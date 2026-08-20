@@ -1,0 +1,33 @@
+{
+  "type" : "local",
+  "version" : 3,
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "flower-show-full-unlock",
+      "localizations" : [
+        {
+          "description" : "Classes 6–30 and the Champion Circuit.",
+          "displayName" : "Complete Flower Show",
+          "locale" : "en_GB"
+        },
+        {
+          "description" : "Classes 6–30 and the Champion Circuit.",
+          "displayName" : "Complete Flower Show",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.tommurton.ringbloom.flower_show",
+      "referenceName" : "Flower Show – Full Unlock",
+      "type" : "NonConsumable"
+    }
+  ],
+  "nonRenewingSubscriptions" : [ ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_GB",
+    "_storefront" : "GBR",
+    "_storeKitErrors" : [ ]
+  }
+}

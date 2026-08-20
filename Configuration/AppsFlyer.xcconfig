@@ -1,0 +1,7 @@
+// Local-only configuration. Add the AppsFlyer developer key after Ringbloom
+// has been created in AppsFlyer. This file is ignored by source control.
+APPSFLYER_APP_ID = 6789952808
+APPSFLYER_DEV_KEY =
+
+// Optional, ignored credentials for local and release builds.
+#include? "AppsFlyer.local.xcconfig"

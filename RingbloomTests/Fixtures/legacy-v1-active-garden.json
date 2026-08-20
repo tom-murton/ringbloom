@@ -1,0 +1,108 @@
+{
+  "activeFlowerShow" : {
+    "malformedObsoletePayload" : true
+  },
+  "activeGame" : {
+    "activeKindCount" : 4,
+    "bestStreak" : 1,
+    "blooms" : 1,
+    "board" : {
+      "rings" : [
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          3,
+          1,
+          3
+        ],
+        [
+          2,
+          2,
+          3,
+          0,
+          2,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          3,
+          3,
+          3,
+          3,
+          1,
+          2,
+          3
+        ]
+      ]
+    },
+    "completionBonus" : 0,
+    "didUseUndo" : false,
+    "garden" : 7,
+    "gardenRating" : "seedling",
+    "harmonyRings" : [
+
+    ],
+    "hintsRemaining" : 3,
+    "hintsUsed" : 0,
+    "infectedSpokes" : [
+
+    ],
+    "lastTurn" : {
+      "bloomSpokes" : [
+        7
+      ],
+      "combo" : 1,
+      "didReshuffle" : false,
+      "direction" : 0,
+      "phase" : "playing",
+      "points" : 100,
+      "ring" : 0,
+      "streak" : 1,
+      "streakBonus" : 0,
+      "turnNumber" : 1
+    },
+    "movesRemaining" : 12,
+    "phase" : "playing",
+    "random" : {
+      "state" : 12671394942374193157
+    },
+    "score" : 100,
+    "selectedRing" : 0,
+    "streak" : 1,
+    "targetBlooms" : 8,
+    "turnNumber" : 1,
+    "twinBloomCompleted" : false
+  },
+  "activeGardenSeed" : 659918,
+  "bestScore" : 4275,
+  "completedFlowerShowClasses" : [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "currentFlowerShowClass" : 6,
+  "flowerShowIntroduced" : true,
+  "globalBestStreak" : 5,
+  "grandChampionAchieved" : false,
+  "hapticsEnabled" : true,
+  "highestGarden" : 7,
+  "radiantGardens" : [
+    2,
+    4
+  ],
+  "reviewRequestState" : {
+    "successfulGardenCompletions" : 6
+  },
+  "seenFlowerShowIntroductions" : [
+    "ringHarmony",
+    "unbroken"
+  ],
+  "soundEnabled" : false
+}

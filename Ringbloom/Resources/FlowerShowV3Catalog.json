@@ -1,0 +1,9821 @@
+{
+  "campaignScenarios" : [
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            1,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            0,
+            1,
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            1,
+            2,
+            2,
+            1,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 1705979661087034257
+      },
+      "repairSalt" : 1358954496,
+      "scenarioDigest" : "9a114e199fcef1d74d89f10ae5e51df045e593a93ec74d4ff63a4fb39ec298ea",
+      "scenarioID" : "campaign-01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 5
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            1,
+            2,
+            0,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            2,
+            2,
+            2,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            2,
+            2,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 15855326747469252504
+      },
+      "repairSalt" : 1358954497,
+      "scenarioDigest" : "7fa5ff9d6b0f6e05780957453e1664571f5174113a607f87d36e6b8a54e6afc8",
+      "scenarioID" : "campaign-02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            0,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            1,
+            0,
+            0,
+            0,
+            2,
+            2
+          ],
+          [
+            0,
+            2,
+            1,
+            1,
+            0,
+            2,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 5,
+      "refillSource" : {
+        "seed" : 6510615556070394416
+      },
+      "repairSalt" : 1358954498,
+      "scenarioDigest" : "15b8e642abea099cce9509525b449d1340d9a78b5a1a5f2144f715c69e4e1403",
+      "scenarioID" : "campaign-03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            3,
+            0,
+            1,
+            2,
+            1,
+            2
+          ],
+          [
+            0,
+            2,
+            1,
+            0,
+            0,
+            2,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0,
+            3,
+            0,
+            1,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 15219986685944085125
+      },
+      "repairSalt" : 1358954499,
+      "scenarioDigest" : "bd5cabe330e74ffcb364e3f2c5daf5c85cd5a9ac68f88fecb5b2db5e66ddd35f",
+      "scenarioID" : "campaign-04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            0,
+            3,
+            0,
+            2,
+            3,
+            0
+          ],
+          [
+            3,
+            0,
+            2,
+            3,
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            3,
+            3,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 3033948361746880999
+      },
+      "repairSalt" : 1358954500,
+      "scenarioDigest" : "4168748ddcbc2d5541f59a9a7f92c38a9f45269550c4addb0a44738ea4743ca7",
+      "scenarioID" : "campaign-05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            2,
+            2
+          ],
+          [
+            2,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            2,
+            2,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 2
+      },
+      "radiantPar" : 5,
+      "refillSource" : {
+        "seed" : 6510615556070394423
+      },
+      "repairSalt" : 1358954501,
+      "scenarioDigest" : "9a6261a14bf719236b43e948d1330006906e79bf1362700efdefc4ab159d5da9",
+      "scenarioID" : "campaign-06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 5
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            0,
+            2,
+            2,
+            0,
+            1,
+            2
+          ],
+          [
+            0,
+            0,
+            2,
+            0,
+            2,
+            0,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            0,
+            0,
+            1,
+            1,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 3
+      },
+      "radiantPar" : 5,
+      "refillSource" : {
+        "seed" : 6510615556070394420
+      },
+      "repairSalt" : 1358954502,
+      "scenarioDigest" : "dc8037c061baf0d7b99b393f4956dd5cf470425b3d2c93c46f6e3338cb3d29ad",
+      "scenarioID" : "campaign-07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            2,
+            0,
+            1,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            2,
+            0,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 2
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 11143385718225218630
+      },
+      "repairSalt" : 1358954503,
+      "scenarioDigest" : "30945f5294da44252981082b28010cfc4d7179af2981a3704f421a96f131b926",
+      "scenarioID" : "campaign-08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            3,
+            1,
+            2,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            3,
+            2,
+            0,
+            2,
+            1,
+            2,
+            0
+          ],
+          [
+            2,
+            3,
+            0,
+            0,
+            0,
+            2,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 3
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 3033948361746881003
+      },
+      "repairSalt" : 1358954504,
+      "scenarioDigest" : "8f76e426f2fe206eb7098bc747e2625206be2645252202c562254782f5c71814",
+      "scenarioID" : "campaign-09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            3,
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            3,
+            3,
+            1,
+            1,
+            3,
+            3,
+            2,
+            2
+          ],
+          [
+            0,
+            3,
+            3,
+            3,
+            3,
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 598806980035654399
+      },
+      "repairSalt" : 1358954505,
+      "scenarioDigest" : "6616900d93903f6e670032433a2e4eef94b3f1c43d377a365ccb0855231f7e14",
+      "scenarioID" : "campaign-10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            1,
+            2,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            2,
+            2,
+            2,
+            2,
+            0,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 5,
+      "refillSource" : {
+        "seed" : 2791270052658716447
+      },
+      "repairSalt" : 1358954506,
+      "scenarioDigest" : "6f6ac88f010a4d6e76aaeb124da32523e716e1e6a6f4317c86a5204e185deecf",
+      "scenarioID" : "campaign-11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 5
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            1,
+            2,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            0,
+            1,
+            2,
+            2,
+            2,
+            1,
+            2
+          ],
+          [
+            2,
+            0,
+            0,
+            1,
+            2,
+            0,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            5
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 1370606486259543425
+      },
+      "repairSalt" : 1358954507,
+      "scenarioDigest" : "718132cb05183ca30a0cdcc37f7c59e3175f46ee89cf83f2260fd7532a818433",
+      "scenarioID" : "campaign-12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            2,
+            2,
+            0,
+            2,
+            0
+          ],
+          [
+            1,
+            2,
+            3,
+            1,
+            3,
+            1,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            2
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 3
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 4454611928146054030
+      },
+      "repairSalt" : 1358954508,
+      "scenarioDigest" : "019c3ac8a8dba8e89e846113d8d6573f0be3e081f2de0424c0650a61f55d6d93",
+      "scenarioID" : "campaign-13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            2,
+            0,
+            3,
+            1,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            2,
+            1,
+            1,
+            3,
+            2,
+            1
+          ],
+          [
+            2,
+            0,
+            3,
+            1,
+            0,
+            1,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            2,
+            7
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 5725292051196388785
+      },
+      "repairSalt" : 1358954509,
+      "scenarioDigest" : "46a7bc775b11ca418e123b069e1c15e0ffbd743797e4d9208eec8804e0940bd1",
+      "scenarioID" : "campaign-14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            0,
+            0,
+            0,
+            1,
+            1,
+            3
+          ],
+          [
+            2,
+            3,
+            0,
+            1,
+            3,
+            3,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            2,
+            0,
+            0,
+            0,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            4,
+            7
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 3
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 6396038400851370460
+      },
+      "repairSalt" : 1358954510,
+      "scenarioDigest" : "eb6b8da8fc39f8f8ac8cfca4c2d4a6adc285156fae1f352d807243299632f5fb",
+      "scenarioID" : "campaign-15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            2,
+            1,
+            1,
+            1,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            2,
+            0,
+            1,
+            0,
+            2,
+            2
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            2,
+            0,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 5,
+      "refillSource" : {
+        "seed" : 7781295679120729183
+      },
+      "repairSalt" : 1358954511,
+      "scenarioDigest" : "d0c6b9238635cd6c7a8dd09fac0b4b9e80030bd22b2c714d22122a9f9549a5ba",
+      "scenarioID" : "campaign-16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 5
+    },
+    {
+      "activeKindCount" : 3,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            2,
+            1,
+            1,
+            1,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            2,
+            0,
+            1,
+            0,
+            2,
+            2
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            2,
+            0,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 8,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 8173957431557731979
+      },
+      "repairSalt" : 1358954512,
+      "scenarioDigest" : "e0b25b108f1bdb325e6ea68210eea9743190f42d45c5f5ae56df07dfdd558ae2",
+      "scenarioID" : "campaign-17",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            1,
+            3,
+            1,
+            0,
+            2,
+            1
+          ],
+          [
+            0,
+            1,
+            2,
+            3,
+            2,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            2,
+            2,
+            0,
+            2,
+            3,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 3
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 4304628484797215734
+      },
+      "repairSalt" : 1358954513,
+      "scenarioDigest" : "7b855a767b36e1d85ba862b54b9178b993ed6de176888fc20074ed79eb091572",
+      "scenarioID" : "campaign-18",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            2,
+            3,
+            0,
+            0,
+            1,
+            2
+          ],
+          [
+            3,
+            1,
+            1,
+            2,
+            2,
+            3,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            2,
+            1,
+            3,
+            1,
+            3,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            5
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 6510615556070394400
+      },
+      "repairSalt" : 1358954514,
+      "scenarioDigest" : "4472194d396c9fe61aff4db69e661b04a4879649e96e1febd14b6555fd9083bb",
+      "scenarioID" : "campaign-19",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            3,
+            2,
+            1,
+            3,
+            3,
+            3
+          ],
+          [
+            0,
+            3,
+            2,
+            0,
+            2,
+            0,
+            0,
+            2
+          ],
+          [
+            3,
+            3,
+            0,
+            2,
+            1,
+            1,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 1980871675295967583
+      },
+      "repairSalt" : 1358954515,
+      "scenarioDigest" : "1c23595047e7be9a8951fa1bd46fb7b06fc28a9858cfca8a8c3ea264dbae86db",
+      "scenarioID" : "campaign-20",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            3,
+            1,
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            1,
+            2,
+            2,
+            3,
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            0,
+            2,
+            1,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 9722722151826045592
+      },
+      "repairSalt" : 1358954516,
+      "scenarioDigest" : "e828b3d659a03c9f5bffb988e065b252da8022d50a5cf3e2f01a31900f0aa653",
+      "scenarioID" : "campaign-21",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 6
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            1,
+            2,
+            0,
+            3,
+            1,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            1,
+            3,
+            3,
+            1,
+            0
+          ],
+          [
+            3,
+            3,
+            3,
+            3,
+            1,
+            1,
+            3,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 17198792571590705889
+      },
+      "repairSalt" : 1358954517,
+      "scenarioDigest" : "b833cc238852baf310113fd2a1c95077c2326c47c12c768e244a35c2267742da",
+      "scenarioID" : "campaign-22",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            0,
+            0,
+            2,
+            1,
+            2,
+            2
+          ],
+          [
+            1,
+            2,
+            0,
+            0,
+            0,
+            0,
+            1,
+            3
+          ],
+          [
+            0,
+            3,
+            2,
+            3,
+            3,
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            2,
+            7
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 18074837817392547776
+      },
+      "repairSalt" : 1358954518,
+      "scenarioDigest" : "3d96347945a869fd5724e57542d6eca28866efc28b108488fc7486c9a91c9aaf",
+      "scenarioID" : "campaign-23",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            1,
+            0,
+            1,
+            3,
+            0,
+            2,
+            3
+          ],
+          [
+            2,
+            3,
+            1,
+            0,
+            1,
+            3,
+            2,
+            3
+          ],
+          [
+            0,
+            0,
+            3,
+            2,
+            1,
+            2,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 11952564637390411984
+      },
+      "repairSalt" : 1358954519,
+      "scenarioDigest" : "ac5460ab1879ae12f83a59ee760f07c271bb677b4ae7b6c2317dd1278a72de50",
+      "scenarioID" : "campaign-24",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 7
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            2,
+            1,
+            3,
+            3,
+            1,
+            1
+          ],
+          [
+            1,
+            3,
+            2,
+            0,
+            0,
+            1,
+            3,
+            1
+          ],
+          [
+            1,
+            2,
+            3,
+            3,
+            1,
+            0,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 7235457900325842560
+      },
+      "repairSalt" : 1358954520,
+      "scenarioDigest" : "417db8f5065286e1a14f88a311329a7dab195155c65e5b31c760ce657565bde7",
+      "scenarioID" : "campaign-25",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            0,
+            1,
+            2,
+            0,
+            3,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            2,
+            3,
+            3,
+            0,
+            2
+          ],
+          [
+            2,
+            1,
+            2,
+            0,
+            3,
+            1,
+            3,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 9,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 6,
+      "refillSource" : {
+        "seed" : 10843418831527542082
+      },
+      "repairSalt" : 1358954521,
+      "scenarioDigest" : "7010f3280b7d739633e53f66427830114135346e7af2357e1bbba5986b769760",
+      "scenarioID" : "campaign-26",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            3,
+            2,
+            3,
+            0,
+            2
+          ],
+          [
+            2,
+            0,
+            3,
+            0,
+            1,
+            3,
+            0,
+            1
+          ],
+          [
+            3,
+            1,
+            3,
+            2,
+            1,
+            2,
+            3,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 5125358277801035686
+      },
+      "repairSalt" : 1358954522,
+      "scenarioDigest" : "8f781bb1a4c4ab68b0cd9683a8510be1c3d4a34a7d24e7150b04bbb156b78fde",
+      "scenarioID" : "campaign-27",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            2,
+            2,
+            2,
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            0,
+            0,
+            0,
+            2,
+            1,
+            1,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            2,
+            1,
+            2,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            4
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 15949173113329833455
+      },
+      "repairSalt" : 1358954523,
+      "scenarioDigest" : "351f0531d4073f6e4954258dc618b9c5eb2130e63c11f9a4510fcc257fabcda7",
+      "scenarioID" : "campaign-28",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            0,
+            2,
+            0,
+            1,
+            1,
+            2
+          ],
+          [
+            3,
+            1,
+            2,
+            0,
+            0,
+            2,
+            1,
+            3
+          ],
+          [
+            2,
+            0,
+            2,
+            1,
+            1,
+            0,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 6916801307157513855
+      },
+      "repairSalt" : 1358954524,
+      "scenarioDigest" : "c9983a9ebe5bca9295203ac1d33a855c1078a14d8ff668cf52326a9a75549ddf",
+      "scenarioID" : "campaign-29",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 10
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            0,
+            1,
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            1,
+            2,
+            1,
+            2,
+            1,
+            3,
+            1,
+            3
+          ],
+          [
+            2,
+            1,
+            1,
+            3,
+            2,
+            3,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            2,
+            5,
+            7
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 13499356232847235562
+      },
+      "repairSalt" : 1358954525,
+      "scenarioDigest" : "12c518023e91713557e0354afbe8ad973e6e17d9404fc86e7f7dc29158a724cb",
+      "scenarioID" : "campaign-30",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    }
+  ],
+  "contentVersion" : 3,
+  "curatedCircuitScenarios" : [
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            1,
+            3,
+            3,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            3,
+            0,
+            0,
+            1,
+            2,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            3,
+            0,
+            2,
+            3,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 12168194949211897747
+      },
+      "repairSalt" : 1392508928,
+      "scenarioDigest" : "0f881fd62cbce06f7727a400dfc83d71ad3eec1f9c6b398326caf12d3e24738f",
+      "scenarioID" : "circuit-curated-31",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            2,
+            3,
+            1,
+            1,
+            3,
+            1
+          ],
+          [
+            2,
+            3,
+            3,
+            0,
+            1,
+            1,
+            1,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            3,
+            2,
+            3,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 7516735080586421368
+      },
+      "repairSalt" : 1392508929,
+      "scenarioDigest" : "d25cf5b0242656642a715878306fe27d01ba6cd2c8d0ccff33bb137b2a4a0168",
+      "scenarioID" : "circuit-curated-32",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            2,
+            2,
+            1,
+            0,
+            1,
+            3
+          ],
+          [
+            1,
+            3,
+            1,
+            2,
+            1,
+            3,
+            2,
+            1
+          ],
+          [
+            2,
+            3,
+            0,
+            1,
+            0,
+            3,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 9687315863729785733
+      },
+      "repairSalt" : 1392508930,
+      "scenarioDigest" : "5267ce0d9289006d6f872eb35fea4f0640cfda5cc6ca346acbf1f9d0b19f1682",
+      "scenarioID" : "circuit-curated-33",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            3,
+            3,
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            2,
+            3,
+            0,
+            0,
+            2,
+            3
+          ],
+          [
+            0,
+            0,
+            3,
+            0,
+            3,
+            2,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2954777494691225759
+      },
+      "repairSalt" : 1392508931,
+      "scenarioDigest" : "326619e104b6adc67eb4e4b168787fac7d9ed414a638bda15e39cca1d6dc8bc5",
+      "scenarioID" : "circuit-curated-34",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            0,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          [
+            0,
+            3,
+            1,
+            0,
+            0,
+            1,
+            3,
+            1
+          ],
+          [
+            2,
+            0,
+            3,
+            0,
+            2,
+            0,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 7238650483368442516
+      },
+      "repairSalt" : 1392508932,
+      "scenarioDigest" : "b1287b79b625cbf9559a681db67ddbdb75fea16a59e97c7016af242a4d443c49",
+      "scenarioID" : "circuit-curated-35",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            3,
+            3,
+            0,
+            1,
+            2,
+            2
+          ],
+          [
+            2,
+            3,
+            1,
+            1,
+            3,
+            3,
+            0,
+            1
+          ],
+          [
+            3,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 9375798103193482625
+      },
+      "repairSalt" : 1392508933,
+      "scenarioDigest" : "c4ac039cb5f856e55b221dda89b4dec3b9ad774051799cb0576e2e30fce3e387",
+      "scenarioID" : "circuit-curated-36",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            2,
+            2,
+            2,
+            0,
+            1,
+            3
+          ],
+          [
+            3,
+            1,
+            1,
+            0,
+            3,
+            1,
+            3,
+            1
+          ],
+          [
+            1,
+            0,
+            3,
+            2,
+            3,
+            2,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 10079977616166788560
+      },
+      "repairSalt" : 1392508934,
+      "scenarioDigest" : "577adc87895dc74bef52e184516f4b2e785a37eeec198be2f467df31257f372c",
+      "scenarioID" : "circuit-curated-37",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            3
+          ],
+          [
+            2,
+            0,
+            1,
+            2,
+            3,
+            2,
+            0,
+            1
+          ],
+          [
+            3,
+            1,
+            2,
+            2,
+            1,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 10265367347645441131
+      },
+      "repairSalt" : 1392508935,
+      "scenarioDigest" : "84cbf548a94b5ee786a440ec855941beffe7adb4e693ae6587fec6d01f2fe397",
+      "scenarioID" : "circuit-curated-38",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    }
+  ],
+  "endlessCircuitScenarios" : [
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            0,
+            0,
+            1,
+            0,
+            2,
+            3
+          ],
+          [
+            1,
+            3,
+            0,
+            1,
+            3,
+            2,
+            1,
+            0
+          ],
+          [
+            3,
+            2,
+            2,
+            0,
+            0,
+            1,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 11625549753526719951
+      },
+      "repairSalt" : 1493172224,
+      "scenarioDigest" : "0082bf250f430cfbfb3dd9456390f70b35e4ae63d57883d1d70a75a77573aaa0",
+      "scenarioID" : "circuit-r1-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            3,
+            2,
+            1,
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            1,
+            0,
+            0,
+            2,
+            3,
+            3
+          ],
+          [
+            3,
+            2,
+            3,
+            0,
+            2,
+            3,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 6141809218058797048
+      },
+      "repairSalt" : 1493172225,
+      "scenarioDigest" : "8403f3f98c07f0264108f3fd4bc3c63379568f7f8e6410998a86a6df9be18fc5",
+      "scenarioID" : "circuit-r1-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            0,
+            0,
+            2,
+            1,
+            3,
+            3
+          ],
+          [
+            2,
+            1,
+            0,
+            1,
+            0,
+            2,
+            3,
+            3
+          ],
+          [
+            0,
+            1,
+            2,
+            3,
+            2,
+            2,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 4247339907321921491
+      },
+      "repairSalt" : 1493172226,
+      "scenarioDigest" : "4b388a6fd9bc5ce387253d1dbcf19d2f878097997ddf3fb12a06d074764438cd",
+      "scenarioID" : "circuit-r1-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            0,
+            0,
+            2,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            3,
+            1,
+            3,
+            0,
+            2,
+            0
+          ],
+          [
+            0,
+            3,
+            1,
+            1,
+            1,
+            3,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 14444994596845368313
+      },
+      "repairSalt" : 1493172227,
+      "scenarioDigest" : "4ed6c5a9857cfdde290ece12ff7ce744f76ebbc68665e5cb7f95be4ab554a7c3",
+      "scenarioID" : "circuit-r1-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            0,
+            0,
+            1,
+            2,
+            2,
+            0
+          ],
+          [
+            3,
+            2,
+            0,
+            3,
+            0,
+            3,
+            2,
+            0
+          ],
+          [
+            3,
+            3,
+            3,
+            3,
+            1,
+            3,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 4038914595054599
+      },
+      "repairSalt" : 1493172228,
+      "scenarioDigest" : "2b5f700944ae7d96ed4879ffaa11e3ac4565040a0fbdb604e558b2e2508c6b31",
+      "scenarioID" : "circuit-r1-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            2,
+            2,
+            1,
+            3,
+            2,
+            2
+          ],
+          [
+            3,
+            2,
+            0,
+            3,
+            0,
+            3,
+            1,
+            1
+          ],
+          [
+            3,
+            3,
+            3,
+            2,
+            2,
+            0,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 14731437484892928239
+      },
+      "repairSalt" : 1493172229,
+      "scenarioDigest" : "9985816623586c9d6f4fb312a88f229f7ff664fe4796a90aaffcdc819ee212e2",
+      "scenarioID" : "circuit-r1-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            1,
+            0,
+            0,
+            0,
+            3,
+            2
+          ],
+          [
+            2,
+            0,
+            2,
+            0,
+            0,
+            0,
+            3,
+            0
+          ],
+          [
+            0,
+            0,
+            3,
+            1,
+            3,
+            1,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 12299488686190747143
+      },
+      "repairSalt" : 1493172230,
+      "scenarioDigest" : "4e899588f3d16339d87b7105cfa20c6cfffaaafd598e1e499cf6b34e23c5f506",
+      "scenarioID" : "circuit-r1-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            2,
+            3,
+            0,
+            2,
+            0
+          ],
+          [
+            2,
+            2,
+            0,
+            1,
+            0,
+            1,
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            1,
+            0,
+            2,
+            0,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 4260863905972038114
+      },
+      "repairSalt" : 1493172231,
+      "scenarioDigest" : "928e52b8195101f656a37245a8ac0159f83cdead1c2a66fa00c323542204c52f",
+      "scenarioID" : "circuit-r1-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            1,
+            3,
+            0,
+            2,
+            3,
+            0
+          ],
+          [
+            3,
+            2,
+            3,
+            0,
+            1,
+            2,
+            2,
+            1
+          ],
+          [
+            0,
+            2,
+            1,
+            3,
+            2,
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10780498754648091387
+      },
+      "repairSalt" : 1493172232,
+      "scenarioDigest" : "3f4b324ab67b8564d2ac7db68b29a143388990bdca8fdf0a86639c6cff914ff0",
+      "scenarioID" : "circuit-r1-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            1,
+            1,
+            3,
+            1,
+            0,
+            0
+          ],
+          [
+            2,
+            3,
+            0,
+            0,
+            3,
+            0,
+            3,
+            3
+          ],
+          [
+            3,
+            0,
+            0,
+            2,
+            1,
+            3,
+            0,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 5233550267136186377
+      },
+      "repairSalt" : 1493172233,
+      "scenarioDigest" : "e36cc7f5c1e3f51862bf6992f6c15dabd6cbf848ae1b0b1f2d4639219e918d78",
+      "scenarioID" : "circuit-r1-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            3,
+            1,
+            0,
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            2,
+            3,
+            1,
+            3,
+            3,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            0,
+            2,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10406992500265361634
+      },
+      "repairSalt" : 1493172234,
+      "scenarioDigest" : "6b14b2646f6ac18f1f2cbd85debfe339498f7599f5400cda083ccaa8d1f1645e",
+      "scenarioID" : "circuit-r1-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            2,
+            0,
+            0,
+            1,
+            0,
+            3
+          ],
+          [
+            3,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            3,
+            0,
+            1,
+            3,
+            3,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2190116821200025629
+      },
+      "repairSalt" : 1493172235,
+      "scenarioDigest" : "5f248c87b622a2ac9cf343a12a071dc015dbee10689d5de6c39827b1e6e1aede",
+      "scenarioID" : "circuit-r1-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            2,
+            3,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            3,
+            0,
+            3,
+            2,
+            0,
+            3
+          ],
+          [
+            0,
+            1,
+            3,
+            1,
+            0,
+            3,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 6286626953587099775
+      },
+      "repairSalt" : 1493172236,
+      "scenarioDigest" : "60fc97050cd58738fad981412063d9a035135f973d62d5a3a30c28f17bd9f284",
+      "scenarioID" : "circuit-r1-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            2,
+            1,
+            0,
+            2,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            3,
+            2,
+            2,
+            3,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            1,
+            2,
+            3,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 8912323774597514504
+      },
+      "repairSalt" : 1493172237,
+      "scenarioDigest" : "da1902cb18e8c46eabd2ee5a858d62e122c51f50a217fa4a72d7358dad9f81e2",
+      "scenarioID" : "circuit-r1-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            2,
+            3,
+            2,
+            1,
+            3,
+            1
+          ],
+          [
+            2,
+            3,
+            3,
+            3,
+            3,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            1,
+            1,
+            2,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 4984486792029930800
+      },
+      "repairSalt" : 1493172238,
+      "scenarioDigest" : "ec103e1d36b460ab29c2da668a85a7281114a02cd188768209d09514f02bbec4",
+      "scenarioID" : "circuit-r1-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            2,
+            3,
+            0
+          ],
+          [
+            3,
+            2,
+            3,
+            3,
+            3,
+            0,
+            1,
+            2
+          ],
+          [
+            2,
+            3,
+            1,
+            2,
+            0,
+            0,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 1,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2376726010876233674
+      },
+      "repairSalt" : 1493172239,
+      "scenarioDigest" : "6d6f14b5d24b829342cc4b4137b8aeae78bb9e2e91849533a565537461d5835b",
+      "scenarioID" : "circuit-r1-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            3,
+            3,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            2,
+            2,
+            2,
+            1,
+            3,
+            2,
+            3
+          ],
+          [
+            0,
+            2,
+            3,
+            2,
+            3,
+            1,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 4547306794019598067
+      },
+      "repairSalt" : 1493172324,
+      "scenarioDigest" : "405ae8655bcb80b023dbfd5613ceaa9863b038bb0e33d5671f3bd8e9ce085a61",
+      "scenarioID" : "circuit-r2-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            3,
+            1,
+            3,
+            1,
+            2,
+            0
+          ],
+          [
+            2,
+            3,
+            0,
+            3,
+            1,
+            3,
+            0,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 16561479385388266247
+      },
+      "repairSalt" : 1493172325,
+      "scenarioDigest" : "cca06d46fb4e2dc0195ce54f7e532118f56aada8cfd02217dbcc8f66364f5fb8",
+      "scenarioID" : "circuit-r2-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            1,
+            1,
+            3,
+            0,
+            1,
+            2
+          ],
+          [
+            3,
+            3,
+            1,
+            2,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            3,
+            0,
+            0,
+            2,
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 15070003242729464619
+      },
+      "repairSalt" : 1493172326,
+      "scenarioDigest" : "3d029e545041ae2e6cbaed63e46e7f60108f5f27ae5e679258a9ba58e043fec9",
+      "scenarioID" : "circuit-r2-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            1,
+            0,
+            1,
+            1,
+            0,
+            3
+          ],
+          [
+            2,
+            1,
+            3,
+            2,
+            0,
+            0,
+            2,
+            1
+          ],
+          [
+            0,
+            2,
+            1,
+            2,
+            2,
+            0,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 12714032728107447682
+      },
+      "repairSalt" : 1493172327,
+      "scenarioDigest" : "91dbeeeecaea1f6b5cc509a2c81d6153e3ba0cca5965e01559b3b02195f6619b",
+      "scenarioID" : "circuit-r2-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            3,
+            2,
+            1,
+            2,
+            0,
+            2
+          ],
+          [
+            2,
+            0,
+            1,
+            3,
+            1,
+            0,
+            1,
+            2
+          ],
+          [
+            3,
+            1,
+            0,
+            0,
+            2,
+            0,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 8023973988343111494
+      },
+      "repairSalt" : 1493172328,
+      "scenarioDigest" : "73a0d1cd9b26a9649a60d1822ae35e80a7cd190f5598bbca5ff269dac72541ba",
+      "scenarioID" : "circuit-r2-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            1,
+            2,
+            1,
+            3,
+            3,
+            2,
+            0
+          ],
+          [
+            0,
+            3,
+            2,
+            2,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            2,
+            3,
+            1,
+            2,
+            1,
+            2,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10957995986880783826
+      },
+      "repairSalt" : 1493172329,
+      "scenarioDigest" : "e4ad5d07c68c453087a30995ab4bc3df875a52c683e897c2967c99be2551c11b",
+      "scenarioID" : "circuit-r2-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            2,
+            0,
+            3,
+            2,
+            0,
+            3
+          ],
+          [
+            1,
+            1,
+            1,
+            3,
+            3,
+            3,
+            0,
+            3
+          ],
+          [
+            0,
+            3,
+            2,
+            1,
+            0,
+            3,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 15312681551817629177
+      },
+      "repairSalt" : 1493172330,
+      "scenarioDigest" : "b12e6abb72fca5ccd63c9dce7c2abd32da23b44107286f7a90572fd081860b59",
+      "scenarioID" : "circuit-r2-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            0,
+            0,
+            1,
+            1,
+            2,
+            2
+          ],
+          [
+            2,
+            3,
+            1,
+            3,
+            3,
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            3,
+            3,
+            1,
+            3,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10208078770136592479
+      },
+      "repairSalt" : 1493172331,
+      "scenarioDigest" : "69967ab5cd4d37c51ca60a29facd375e6263295dc63b0a9232a85350777e1aef",
+      "scenarioID" : "circuit-r2-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            2,
+            3,
+            2,
+            0,
+            3,
+            3
+          ],
+          [
+            1,
+            2,
+            1,
+            1,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            3,
+            2,
+            0,
+            1,
+            2,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 5182646855544765452
+      },
+      "repairSalt" : 1493172332,
+      "scenarioDigest" : "1da8570f71b187b21eb586a34b54962a658abc4dbac2deb6a649d70af6be76e0",
+      "scenarioID" : "circuit-r2-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            0,
+            3,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2,
+            2,
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            0,
+            2,
+            2,
+            1,
+            1,
+            1,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 206145227732869340
+      },
+      "repairSalt" : 1493172333,
+      "scenarioDigest" : "0aac7000c902adb9cd79865647d3be159cffff01336dd55f85a2be16e8f18689",
+      "scenarioID" : "circuit-r2-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            3,
+            0,
+            3,
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            2,
+            1,
+            2,
+            2,
+            2,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            0,
+            3,
+            2,
+            2,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 17368685179741969581
+      },
+      "repairSalt" : 1493172334,
+      "scenarioDigest" : "65eec3582751919d92b8faf5567e84b61ba14c253ffef5201b13fc38f7907657",
+      "scenarioID" : "circuit-r2-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            1,
+            2,
+            0,
+            3,
+            1,
+            0
+          ],
+          [
+            3,
+            0,
+            1,
+            2,
+            3,
+            1,
+            2,
+            3
+          ],
+          [
+            3,
+            3,
+            2,
+            0,
+            1,
+            1,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 14227391160245946998
+      },
+      "repairSalt" : 1493172335,
+      "scenarioDigest" : "e883ce021b9f4816abd1d1b8406a3a3aa6afb6cad3ae454cf46085896dff13e5",
+      "scenarioID" : "circuit-r2-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            1,
+            2,
+            1,
+            2,
+            3,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            3,
+            0,
+            3,
+            3,
+            0
+          ],
+          [
+            3,
+            3,
+            2,
+            1,
+            3,
+            2,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10658029100183107263
+      },
+      "repairSalt" : 1493172336,
+      "scenarioDigest" : "34ee85c28d2064239e48b2680781fce99c5c83790189475a92a166c755c82bcf",
+      "scenarioID" : "circuit-r2-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            0,
+            1,
+            0,
+            2,
+            1,
+            0
+          ],
+          [
+            2,
+            0,
+            1,
+            1,
+            2,
+            0,
+            2,
+            3
+          ],
+          [
+            1,
+            0,
+            0,
+            3,
+            0,
+            2,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 620689269649569818
+      },
+      "repairSalt" : 1493172337,
+      "scenarioDigest" : "1679270f3271fd68176930a3590a553260b39fb57d1750c40c316ea08c157a30",
+      "scenarioID" : "circuit-r2-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            1,
+            2,
+            1,
+            3,
+            3,
+            2,
+            0
+          ],
+          [
+            0,
+            3,
+            2,
+            2,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            2,
+            3,
+            1,
+            2,
+            1,
+            2,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 16733345118216802176
+      },
+      "repairSalt" : 1493172338,
+      "scenarioDigest" : "d6e1c7f15766eee36cd79b7e58acd803614e08d68840598d23e79fa7b6df9a5d",
+      "scenarioID" : "circuit-r2-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            3,
+            1,
+            2,
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            2,
+            0,
+            2,
+            2,
+            3,
+            0
+          ],
+          [
+            2,
+            0,
+            3,
+            3,
+            3,
+            2,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3
+          ]
+        },
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 0,
+        "unbrokenChain" : 4
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 9850823305829403933
+      },
+      "repairSalt" : 1493172339,
+      "scenarioDigest" : "e769ebd30a5a22f8b3bc12fb8ac66aa03f05b39bde6e7acb5825fadd93ec4b0e",
+      "scenarioID" : "circuit-r2-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            1,
+            0,
+            1,
+            3,
+            1,
+            1
+          ],
+          [
+            3,
+            0,
+            0,
+            2,
+            3,
+            2,
+            1,
+            2
+          ],
+          [
+            2,
+            2,
+            1,
+            3,
+            2,
+            0,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10196527896297966063
+      },
+      "repairSalt" : 1493172424,
+      "scenarioDigest" : "156470e37ed613f6c45aa2d9b4ce7dc2324235ee1b22b7d54c4bd776be1ce59a",
+      "scenarioID" : "circuit-r3-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            0,
+            0,
+            1,
+            2,
+            1,
+            2
+          ],
+          [
+            3,
+            0,
+            0,
+            1,
+            3,
+            0,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3,
+            0,
+            3,
+            0,
+            3,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 11621137712320119169
+      },
+      "repairSalt" : 1493172425,
+      "scenarioDigest" : "4e51ec4529efb74bdcb244eafc1a9cc8e0def037510add12287c7084204ffb5b",
+      "scenarioID" : "circuit-r3-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            2,
+            2,
+            2,
+            2,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            1,
+            3,
+            2,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            3,
+            2,
+            0,
+            3,
+            2,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 15384247794691192509
+      },
+      "repairSalt" : 1493172426,
+      "scenarioDigest" : "b80ab2b3fda889f314b3b33688fe813d501426d337b860be1f310bffbad13dc4",
+      "scenarioID" : "circuit-r3-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0,
+            2
+          ],
+          [
+            2,
+            1,
+            0,
+            1,
+            3,
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            1,
+            0,
+            2,
+            0,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 8258294006601695142
+      },
+      "repairSalt" : 1493172427,
+      "scenarioDigest" : "e577527d9b2f19ab4ce3186ed13e9ac1e66befbb797b61979170524bed185536",
+      "scenarioID" : "circuit-r3-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            3,
+            0,
+            1,
+            3,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            1,
+            1,
+            0,
+            3,
+            3,
+            3
+          ],
+          [
+            3,
+            2,
+            0,
+            1,
+            1,
+            0,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 11452464562500628732
+      },
+      "repairSalt" : 1493172428,
+      "scenarioDigest" : "419d18e39d33c3b780473cc2e7db646149981d5a6130a49220ebfd01d8ead3c0",
+      "scenarioID" : "circuit-r3-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            1,
+            2,
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            3,
+            2,
+            0,
+            0,
+            0,
+            1,
+            1,
+            2
+          ],
+          [
+            3,
+            0,
+            0,
+            1,
+            2,
+            1,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 15988593609293146575
+      },
+      "repairSalt" : 1493172429,
+      "scenarioDigest" : "91e07a2437580fa231bafd585f56dadd948b084d96b8dfb333267930dc3ac861",
+      "scenarioID" : "circuit-r3-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            0,
+            1,
+            1,
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3,
+            2,
+            3,
+            3,
+            0,
+            3
+          ],
+          [
+            3,
+            1,
+            0,
+            1,
+            0,
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 13233864051246349456
+      },
+      "repairSalt" : 1493172430,
+      "scenarioDigest" : "18e8384ad686fff778e9b43c3ee05e47300d1faf12ef7adfb1143a6ec40bc0aa",
+      "scenarioID" : "circuit-r3-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            0,
+            1,
+            1,
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3,
+            2,
+            3,
+            3,
+            0,
+            3
+          ],
+          [
+            3,
+            1,
+            0,
+            1,
+            0,
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 13233864051246349456
+      },
+      "repairSalt" : 1493172430,
+      "scenarioDigest" : "c79625ac41136cb070390b3a27a1ef06100a48a2cb6bdc793fd3f44bf3cc9031",
+      "scenarioID" : "circuit-r3-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            1,
+            3,
+            2,
+            2,
+            2,
+            3,
+            1
+          ],
+          [
+            3,
+            2,
+            0,
+            0,
+            2,
+            1,
+            0,
+            3
+          ],
+          [
+            2,
+            3,
+            1,
+            2,
+            3,
+            2,
+            3,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2779719178954307768
+      },
+      "repairSalt" : 1493172432,
+      "scenarioDigest" : "a9b1bf8d4da1c6b5ac9cad0fc46bff76934867c47c87fba29efacaac5bca45dd",
+      "scenarioID" : "circuit-r3-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            1,
+            1,
+            3,
+            2,
+            2,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0,
+            3,
+            2,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            2,
+            0,
+            2,
+            3,
+            1,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 4882679968847089047
+      },
+      "repairSalt" : 1493172433,
+      "scenarioDigest" : "8466e28278e595118c259616579c432c40de26ffd8970ea81e83897bc6e687c8",
+      "scenarioID" : "circuit-r3-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            3,
+            3,
+            3,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            3,
+            1,
+            2,
+            2,
+            3,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 13839895115629479859
+      },
+      "repairSalt" : 1493172434,
+      "scenarioDigest" : "f27767dbcdbeb57bc7330b2ecbe3d0b58c3d3bc83e4c2fd544ee93ddf93a0a42",
+      "scenarioID" : "circuit-r3-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            1,
+            2,
+            2,
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            2,
+            0,
+            0,
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            3,
+            3,
+            2,
+            1,
+            1,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 698640678541224172
+      },
+      "repairSalt" : 1493172435,
+      "scenarioDigest" : "33a48815fb94ddcc5c522a13e3a3cb3708f38b387bd0ec020e928dbbd1b79759",
+      "scenarioID" : "circuit-r3-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            0,
+            1,
+            1,
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3,
+            2,
+            3,
+            3,
+            0,
+            3
+          ],
+          [
+            3,
+            1,
+            0,
+            1,
+            0,
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 13233864051246349456
+      },
+      "repairSalt" : 1493172430,
+      "scenarioDigest" : "6afdacab8a60c3c0a18411d743c8ad93d390f60b0bb901078ed1bd90a115f691",
+      "scenarioID" : "circuit-r3-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            3,
+            1,
+            3,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            3,
+            0,
+            2,
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            2,
+            3,
+            0,
+            1,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 8662904466384644630
+      },
+      "repairSalt" : 1493172437,
+      "scenarioDigest" : "f6e82e337da9b52a587bdb304b7b582911f95f831118dd132042e957b46351a0",
+      "scenarioID" : "circuit-r3-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            3,
+            3,
+            0,
+            1,
+            0,
+            3
+          ],
+          [
+            3,
+            0,
+            3,
+            2,
+            1,
+            3,
+            3,
+            2
+          ],
+          [
+            0,
+            2,
+            2,
+            3,
+            3,
+            1,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 11328775449838089103
+      },
+      "repairSalt" : 1493172438,
+      "scenarioDigest" : "be185d433719ca84ae80faded8d7512919706640ef3b40c61005163ffd773ade",
+      "scenarioID" : "circuit-r3-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            3,
+            0,
+            0,
+            3,
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            3,
+            0,
+            2,
+            2,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2346485430566955094
+      },
+      "repairSalt" : 1493172439,
+      "scenarioDigest" : "8d7dec9799804e366a32ab5e9c7d5bb06151920289fc002ce25e53eccd6faf3e",
+      "scenarioID" : "circuit-r3-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            2,
+            3,
+            0,
+            1,
+            3,
+            1
+          ],
+          [
+            1,
+            0,
+            2,
+            1,
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            2,
+            3,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 12970235035845729055
+      },
+      "repairSalt" : 1493172524,
+      "scenarioDigest" : "22df75c3f100d290454374c8079824724e14216d22f43424f1a99e45b4ce6f0f",
+      "scenarioID" : "circuit-r4-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            2,
+            0,
+            3,
+            2,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            2,
+            1,
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            3,
+            2,
+            0,
+            1,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 17704058354569460615
+      },
+      "repairSalt" : 1493172525,
+      "scenarioDigest" : "a194c8704d5aa14f97337916ed0991669191e6218a552b35872004c7e2ddaa4b",
+      "scenarioID" : "circuit-r4-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            0,
+            3,
+            1,
+            2,
+            0,
+            3
+          ],
+          [
+            0,
+            3,
+            1,
+            3,
+            2,
+            2,
+            3,
+            0
+          ],
+          [
+            2,
+            1,
+            0,
+            0,
+            1,
+            3,
+            0,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 677977847259082019
+      },
+      "repairSalt" : 1493172526,
+      "scenarioDigest" : "0994c5c77fc2e371fab3f2fc93ce7e8e7f5c5d4560c1aff2b7d56f2fa5274c4c",
+      "scenarioID" : "circuit-r4-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            3,
+            1,
+            2,
+            3,
+            3,
+            3
+          ],
+          [
+            3,
+            2,
+            0,
+            3,
+            3,
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            1,
+            2,
+            2,
+            0,
+            1,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10856942830311876670
+      },
+      "repairSalt" : 1493172527,
+      "scenarioDigest" : "1f5c1bf758fe242999ef5ab4ac1f976436eba4b8d794760144e02493f17a020c",
+      "scenarioID" : "circuit-r4-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            1,
+            2,
+            2,
+            3,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            2,
+            0,
+            3,
+            2,
+            3,
+            2
+          ],
+          [
+            1,
+            0,
+            0,
+            2,
+            0,
+            2,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 1512231638913018558
+      },
+      "repairSalt" : 1493172528,
+      "scenarioDigest" : "4f44350682e7dee980990b52d935f0f71451da3a20ce9334648b69720ee5074d",
+      "scenarioID" : "circuit-r4-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            0,
+            1,
+            1,
+            2,
+            3,
+            0
+          ],
+          [
+            2,
+            1,
+            1,
+            0,
+            1,
+            3,
+            2,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            3,
+            3,
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 16733345118216802371
+      },
+      "repairSalt" : 1493172529,
+      "scenarioDigest" : "559b007fe000898469e568ef0bc8846616bba43b02e66cc15590c0d4cc7ffcb2",
+      "scenarioID" : "circuit-r4-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            0,
+            1,
+            1,
+            3,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            1,
+            2,
+            0,
+            1,
+            0,
+            3
+          ],
+          [
+            1,
+            3,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 1555996217872413922
+      },
+      "repairSalt" : 1493172530,
+      "scenarioDigest" : "5bd816114c6ab929b585b0b434d3ac03c468e133cbdb5cdd656d938724bc9b4d",
+      "scenarioID" : "circuit-r4-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            3,
+            1,
+            3,
+            2,
+            3
+          ],
+          [
+            3,
+            1,
+            1,
+            3,
+            0,
+            3,
+            0,
+            3
+          ],
+          [
+            3,
+            3,
+            2,
+            0,
+            2,
+            1,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 9158194666694724764
+      },
+      "repairSalt" : 1493172531,
+      "scenarioDigest" : "39f2368678053c0ad68098b541cdbedaae5b027e767f497fede36b182db5ba25",
+      "scenarioID" : "circuit-r4-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            2,
+            2,
+            3,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            0,
+            3,
+            3,
+            0
+          ],
+          [
+            3,
+            1,
+            0,
+            2,
+            3,
+            3,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 18154008684615975397
+      },
+      "repairSalt" : 1493172532,
+      "scenarioDigest" : "acae98f38f57746ef273bbc87749e51a5ddc85a60da2e3826b9e89e032b1771f",
+      "scenarioID" : "circuit-r4-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            3,
+            1,
+            0,
+            0,
+            0,
+            3
+          ],
+          [
+            0,
+            3,
+            3,
+            1,
+            0,
+            2,
+            1,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            3,
+            1,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 8880110069476745915
+      },
+      "repairSalt" : 1493172533,
+      "scenarioDigest" : "f5b056863a9a484a0c4ef2df607af6300bb60f404d2770896d32697682a3295d",
+      "scenarioID" : "circuit-r4-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            0,
+            0,
+            1,
+            2,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            2,
+            3,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            1,
+            1,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 15176222107118907698
+      },
+      "repairSalt" : 1493172534,
+      "scenarioDigest" : "7652d33958f3c346e6d6fe73645fc5cb16dfba1daf00f7b7302c54b19efabe11",
+      "scenarioID" : "circuit-r4-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            3,
+            0,
+            2,
+            1,
+            2,
+            2
+          ],
+          [
+            1,
+            0,
+            2,
+            2,
+            1,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            2,
+            2,
+            2,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 9828941016349706446
+      },
+      "repairSalt" : 1493172535,
+      "scenarioDigest" : "411a8b0dad30f6c9ab4e56d02242359c97579dc291daffbdbffbdc7e3a92b249",
+      "scenarioID" : "circuit-r4-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            0,
+            0,
+            1,
+            1,
+            1,
+            3,
+            3
+          ],
+          [
+            1,
+            0,
+            1,
+            1,
+            3,
+            0,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            2,
+            3,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 8187481430342066557
+      },
+      "repairSalt" : 1493172536,
+      "scenarioDigest" : "f3437cf8762d224492cbd95320cb41b2c49d7d3c05908ac693dcc7f6eb118a92",
+      "scenarioID" : "circuit-r4-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            3,
+            3,
+            1,
+            0,
+            1,
+            2
+          ],
+          [
+            3,
+            1,
+            1,
+            2,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 1127928177305596809
+      },
+      "repairSalt" : 1493172537,
+      "scenarioDigest" : "03cb800d43d2bf5af9148030088297e29bd074f4d943481d65c18b2357b4592b",
+      "scenarioID" : "circuit-r4-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            0,
+            3,
+            3,
+            3,
+            0,
+            2
+          ],
+          [
+            3,
+            3,
+            0,
+            2,
+            0,
+            1,
+            2,
+            2
+          ],
+          [
+            2,
+            0,
+            2,
+            3,
+            1,
+            3,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 14562764335073438008
+      },
+      "repairSalt" : 1493172538,
+      "scenarioDigest" : "1ad8d6b93c3fb799dd3cd986b617006e382549a943ba52e975edad6a60767bc0",
+      "scenarioID" : "circuit-r4-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            0,
+            0,
+            2,
+            3,
+            2,
+            2
+          ],
+          [
+            0,
+            2,
+            1,
+            1,
+            0,
+            0,
+            2,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            0,
+            3,
+            1,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          2,
+          0,
+          1,
+          2
+        ],
+        "twinBloomTurns" : 0
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 10808012543531945731
+      },
+      "repairSalt" : 1493172539,
+      "scenarioDigest" : "4d740cd372829dd2e873e0f59a4dafff64f9f0dfc1354bb1ca13da423a1721e1",
+      "scenarioID" : "circuit-r4-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 8
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            2,
+            3,
+            2,
+            2,
+            1,
+            2
+          ],
+          [
+            2,
+            0,
+            1,
+            2,
+            3,
+            0,
+            0,
+            1
+          ],
+          [
+            3,
+            3,
+            0,
+            2,
+            0,
+            3,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 12356777263800259493
+      },
+      "repairSalt" : 1493172624,
+      "scenarioDigest" : "25377cdedc4a55a7c634d998ae6eb797a61d0a8d64eb72046092055e198d1bf8",
+      "scenarioID" : "circuit-r5-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            0,
+            1,
+            1,
+            3,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            1,
+            2,
+            0,
+            1,
+            0,
+            3
+          ],
+          [
+            1,
+            3,
+            2,
+            0,
+            0,
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 2491303166095258000
+      },
+      "repairSalt" : 1493172625,
+      "scenarioDigest" : "62f7881dc2891e3fc730ff3ad3384cf82230f7cdb36efa2b59a7e9bf332581b6",
+      "scenarioID" : "circuit-r5-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            2,
+            1,
+            3,
+            0,
+            3
+          ],
+          [
+            2,
+            1,
+            1,
+            3,
+            3,
+            2,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3,
+            0,
+            3,
+            3,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 6510615556204612512
+      },
+      "repairSalt" : 1493172626,
+      "scenarioDigest" : "35ad7653e21dcfbf364ca8ed780c8633d953747960c945886da00a7483dbea1d",
+      "scenarioID" : "circuit-r5-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            2,
+            3,
+            1,
+            3,
+            1,
+            3
+          ],
+          [
+            0,
+            0,
+            0,
+            3,
+            1,
+            0,
+            3,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            2,
+            3,
+            0,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 9294654111393446575
+      },
+      "repairSalt" : 1493172627,
+      "scenarioDigest" : "d8597f13905e11002683a31fc8680f59794d9ba1a1edb032404e050f6bcbfeaf",
+      "scenarioID" : "circuit-r5-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            3,
+            3,
+            0,
+            1,
+            3,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            3,
+            0,
+            2,
+            0
+          ],
+          [
+            2,
+            2,
+            3,
+            2,
+            0,
+            0,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 6995972174380941626
+      },
+      "repairSalt" : 1493172628,
+      "scenarioDigest" : "2f6ff6386dad7ed3840c8f7079d17c03d89bd7324ed744fde77b26c327c88d5e",
+      "scenarioID" : "circuit-r5-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            0,
+            0,
+            1,
+            1,
+            3,
+            0
+          ],
+          [
+            3,
+            1,
+            2,
+            1,
+            3,
+            2,
+            1,
+            2
+          ],
+          [
+            2,
+            3,
+            3,
+            1,
+            0,
+            0,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 15070003242729464958
+      },
+      "repairSalt" : 1493172629,
+      "scenarioDigest" : "f27c5b880f5bd0fb504cab7714a59911509ea273b0f5ba246ccd9e0676207d53",
+      "scenarioID" : "circuit-r5-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            2,
+            2,
+            0,
+            3,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            3,
+            0,
+            2,
+            2,
+            3,
+            2
+          ],
+          [
+            3,
+            0,
+            0,
+            3,
+            0,
+            3,
+            0,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 9978924459698544874
+      },
+      "repairSalt" : 1493172630,
+      "scenarioDigest" : "ca68902f3dc5dcce1e9154a2e13a5dd5af93db91f24cd6d1a6e0fb6d1710ab6d",
+      "scenarioID" : "circuit-r5-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            1,
+            1,
+            2,
+            0,
+            3,
+            2
+          ],
+          [
+            0,
+            3,
+            2,
+            0,
+            1,
+            3,
+            2,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            1,
+            2,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 5831510915720049774
+      },
+      "repairSalt" : 1493172631,
+      "scenarioDigest" : "ea09852fb2b1951bb5ebd20d19e83736f18f30d287237cc6b7862a1913da3a78",
+      "scenarioID" : "circuit-r5-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            1,
+            3,
+            2,
+            1,
+            3,
+            0
+          ],
+          [
+            0,
+            3,
+            2,
+            0,
+            1,
+            1,
+            3,
+            2
+          ],
+          [
+            1,
+            3,
+            2,
+            0,
+            1,
+            2,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 585282981519755876
+      },
+      "repairSalt" : 1493172632,
+      "scenarioDigest" : "0048f84f7a22cea5e9608e68128f14b0893eff9033fef67f058d4f7213532321",
+      "scenarioID" : "circuit-r5-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            1,
+            3,
+            2,
+            2,
+            3,
+            1
+          ],
+          [
+            0,
+            1,
+            2,
+            1,
+            0,
+            2,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 12542166995278912072
+      },
+      "repairSalt" : 1493172633,
+      "scenarioDigest" : "c7f52d6fbaf041afe69717bd709702b8b4516c8d808ecdd08f47c604bb862fca",
+      "scenarioID" : "circuit-r5-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            2,
+            1,
+            2,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            3,
+            2,
+            0,
+            3,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 4454611928280272120
+      },
+      "repairSalt" : 1493172634,
+      "scenarioDigest" : "db374322918979e89f37d4781cc6c33e1748cbd6ab438317d7a74c576e5aa4e1",
+      "scenarioID" : "circuit-r5-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            1,
+            2,
+            2,
+            2,
+            1,
+            3
+          ],
+          [
+            0,
+            0,
+            3,
+            2,
+            3,
+            2,
+            3,
+            1
+          ],
+          [
+            2,
+            3,
+            2,
+            0,
+            0,
+            1,
+            2,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 7574023658296597022
+      },
+      "repairSalt" : 1493172635,
+      "scenarioDigest" : "9894127ea85fba0d44730b73639b3d31975635827ab47a472bcde48c05820703",
+      "scenarioID" : "circuit-r5-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            3,
+            1,
+            0,
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            3,
+            2,
+            1,
+            3,
+            0,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            2,
+            0,
+            0,
+            1,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 11050690852620110450
+      },
+      "repairSalt" : 1493172636,
+      "scenarioDigest" : "5ca945d9c7e703410523b1b71c33fe5f8a67a1857e4d4cc99fc0eb89fce89fc9",
+      "scenarioID" : "circuit-r5-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            3,
+            1,
+            0,
+            1,
+            2,
+            2
+          ],
+          [
+            3,
+            3,
+            1,
+            3,
+            0,
+            0,
+            2,
+            1
+          ],
+          [
+            0,
+            2,
+            1,
+            1,
+            3,
+            3,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 6153360091897424005
+      },
+      "repairSalt" : 1493172637,
+      "scenarioDigest" : "899582eff1af19106e503d0840c6528db19536704d9aad0f9c97699a4bebf33c",
+      "scenarioID" : "circuit-r5-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            2,
+            2,
+            0,
+            0,
+            3,
+            3
+          ],
+          [
+            0,
+            2,
+            2,
+            3,
+            1,
+            2,
+            1,
+            2
+          ],
+          [
+            2,
+            2,
+            3,
+            1,
+            1,
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 10715317677792619609
+      },
+      "repairSalt" : 1493172638,
+      "scenarioDigest" : "cb2bc6ef4248d9f33cbc90f7932f9c5dd2a83ce9972eee435595bdafd3131a69",
+      "scenarioID" : "circuit-r5-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            1,
+            1,
+            1,
+            2,
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            2,
+            1,
+            0,
+            3,
+            3,
+            2
+          ],
+          [
+            1,
+            2,
+            3,
+            2,
+            2,
+            1,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            1,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 2,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 10358062213485431088
+      },
+      "repairSalt" : 1493172639,
+      "scenarioDigest" : "9d1e9e4946d6e0ffc4a7c39ef8d33ed693fcc0e19821470f6ff73d982fbde808",
+      "scenarioID" : "circuit-r5-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            3,
+            2,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            0,
+            0,
+            2,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            2,
+            3,
+            0,
+            2,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 12375466970270911700
+      },
+      "repairSalt" : 1493172724,
+      "scenarioDigest" : "87c702340d99f7d8d5a33eed12e27f0a7af9e5ac04a49c2324ffa2c7b2def6e9",
+      "scenarioID" : "circuit-r6-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            1,
+            2,
+            2,
+            3,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            2,
+            1,
+            0,
+            3,
+            3,
+            2
+          ],
+          [
+            1,
+            1,
+            2,
+            1,
+            1,
+            1,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 11985997800842954390
+      },
+      "repairSalt" : 1493172725,
+      "scenarioDigest" : "f7e2a25575e332634fabb9d2ea0e95bcdf235dba0b0a0d5cca4ee38b7ea1c012",
+      "scenarioID" : "circuit-r6-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            0,
+            3,
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            2,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            3,
+            3,
+            3,
+            2,
+            0,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 6995972174380941656
+      },
+      "repairSalt" : 1493172726,
+      "scenarioDigest" : "89a762364be8026dd6db9c5e49e056abb1c2d43763f27b2b85c66ca4de8e87f9",
+      "scenarioID" : "circuit-r6-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            0,
+            3,
+            3,
+            1,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            2,
+            0,
+            3,
+            0,
+            3,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            2,
+            0,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 7090640164931757983
+      },
+      "repairSalt" : 1493172727,
+      "scenarioDigest" : "7b8d64d848a4836b1e793697434d719e1e30dd7f4b9d59afef872b3a97c356c1",
+      "scenarioID" : "circuit-r6-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            0,
+            1,
+            0,
+            2,
+            2
+          ],
+          [
+            2,
+            2,
+            1,
+            3,
+            3,
+            1,
+            0,
+            3
+          ],
+          [
+            1,
+            0,
+            1,
+            2,
+            1,
+            2,
+            0,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 8868559195638119533
+      },
+      "repairSalt" : 1493172728,
+      "scenarioDigest" : "67a21b5e76a2c455f19a48114363c4d75e72a8fac06492a6f8458d04d07c5a14",
+      "scenarioID" : "circuit-r6-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            0,
+            0,
+            2,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            2,
+            2,
+            3,
+            1,
+            3,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            0,
+            2,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 9343584398173377536
+      },
+      "repairSalt" : 1493172729,
+      "scenarioDigest" : "7aa3076d5b9fa77bb70a1648e2feda29e2d92d61dbc17883ec037e514c8ada7f",
+      "scenarioID" : "circuit-r6-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            2,
+            2,
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            3,
+            3
+          ],
+          [
+            2,
+            1,
+            0,
+            2,
+            2,
+            2,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2504827164745374655
+      },
+      "repairSalt" : 1493172730,
+      "scenarioDigest" : "8e9b7ad3b4d769ae508b543e2d9f77703f01092437a9f9edf3799ee310b3455a",
+      "scenarioID" : "circuit-r6-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            3,
+            0,
+            1,
+            1,
+            2,
+            2
+          ],
+          [
+            2,
+            3,
+            1,
+            1,
+            3,
+            3,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            1,
+            3,
+            2,
+            3,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 11312058868178927202
+      },
+      "repairSalt" : 1493172731,
+      "scenarioDigest" : "453e9e3ff9a81013d6bae246ffd0ff68f9f6257f8c6245eb57426dd6574e97bb",
+      "scenarioID" : "circuit-r6-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            0,
+            1,
+            1,
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            1,
+            0,
+            0,
+            2,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 17330086308603110138
+      },
+      "repairSalt" : 1493172732,
+      "scenarioDigest" : "895621b069df7206f014ac4213e804191ed10cabcd406087edc718e363bbb0ac",
+      "scenarioID" : "circuit-r6-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            2,
+            1,
+            0,
+            1,
+            2,
+            2
+          ],
+          [
+            1,
+            0,
+            0,
+            2,
+            2,
+            0,
+            3,
+            0
+          ],
+          [
+            2,
+            2,
+            1,
+            1,
+            0,
+            1,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 5602356605282001880
+      },
+      "repairSalt" : 1493172733,
+      "scenarioDigest" : "8f26cdbc51fa14a747f29b2d696cae3cc39527c28417214b86a3990d380bc5d3",
+      "scenarioID" : "circuit-r6-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            1,
+            2,
+            3,
+            3,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            3,
+            0,
+            3,
+            2,
+            0,
+            3
+          ],
+          [
+            2,
+            0,
+            3,
+            2,
+            0,
+            3,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2733981475183422595
+      },
+      "repairSalt" : 1493172734,
+      "scenarioDigest" : "d3faccab047672b98c5a4eec4d6e52322cbe7e68a295d3d90632bde34ba92e00",
+      "scenarioID" : "circuit-r6-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            1,
+            3,
+            2,
+            1,
+            2,
+            1
+          ],
+          [
+            1,
+            3,
+            1,
+            0,
+            1,
+            2,
+            0,
+            1
+          ],
+          [
+            1,
+            3,
+            2,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 1133093885126132556
+      },
+      "repairSalt" : 1493172735,
+      "scenarioDigest" : "3d785a9e3f8bf0e53ce4803eb7339bd8986fc0c19e0dad5983c855c90a603c05",
+      "scenarioID" : "circuit-r6-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            0,
+            1,
+            3,
+            3,
+            2,
+            1,
+            2
+          ],
+          [
+            0,
+            2,
+            0,
+            2,
+            2,
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            0,
+            1,
+            2,
+            2,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 5959612069589189477
+      },
+      "repairSalt" : 1493172736,
+      "scenarioDigest" : "3dca5c3b6daeb7aa4013c6d6480c27b6bd36be4470cb3906b172ccbdc7187517",
+      "scenarioID" : "circuit-r6-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            3,
+            2,
+            1,
+            3,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            3,
+            1,
+            1,
+            2,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            1,
+            0,
+            3,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 2668334606744328625
+      },
+      "repairSalt" : 1493172737,
+      "scenarioDigest" : "fa4e543fa79ec4a548ae4d16a835053534c925706cb242148048bd618f2df0cb",
+      "scenarioID" : "circuit-r6-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            2,
+            0,
+            3,
+            0,
+            3,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            3,
+            3,
+            1,
+            1,
+            0,
+            2
+          ],
+          [
+            2,
+            2,
+            0,
+            1,
+            1,
+            0,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 1555996217872413202
+      },
+      "repairSalt" : 1493172738,
+      "scenarioDigest" : "fd1b25ccb78a908b4e253139c2e4501974aba6b9f3a88d3b27a50ffb44677e7e",
+      "scenarioID" : "circuit-r6-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            3,
+            2,
+            3,
+            3,
+            3,
+            0
+          ],
+          [
+            1,
+            3,
+            1,
+            0,
+            3,
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            2,
+            3,
+            1,
+            0,
+            3,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 10,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+
+        ],
+        "twinBloomTurns" : 1,
+        "unbrokenChain" : 5
+      },
+      "radiantPar" : 7,
+      "refillSource" : {
+        "seed" : 7194885904509709929
+      },
+      "repairSalt" : 1493172739,
+      "scenarioDigest" : "3bd7df28514f8f4984e3cec4c75aa03d1a0d68885bbfaef094d00ee90cca34e9",
+      "scenarioID" : "circuit-r6-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            0,
+            3,
+            1,
+            1,
+            0,
+            3
+          ],
+          [
+            0,
+            2,
+            3,
+            0,
+            0,
+            0,
+            1,
+            3
+          ],
+          [
+            2,
+            3,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 1370606486393760690
+      },
+      "repairSalt" : 1493172824,
+      "scenarioDigest" : "261c8e55388e864793a1f7c836b69c3411e034000b174bf0ae21c9186798f988",
+      "scenarioID" : "circuit-r7-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            3,
+            1,
+            1,
+            2,
+            0,
+            3,
+            0
+          ],
+          [
+            2,
+            0,
+            3,
+            0,
+            1,
+            2,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            2,
+            1,
+            3,
+            2,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 14862731221771113877
+      },
+      "repairSalt" : 1493172825,
+      "scenarioDigest" : "dbdfbdedcd33e8733992a5afb09a6c6f6683d796c7458eca8df3268afec210b7",
+      "scenarioID" : "circuit-r7-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            3,
+            1
+          ],
+          [
+            0,
+            3,
+            0,
+            1,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            3,
+            0,
+            3,
+            1,
+            2,
+            3,
+            1,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 12299488686190746683
+      },
+      "repairSalt" : 1493172826,
+      "scenarioDigest" : "9b10a6a8250bf586ed441844dec4ca170e8a37e2a297e07f11c47007e23d0ae4",
+      "scenarioID" : "circuit-r7-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            3,
+            1,
+            1,
+            0,
+            3,
+            1
+          ],
+          [
+            2,
+            3,
+            0,
+            0,
+            2,
+            1,
+            3,
+            1
+          ],
+          [
+            1,
+            0,
+            3,
+            2,
+            0,
+            1,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 6845988731032102528
+      },
+      "repairSalt" : 1493172827,
+      "scenarioDigest" : "d3eed7ee2d66654d03bcda5056357d8dd7493a81c570b6dab2b0a87e0097c812",
+      "scenarioID" : "circuit-r7-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            0,
+            3,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2,
+            2,
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            0,
+            2,
+            2,
+            1,
+            1,
+            1,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 11536047470796438726
+      },
+      "repairSalt" : 1493172828,
+      "scenarioDigest" : "947797c378ed9ba3b527c60abfa5ac112d50fe51dee27a93fd82e80ca8b6f98d",
+      "scenarioID" : "circuit-r7-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            1,
+            0,
+            0,
+            1,
+            2,
+            1
+          ],
+          [
+            1,
+            3,
+            1,
+            2,
+            0,
+            3,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            3,
+            1,
+            3,
+            3,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 285316094822078511
+      },
+      "repairSalt" : 1493172829,
+      "scenarioDigest" : "e4b0ea9c307b75797bf1f86823243f2d29e2ba8c462b24b401c0f4aaf278c091",
+      "scenarioID" : "circuit-r7-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            1,
+            0,
+            2,
+            0,
+            1,
+            1
+          ],
+          [
+            3,
+            3,
+            0,
+            0,
+            0,
+            2,
+            2,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            3,
+            1,
+            0,
+            3,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 8809297493217116646
+      },
+      "repairSalt" : 1493172830,
+      "scenarioDigest" : "95c1fba35150484fbdffb9b30ca4bd373ebb30b1f89c30f143e020925cf50352",
+      "scenarioID" : "circuit-r7-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            3,
+            3,
+            2,
+            3,
+            1,
+            0
+          ],
+          [
+            3,
+            2,
+            1,
+            1,
+            3,
+            3,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3,
+            1,
+            3,
+            1,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 8266652297431275555
+      },
+      "repairSalt" : 1493172831,
+      "scenarioDigest" : "10fd8b93399d4f5d8462c3043b649dfee5d73962c43db79f09867b8e5f0a3b84",
+      "scenarioID" : "circuit-r7-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            2,
+            3,
+            3,
+            3,
+            2,
+            3,
+            1,
+            0
+          ],
+          [
+            3,
+            2,
+            1,
+            1,
+            3,
+            3,
+            2,
+            3
+          ],
+          [
+            1,
+            2,
+            3,
+            1,
+            3,
+            1,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 5575308607981767751
+      },
+      "repairSalt" : 1493172832,
+      "scenarioDigest" : "bb76afa41d18c3ef66fb76b862eb2298bbd6d36120e8a80af04247208c018571",
+      "scenarioID" : "circuit-r7-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            2,
+            1,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            2,
+            1,
+            0,
+            3,
+            1,
+            2
+          ],
+          [
+            2,
+            2,
+            0,
+            0,
+            3,
+            1,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 2041352836048742345
+      },
+      "repairSalt" : 1493172833,
+      "scenarioDigest" : "7be9b47e3c21689a81ce4c7212d42438f80057b250187c71470da4d9331a1a95",
+      "scenarioID" : "circuit-r7-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            3,
+            2,
+            2,
+            0,
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            3,
+            2,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            2,
+            3,
+            1,
+            1,
+            0,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 7574023658296596165
+      },
+      "repairSalt" : 1493172834,
+      "scenarioDigest" : "577b61bef2a65962a80f4af667244b347096391164d9b851b94d83840c2c24b0",
+      "scenarioID" : "circuit-r7-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            0,
+            3,
+            1,
+            2,
+            1,
+            3
+          ],
+          [
+            2,
+            1,
+            0,
+            2,
+            2,
+            1,
+            3,
+            1
+          ],
+          [
+            2,
+            1,
+            1,
+            2,
+            1,
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 16676056540607289697
+      },
+      "repairSalt" : 1493172835,
+      "scenarioDigest" : "bb6be6ca70439910381227b6427347b21ca2090ca6343dbf49e9d130957c0f1a",
+      "scenarioID" : "circuit-r7-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            1,
+            0,
+            3,
+            3,
+            3,
+            0
+          ],
+          [
+            2,
+            2,
+            2,
+            3,
+            2,
+            1,
+            3,
+            3
+          ],
+          [
+            3,
+            0,
+            0,
+            2,
+            0,
+            1,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 12378659553279956332
+      },
+      "repairSalt" : 1493172836,
+      "scenarioDigest" : "d95c5cf4604257fa75e5757d1debcabf1fc661cbf2f507bc11c1fd0b24a52fca",
+      "scenarioID" : "circuit-r7-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            0,
+            0,
+            2,
+            3,
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            1,
+            1,
+            2,
+            1,
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            1,
+            1,
+            0,
+            1,
+            0,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 7966685410733598995
+      },
+      "repairSalt" : 1493172837,
+      "scenarioDigest" : "d7bd9806716258e834e49b6e0bb0aaf6098b47d8a2832574fcd1179b7df66a4a",
+      "scenarioID" : "circuit-r7-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            1,
+            1,
+            2,
+            1,
+            0,
+            3
+          ],
+          [
+            0,
+            3,
+            2,
+            3,
+            3,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            2,
+            1,
+            3,
+            3,
+            0,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 6603310421943937953
+      },
+      "repairSalt" : 1493172838,
+      "scenarioDigest" : "be498af4659750a14074313e09ee31c6ceef6f8e06ec5fd0065dc59d160bf0ca",
+      "scenarioID" : "circuit-r7-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            1,
+            3,
+            2,
+            2,
+            1,
+            2
+          ],
+          [
+            2,
+            3,
+            3,
+            0,
+            1,
+            1,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            1,
+            2,
+            0,
+            0,
+            2,
+            0
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bindweed" : {
+          "spreadInterval" : 3,
+          "startingSpokes" : [
+            0,
+            3,
+            6
+          ]
+        },
+        "bouquetKinds" : 0,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          1,
+          2,
+          0,
+          1
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 8,
+      "refillSource" : {
+        "seed" : 8752008915607604639
+      },
+      "repairSalt" : 1493172839,
+      "scenarioDigest" : "da1289506fe9a9ea4160dbf23fbc2c3190a8263e99c553c017a237198e8eccc5",
+      "scenarioID" : "circuit-r7-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 9
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            0,
+            2,
+            2,
+            3,
+            0,
+            2,
+            0
+          ],
+          [
+            2,
+            2,
+            0,
+            1,
+            0,
+            1,
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            1,
+            0,
+            2,
+            0,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 16861446272085942328
+      },
+      "repairSalt" : 1493172924,
+      "scenarioDigest" : "d81edf162110a787ab4d6a56d7b4675edfd572b10fb39e8c9ad548298b8799aa",
+      "scenarioID" : "circuit-r8-v01",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            3,
+            1,
+            2,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            3,
+            3,
+            2,
+            0,
+            1,
+            3,
+            1
+          ],
+          [
+            2,
+            1,
+            3,
+            3,
+            0,
+            0,
+            1,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 14512902465126264654
+      },
+      "repairSalt" : 1493172925,
+      "scenarioDigest" : "e62b0de95eb9619b3623dd6d3563803500f136870059777bbc9b704addb1c7b4",
+      "scenarioID" : "circuit-r8-v02",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            3,
+            2,
+            3,
+            0,
+            0,
+            1
+          ],
+          [
+            3,
+            0,
+            0,
+            2,
+            2,
+            0,
+            2,
+            2
+          ],
+          [
+            0,
+            2,
+            0,
+            3,
+            0,
+            3,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 16135672344663252374
+      },
+      "repairSalt" : 1493172926,
+      "scenarioDigest" : "3be529ba87ad2612477c6b7c4b7e70fae483436703c15cda446f78c14b96fced",
+      "scenarioID" : "circuit-r8-v03",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            1,
+            2,
+            3,
+            2,
+            3,
+            0,
+            3
+          ],
+          [
+            1,
+            3,
+            2,
+            2,
+            3,
+            1,
+            0,
+            1
+          ],
+          [
+            2,
+            1,
+            1,
+            0,
+            3,
+            2,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 11778725779884603311
+      },
+      "repairSalt" : 1493172927,
+      "scenarioDigest" : "7fe6a1f1873a7d1df075b16b78a61dcc10fd8a669d4e59de91926d62cc24a10f",
+      "scenarioID" : "circuit-r8-v04",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            0,
+            2,
+            2,
+            3,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            2,
+            2,
+            1,
+            0,
+            3,
+            3
+          ],
+          [
+            0,
+            3,
+            0,
+            1,
+            2,
+            3,
+            2,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 11123476553691228393
+      },
+      "repairSalt" : 1493172928,
+      "scenarioDigest" : "ab5200970280bcf978b3cfa53ae9fd138f0ddcc3882b253d291947f428bdac9c",
+      "scenarioID" : "circuit-r8-v05",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            2,
+            2,
+            3,
+            3,
+            1,
+            2
+          ],
+          [
+            3,
+            3,
+            0,
+            3,
+            2,
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            0,
+            2,
+            1,
+            2,
+            3,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 530255403752046912
+      },
+      "repairSalt" : 1493172938,
+      "scenarioDigest" : "f4282e7d31917fa9c000064713a29eb5f09a17f7839d892873db33470a02ce25",
+      "scenarioID" : "circuit-r8-v06",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            3,
+            2,
+            3,
+            0,
+            0,
+            1
+          ],
+          [
+            3,
+            0,
+            0,
+            2,
+            2,
+            0,
+            2,
+            2
+          ],
+          [
+            0,
+            2,
+            0,
+            3,
+            0,
+            3,
+            3,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 16135672344663252374
+      },
+      "repairSalt" : 1493172930,
+      "scenarioDigest" : "d1d31954918b3989744990c5d3933e832da3dbde9a47e81a3e1c95097c8248bb",
+      "scenarioID" : "circuit-r8-v07",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            3,
+            1,
+            2,
+            3,
+            0,
+            0
+          ],
+          [
+            3,
+            2,
+            1,
+            3,
+            0,
+            2,
+            0,
+            3
+          ],
+          [
+            2,
+            0,
+            0,
+            3,
+            2,
+            1,
+            3,
+            2
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 1018516729907107856
+      },
+      "repairSalt" : 1493172931,
+      "scenarioDigest" : "bd3ff94574e44b757e439aef528403d82b5c29b801073eabe724f23d47c4c530",
+      "scenarioID" : "circuit-r8-v08",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            2,
+            2,
+            2,
+            3,
+            1,
+            1
+          ],
+          [
+            2,
+            3,
+            0,
+            3,
+            3,
+            0,
+            3,
+            1
+          ],
+          [
+            3,
+            0,
+            2,
+            3,
+            2,
+            0,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 134113193275684906
+      },
+      "repairSalt" : 1493172932,
+      "scenarioDigest" : "07cd54311e8b67e3b2567a0fc805009fe39dbb961ef95dec59fa0048f0b1ad16",
+      "scenarioID" : "circuit-r8-v09",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            2,
+            3,
+            1,
+            2,
+            3,
+            0,
+            2
+          ],
+          [
+            3,
+            1,
+            0,
+            2,
+            2,
+            0,
+            3,
+            1
+          ],
+          [
+            0,
+            2,
+            2,
+            3,
+            1,
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 13005641323975542805
+      },
+      "repairSalt" : 1493172933,
+      "scenarioDigest" : "ca5364821e3390dd4adb4ec7696e97a9732aa1b9546b15644ad7381ac7a6a5a4",
+      "scenarioID" : "circuit-r8-v10",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            1,
+            1,
+            3,
+            2,
+            2,
+            1
+          ],
+          [
+            2,
+            3,
+            1,
+            1,
+            2,
+            2,
+            3,
+            1
+          ],
+          [
+            2,
+            3,
+            0,
+            2,
+            1,
+            1,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 6210648669506935290
+      },
+      "repairSalt" : 1493172934,
+      "scenarioDigest" : "23ed573b9ece04befc48edb738e1e7cf134f2252f068686ae7ff4e6ef8d52d76",
+      "scenarioID" : "circuit-r8-v11",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            1,
+            2,
+            0,
+            0,
+            2,
+            1,
+            1
+          ],
+          [
+            0,
+            2,
+            3,
+            0,
+            3,
+            2,
+            2,
+            1
+          ],
+          [
+            0,
+            2,
+            1,
+            3,
+            3,
+            0,
+            2,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 14020119139287596385
+      },
+      "repairSalt" : 1493172935,
+      "scenarioDigest" : "541e5e8045adf6f6d71ec3ec37d3c1a4c75c46a64b5275824d47867cb12bfdf4",
+      "scenarioID" : "circuit-r8-v12",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            0,
+            2,
+            1,
+            1,
+            1,
+            3
+          ],
+          [
+            3,
+            1,
+            3,
+            1,
+            0,
+            2,
+            3,
+            1
+          ],
+          [
+            0,
+            1,
+            3,
+            3,
+            0,
+            0,
+            3,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 6529305262675264005
+      },
+      "repairSalt" : 1493172936,
+      "scenarioDigest" : "50f12f65c7b644ed839ae480334f7c422ded578ea85baccc8da9025b368d5d21",
+      "scenarioID" : "circuit-r8-v13",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            1,
+            2,
+            2,
+            2,
+            0,
+            3,
+            0,
+            3
+          ],
+          [
+            1,
+            0,
+            2,
+            1,
+            2,
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            0,
+            3,
+            2,
+            1,
+            0,
+            1,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 7603332655438633282
+      },
+      "repairSalt" : 1493172937,
+      "scenarioDigest" : "7c06ff9d87d8c19f9af75af09f2718486bf2a4bbe04afaa3b64b62a4c39b775a",
+      "scenarioID" : "circuit-r8-v14",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            3,
+            3,
+            2,
+            2,
+            3,
+            3,
+            1,
+            2
+          ],
+          [
+            3,
+            3,
+            0,
+            3,
+            2,
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            0,
+            2,
+            1,
+            2,
+            3,
+            0,
+            3
+          ]
+        ]
+      },
+      "moveBudget" : 11,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 530255403752046912
+      },
+      "repairSalt" : 1493172938,
+      "scenarioDigest" : "4ef0d02e75db1d75bf1c32ebb81acae27b228401cff30b22f87e8974dfe7a6d3",
+      "scenarioID" : "circuit-r8-v15",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    },
+    {
+      "activeKindCount" : 4,
+      "initialBoard" : {
+        "rings" : [
+          [
+            0,
+            2,
+            0,
+            2,
+            3,
+            0,
+            3,
+            1
+          ],
+          [
+            2,
+            2,
+            1,
+            3,
+            1,
+            0,
+            2,
+            0
+          ],
+          [
+            1,
+            3,
+            0,
+            3,
+            3,
+            3,
+            0,
+            1
+          ]
+        ]
+      },
+      "moveBudget" : 12,
+      "objectives" : {
+        "bouquetKinds" : 15,
+        "harmonyCreditsPerRing" : 0,
+        "judgesOrder" : [
+          0,
+          2,
+          1,
+          0
+        ],
+        "twinBloomTurns" : 2
+      },
+      "radiantPar" : 9,
+      "refillSource" : {
+        "seed" : 9403133975624692508
+      },
+      "repairSalt" : 1493172939,
+      "scenarioDigest" : "c231a246712e19a31113b89d7f9ea06c5fe9f1f6f1debe4feb3ec63de3f95e22",
+      "scenarioID" : "circuit-r8-v16",
+      "startingSelectedRing" : 1,
+      "targetBlooms" : 11
+    }
+  ],
+  "mappingVersion" : 1
+}

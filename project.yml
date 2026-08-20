@@ -1,0 +1,128 @@
+name: Ringbloom
+
+options:
+  bundleIdPrefix: com.tommurton
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: 5R8P82H779
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    MARKETING_VERSION: "1.3"
+    CURRENT_PROJECT_VERSION: "7"
+    ENABLE_USER_SCRIPT_SANDBOXING: true
+    CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: true
+
+packages:
+  AppsFlyer:
+    url: https://github.com/AppsFlyerSDK/AppsFlyerFramework-Strict.git
+    exactVersion: 7.0.1
+
+targets:
+  FlowerShowAuthoring:
+    type: tool
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: Tools/FlowerShowAuthoring.swift
+      - path: Ringbloom/Sources/GameEngine.swift
+      - path: Ringbloom/Sources/FlowerShowModel.swift
+      - path: Ringbloom/Sources/FlowerShowReducer.swift
+      - path: Ringbloom/Sources/FlowerShowSolver.swift
+      - path: Ringbloom/Sources/FlowerShowContent.swift
+      - path: Ringbloom/Sources/FlowerShowProgress.swift
+      - path: Ringbloom/Sources/FlowerShow.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tommurton.ringbloom.authoring
+        PRODUCT_NAME: FlowerShowAuthoring
+        PRODUCT_MODULE_NAME: FlowerShowAuthoring
+
+  Ringbloom:
+    type: application
+    platform: iOS
+    sources:
+      - path: Ringbloom/Sources
+      - path: Ringbloom/Resources
+        excludes:
+          - Info.plist
+          - Ringbloom.storekit
+    dependencies:
+      - package: AppsFlyer
+        product: AppsFlyerLib-Strict
+    configFiles:
+      Debug: Configuration/AppsFlyer.xcconfig
+      Release: Configuration/AppsFlyer.xcconfig
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tommurton.ringbloom
+        PRODUCT_NAME: Ringbloom
+        PRODUCT_MODULE_NAME: Ringbloom
+        INFOPLIST_FILE: Ringbloom/Resources/Info.plist
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        INFOPLIST_KEY_CFBundleDisplayName: Ringbloom
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.puzzle-games
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: true
+        INFOPLIST_KEY_UILaunchScreen_Generation: true
+        INFOPLIST_KEY_UIRequiresFullScreen: true
+
+  RingbloomTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: RingbloomTests
+    dependencies:
+      - target: Ringbloom
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tommurton.ringbloom.tests
+        GENERATE_INFOPLIST_FILE: true
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Ringbloom.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Ringbloom"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+  RingbloomUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: RingbloomUITests
+    dependencies:
+      - target: Ringbloom
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tommurton.ringbloom.ui-tests
+        GENERATE_INFOPLIST_FILE: true
+        TEST_TARGET_NAME: Ringbloom
+
+schemes:
+  FlowerShowAuthoring:
+    build:
+      targets:
+        FlowerShowAuthoring: all
+    run:
+      config: Release
+
+  Ringbloom:
+    build:
+      targets:
+        Ringbloom: all
+        RingbloomTests: [test]
+        RingbloomUITests: [test]
+    run:
+      config: Debug
+      storeKitConfiguration: Ringbloom/Resources/Ringbloom.storekit
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - RingbloomTests
+        - RingbloomUITests
+    archive:
+      config: Release
