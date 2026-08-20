@@ -80,7 +80,8 @@ Do not enable broad Advanced Data Sharing or send events from all media sources 
 ## 7. Privacy and release gate
 
 - The updated support and privacy pages were published and verified live on 15 August 2026 at support-site commit `f3b64c5`.
-- Apply and publish `metadata/privacy.json` in App Store Connect only when the AppsFlyer-enabled binary is the version being prepared. The current 1.3 version is already **Waiting for Review**, so changing it now would make the declaration and binary disagree and could alter release state.
+- Version 1.4 is now the App Store version being prepared and build 8 contains the AppsFlyer-enabled binary. The local declaration in `metadata/privacy.json` is staged for this version.
+- Before submitting 1.4, open App Store Connect → App Privacy for Ringbloom, replace the old **Data Not Collected** declaration with the staged AppsFlyer declaration, save it and publish it. The public App Store page was checked on 20 August 2026 and still showed **Data Not Collected**, so this remains a manual release gate.
 - The staged App Store declaration covers coarse location, device ID, other technical data, performance data, product interaction and purchase history; all are linked, used for the listed analytics/functionality/marketing purposes, and none is marked as tracking.
 - Tom must perform the App Store privacy publication and any associated attestation. Do not submit a build or app version as part of this setup.
 
