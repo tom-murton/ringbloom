@@ -1,6 +1,10 @@
-# App Review Notes — Ringbloom 1.2
+# App Review Notes — Ringbloom 1.4
 
-Ringbloom is free to download. Garden and Flower Show Classes 1–5 are free. A single non-consumable in-app purchase, **Complete Flower Show**, unlocks Classes 6–30 and the Champion Circuit. No account, login, demo credentials, network connection, subscription, advertising, or special hardware is required.
+Ringbloom is free to download. Garden and Flower Show Classes 1–5 are free. A single non-consumable in-app purchase, **Complete Flower Show**, unlocks Classes 6–30 and the Champion Circuit. No account, login, demo credentials, subscription, advertising, or special hardware is required.
+
+## What changed in 1.4
+
+Version 1.4 improves Flower Show access recovery and preserves existing Garden and Flower Show progress. It also adds clearer accessibility feedback across later classes. Ringbloom includes AppsFlyer’s Strict iOS SDK as its sole mobile attribution and measurement provider. AppsFlyer automatically measures installs and sessions; Ringbloom sends one idempotent `af_purchase` event after the verified £2.99 Complete Flower Show purchase. The SDK uses no IDFA and Ringbloom does not show an ATT prompt.
 
 ## Core review path
 
@@ -30,6 +34,6 @@ During a playing Garden or Flower Show class, make at least one move and tap the
 
 Sound and haptics are optional and can be switched off independently. Gameplay remains understandable without either. Petal colours are paired with distinct glyphs; VoiceOver, Larger Text layouts, Increased Contrast and Reduce Motion are supported.
 
-All game state and preferences are stored locally on-device. Ringbloom has no login, account or advertising system and makes no network request for gameplay. It includes AppsFlyer’s Strict iOS SDK as its sole mobile attribution and measurement provider. AppsFlyer automatically measures installs and sessions, and Ringbloom sends one idempotent `af_purchase` event after the verified £2.99 Complete Flower Show purchase. The app does not collect IDFA and does not show an ATT prompt. Full details are in the linked privacy policy.
+All game state and preferences are stored locally on-device. Ringbloom has no login, account or advertising system and makes no network request for gameplay. Network access is used for Apple StoreKit purchase/restore operations and AppsFlyer’s privacy-preserving install, session and purchase measurement. AppsFlyer is the sole mobile attribution/measurement provider; no TikTok SDK is included. Full details are in the linked privacy policy.
 
 App Review contact: Tom Murton · shopping@tommurton.com · +447957357194.
