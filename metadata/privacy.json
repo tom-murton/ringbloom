@@ -13,17 +13,6 @@
       ]
     },
     {
-      "category": "DEVICE_ID",
-      "purposes": [
-        "ANALYTICS",
-        "APP_FUNCTIONALITY",
-        "DEVELOPERS_ADVERTISING"
-      ],
-      "dataProtections": [
-        "DATA_LINKED_TO_YOU"
-      ]
-    },
-    {
       "category": "OTHER_DATA",
       "purposes": [
         "ANALYTICS",
