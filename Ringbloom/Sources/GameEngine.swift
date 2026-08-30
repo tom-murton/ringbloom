@@ -1480,7 +1480,8 @@ struct GameProgress: Codable, Equatable, Sendable {
 @MainActor
 protocol GameProgressStoring: AnyObject {
     func load() -> GameProgress
-    func save(_ progress: GameProgress)
+    @discardableResult
+    func save(_ progress: GameProgress) -> Bool
 }
 
 @MainActor
@@ -1493,16 +1494,21 @@ final class InMemoryGameProgressStore: GameProgressStoring {
 
     func load() -> GameProgress { progress }
 
-    func save(_ progress: GameProgress) {
+    @discardableResult
+    func save(_ progress: GameProgress) -> Bool {
         self.progress = progress
+        return true
     }
 }
 
 /// A small JSON store keeps engine persistence injectable and avoids coupling it to UserDefaults.
 @MainActor
 final class FileGameProgressStore: GameProgressStoring {
+    private static let maximumSaveAttempts = 2
+
     private let fileURL: URL
     private(set) var lastLoadOutcome: GameProgressLoadOutcome = .fresh
+    private(set) var lastSaveOutcome: GameProgressSaveOutcome = .notAttempted
     private(set) var persistenceEnabled = true
 
     init(fileURL: URL? = nil) {
@@ -1658,19 +1664,48 @@ final class FileGameProgressStore: GameProgressStoring {
         return recoveredBackupURL
     }
 
-    func save(_ progress: GameProgress) {
-        guard persistenceEnabled else { return }
-        do {
-            try FileManager.default.createDirectory(
-                at: fileURL.deletingLastPathComponent(),
-                withIntermediateDirectories: true
+    @discardableResult
+    func save(_ progress: GameProgress) -> Bool {
+        guard persistenceEnabled else {
+            lastSaveOutcome = .failed(
+                message: "Persistence is disabled because the existing save could not be loaded safely."
             )
-            let data = try JSONEncoder().encode(progress)
-            try data.write(to: fileURL, options: .atomic)
-        } catch {
-            persistenceEnabled = false
-            lastLoadOutcome = .failed(message: "Unable to persist Ringbloom progress: \(error)")
+            return false
         }
+
+        let data: Data
+        do {
+            data = try JSONEncoder().encode(progress)
+        } catch {
+            lastSaveOutcome = .failed(message: "Unable to encode Ringbloom progress: \(error)")
+            return false
+        }
+
+        var lastError: (any Error)?
+        for _ in 0 ..< Self.maximumSaveAttempts {
+            do {
+                try FileManager.default.createDirectory(
+                    at: fileURL.deletingLastPathComponent(),
+                    withIntermediateDirectories: true
+                )
+                try data.write(to: fileURL, options: .atomic)
+                let persistedData = try Data(contentsOf: fileURL)
+                guard persistedData == data else { throw CocoaError(.fileWriteUnknown) }
+                lastSaveOutcome = .saved
+                return true
+            } catch {
+                lastError = error
+            }
+        }
+
+        // A write can fail transiently while the app remains otherwise healthy. Keep the
+        // previous atomic save intact and allow the next gameplay event to try again instead
+        // of silently disabling persistence for the rest of the process.
+        let errorDescription = lastError.map { String(describing: $0) } ?? "Unknown error"
+        lastSaveOutcome = .failed(
+            message: "Unable to persist Ringbloom progress: \(errorDescription)"
+        )
+        return false
     }
 }
 

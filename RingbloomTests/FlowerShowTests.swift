@@ -401,6 +401,50 @@ struct FlowerShowV3ProgressTests {
     }
 
     @MainActor
+    @Test("Circuit Classes 201 through 210 survive a relaunch")
+    func highCircuitProgressSurvivesRelaunch() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomHighCircuit-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        let ratings = Dictionary(
+            uniqueKeysWithValues: (1 ... FlowerShowContent.campaignClassCount).map {
+                ($0, FlowerShowRating.seedling)
+            }
+        )
+        let store = FileGameProgressStore(fileURL: destination)
+        #expect(store.save(
+            GameProgress(
+                bestScore: 0,
+                highestGarden: 11,
+                flowerShowProgress: FlowerShowProgressV3(
+                    bestCampaignRatings: ratings,
+                    nextCircuitClass: 201
+                )
+            )
+        ))
+
+        let model = GameModel(
+            launchMode: .uiTest(seed: 201),
+            progressStore: store,
+            flowerShowAccess: FullFlowerShowAccessProvider()
+        )
+        for classNumber in 201 ... 210 {
+            #expect(model.currentFlowerShowClass == classNumber)
+            try #require(model.prepareFlowerShowWinFixture(classNumber: classNumber))
+            #expect(model.nextCircuitClass == classNumber + 1)
+        }
+
+        let relaunched = GameModel(
+            launchMode: .uiTest(seed: 211),
+            progressStore: FileGameProgressStore(fileURL: destination),
+            flowerShowAccess: FullFlowerShowAccessProvider()
+        )
+        #expect(relaunched.currentFlowerShowClass == 211)
+        #expect(relaunched.nextCircuitClass == 211)
+    }
+
+    @MainActor
     private func modelState(_ model: GameModel) -> FlowerShowState {
         var engine = FlowerShowEngine(scenario: FlowerShowContent.resolve(classNumber: model.flowerShowDefinition.number).scenario)
         engine.state.board = model.board
@@ -671,6 +715,45 @@ struct FlowerShowV3MigrationTests {
             return
         }
         #expect(try Data(contentsOf: destination) == corrupt)
+    }
+
+    @MainActor
+    @Test("A transient write failure does not disable later progress saves")
+    func transientWriteFailureAllowsLaterRecovery() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomTransientSave-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+
+        let blockedParent = directory.appendingPathComponent("blocked")
+        try Data("temporary obstruction".utf8).write(to: blockedParent, options: .atomic)
+        let destination = blockedParent.appendingPathComponent("progress.json")
+        let store = FileGameProgressStore(fileURL: destination)
+
+        let class201 = GameProgress(
+            bestScore: 0,
+            highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(nextCircuitClass: 201)
+        )
+        #expect(store.save(class201) == false)
+        #expect(store.persistenceEnabled)
+        guard case .failed = store.lastSaveOutcome else {
+            Issue.record("Expected the obstructed write to report a save failure.")
+            return
+        }
+
+        try FileManager.default.removeItem(at: blockedParent)
+        try FileManager.default.createDirectory(at: blockedParent, withIntermediateDirectories: true)
+        let class211 = GameProgress(
+            bestScore: 0,
+            highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(nextCircuitClass: 211)
+        )
+        #expect(store.save(class211))
+        #expect(store.lastSaveOutcome == .saved)
+
+        let loaded = FileGameProgressStore(fileURL: destination).load()
+        #expect(loaded.flowerShowProgress.nextCircuitClass == 211)
     }
 
     @Test func rawLegacyGardenContinuationIsDeterministic() throws {

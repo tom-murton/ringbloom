@@ -287,3 +287,9 @@ enum GameProgressLoadOutcome: Equatable, Sendable {
         }
     }
 }
+
+enum GameProgressSaveOutcome: Equatable, Sendable {
+    case notAttempted
+    case saved
+    case failed(message: String)
+}
