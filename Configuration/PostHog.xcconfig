@@ -1,0 +1,3 @@
+// PostHog's project token is a public ingestion identifier embedded in the app.
+POSTHOG_PROJECT_TOKEN = phc_odSbKPSusCxB2qohQkYcdwWPzd6zDgLAzKrBKg3xcVw7
+POSTHOG_HOST = https:/$()/eu.i.posthog.com

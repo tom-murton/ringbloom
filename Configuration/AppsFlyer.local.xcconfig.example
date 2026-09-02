@@ -1,0 +1,3 @@
+// Copy this file to AppsFlyer.local.xcconfig and fill it locally.
+// AppsFlyer.local.xcconfig is ignored by source control.
+APPSFLYER_DEV_KEY = YOUR_APPSFLYER_DEV_KEY

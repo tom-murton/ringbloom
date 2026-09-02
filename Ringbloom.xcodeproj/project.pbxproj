@@ -1,0 +1,877 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		037AA6864F70CEFA0E7DC9C0 /* FlowerShowStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598896F541BCC0FF28658811 /* FlowerShowStore.swift */; };
+		03EE4074112512DF339F05D5 /* ProductAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939465AD720E82164ECFDC62 /* ProductAnalytics.swift */; };
+		0FD1399FBC0241BB9F74B124 /* rotate.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 53085C174F562D5998A5E90F /* rotate.mp3 */; };
+		1E63DC83C57B9E44FE380458 /* bloom.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B8F126EC9691B6F5D13DA7DB /* bloom.mp3 */; };
+		20F30CC0B0F017E9D0CB913C /* FlowerShowV3Catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 8EAC6688C57719EED4431BBE /* FlowerShowV3Catalog.json */; };
+		2409B11652647198A6DC26A7 /* FlowerShowSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7451BEB32E0B3EA12E6CC7BB /* FlowerShowSolver.swift */; };
+		253627A5424B4B52389C207A /* FlowerShowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBD7035AC632A76EA9B779A /* FlowerShowViews.swift */; };
+		2E45140D9AE95DD2EEE65015 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F93CE3E617AC755EEB79D9A1 /* PrivacyInfo.xcprivacy */; };
+		338090D2352B81E4E4E77C00 /* FlowerShowAuthoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7AA1FF4702315D29DE8EFBF /* FlowerShowAuthoring.swift */; };
+		36A9203DC3E2C55841D0CCB7 /* FlowerShowContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A282E2CE0879EFA74A55F0BC /* FlowerShowContent.swift */; };
+		38C1EE1EC631229303081278 /* FlowerShowReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2775B02438EE25DEC0A1C5 /* FlowerShowReducer.swift */; };
+		3B1B31648A4D5BEFCE595E62 /* FlowerShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22E8DB60A44D7E8DD5603F4 /* FlowerShow.swift */; };
+		430046D4E57FAC825AF0D783 /* FlowerShowReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2775B02438EE25DEC0A1C5 /* FlowerShowReducer.swift */; };
+		4F994FB15E60CD8D946B5C86 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE20BB96D55DDC4541275C0 /* GameEngine.swift */; };
+		58265DD6DB2D974C66770C7C /* FlowerShowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2433511B57B16552D3E2963 /* FlowerShowModel.swift */; };
+		5D7960BB36194E94A9F75957 /* FeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB9E98C419DE623A14531023 /* FeedbackService.swift */; };
+		5DDE0AAB5CC7AF64441CCB62 /* FlowerShowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2433511B57B16552D3E2963 /* FlowerShowModel.swift */; };
+		7089618B4050EF7506C16097 /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD54C3EDBA3908E39F41E3E /* AudioService.swift */; };
+		750395E3AE943B94EE1B4BC1 /* win.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7B0EB52BD63F0DBCE37444B0 /* win.mp3 */; };
+		7EFCA4C1DA816E1F6E9CEE4F /* GameBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240B0F48A34650B48ACDD1B2 /* GameBoardView.swift */; };
+		8BC3F8105F45AA9222E0A152 /* AppsFlyerAttributionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C463621EAAD4107375264A /* AppsFlyerAttributionTests.swift */; };
+		8EF21C5107713E38A4D98C32 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE20BB96D55DDC4541275C0 /* GameEngine.swift */; };
+		91C7554A8FED6EA5CD219DFF /* FlowerShowProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3169EBE43ECB7365B2894000 /* FlowerShowProgress.swift */; };
+		935D644B44873CF4711B1C06 /* FlowerShowResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A865A7D837EA9552A76786 /* FlowerShowResultView.swift */; };
+		98D9224258BC7C98A134C7C4 /* RingbloomUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F778FEA3114FAAAE010E35D8 /* RingbloomUITests.swift */; };
+		99591A5B07E7D55DC17460DD /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = 83BBB764A5A0AFFD3DC5EF81 /* PostHog */; };
+		9A98885927ECB6A56F15685D /* FlowerShowProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3169EBE43ECB7365B2894000 /* FlowerShowProgress.swift */; };
+		9EC75F2A16D357C752B312CB /* FlowerShowSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7451BEB32E0B3EA12E6CC7BB /* FlowerShowSolver.swift */; };
+		9EED7F884C93D7581CB4631E /* lose.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2E66EF08C9ACEBC4119D95AA /* lose.mp3 */; };
+		A4273EB3CE5B3957930746E1 /* FlowerShowContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A282E2CE0879EFA74A55F0BC /* FlowerShowContent.swift */; };
+		AED596F0534CFDB06860D1BD /* FlowerShowPurchaseContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3354FA2A211B140ADF56CB5 /* FlowerShowPurchaseContext.swift */; };
+		AF1123995A293A2299B62E3F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B8CA2B28098B66F1C4B1FD /* Theme.swift */; };
+		B55C9B5885576151D0EBB9E3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BA8F94CF8A6FFED7254058 /* ContentView.swift */; };
+		B9A735195008848C98B974C5 /* FlowerShowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5B134D7622BF17D3553ABF /* FlowerShowTests.swift */; };
+		BB612F80D362D4F0B917D7B5 /* GameEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8AFE34E73563132B2FD5CB6 /* GameEngineTests.swift */; };
+		BDC940278575802515D0DC14 /* AppsFlyerAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E95218CF6597F82E1A19CFB /* AppsFlyerAttribution.swift */; };
+		C054CBD1F191B05CB6AF572D /* FlowerShowClassBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C20CF28D0B8E860E5D4FFC6 /* FlowerShowClassBookView.swift */; };
+		C2989808FBADC3687B1CCF88 /* FlowerShowAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E2972F6B720DB6B3174A6E4 /* FlowerShowAccess.swift */; };
+		D526C4F82DE00426B0C73486 /* FlowerShowPurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2877E5CD03589A5920F791B /* FlowerShowPurchaseView.swift */; };
+		D6FAFDA424B307946C4908C1 /* RingbloomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8788E34DE9400EED35107F50 /* RingbloomApp.swift */; };
+		DB4E01A01C936E65BE2D0E65 /* legacy-v2-active-garden.json in Resources */ = {isa = PBXBuildFile; fileRef = B36D86E3E3D587C236518DC4 /* legacy-v2-active-garden.json */; };
+		DD798C72014A3AC7F3EBACE7 /* ProductAnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14BF4144FD840D4CB1F4B18 /* ProductAnalyticsTests.swift */; };
+		E42F51A8B70181A203716EF2 /* AppsFlyerLib-Strict in Frameworks */ = {isa = PBXBuildFile; productRef = 282EAA5BBF059957F1A6A0B2 /* AppsFlyerLib-Strict */; };
+		E479836A8F4273C85233BFBE /* legacy-v1-active-garden.json in Resources */ = {isa = PBXBuildFile; fileRef = A98FCD577E4AA3C2E6637B32 /* legacy-v1-active-garden.json */; };
+		E4F83AE033F523801E08FB8B /* FlowerShowAccessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFDF1823BB1ABF0D67F8939 /* FlowerShowAccessTests.swift */; };
+		E7B19B0F01C1B772DE0D429A /* AppsFlyerLibConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D05E3D1EECAAE3C8085F690 /* AppsFlyerLibConfig.plist */; };
+		EDB279BADB7FCE7DFCC7A416 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC07B1EE0ADF0F0D2B260EE9 /* Assets.xcassets */; };
+		EE73F8BF392C0C5FC758F70A /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF8B96FEE3D5DBE30CBA105 /* GameModel.swift */; };
+		EF03A161BCCB934DF05F175B /* FlowerShow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22E8DB60A44D7E8DD5603F4 /* FlowerShow.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5EE83A61A0AEDBA275CD007F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 80333681C0E81221104927BC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC1E85CCA780B32C6A7D3C9A;
+			remoteInfo = Ringbloom;
+		};
+		D2DB2E7463F0B50D731AC94A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 80333681C0E81221104927BC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC1E85CCA780B32C6A7D3C9A;
+			remoteInfo = Ringbloom;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		240B0F48A34650B48ACDD1B2 /* GameBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBoardView.swift; sourceTree = "<group>"; };
+		2DFDF1823BB1ABF0D67F8939 /* FlowerShowAccessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowAccessTests.swift; sourceTree = "<group>"; };
+		2E66EF08C9ACEBC4119D95AA /* lose.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = lose.mp3; sourceTree = "<group>"; };
+		3169EBE43ECB7365B2894000 /* FlowerShowProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowProgress.swift; sourceTree = "<group>"; };
+		31A865A7D837EA9552A76786 /* FlowerShowResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowResultView.swift; sourceTree = "<group>"; };
+		32C463621EAAD4107375264A /* AppsFlyerAttributionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsFlyerAttributionTests.swift; sourceTree = "<group>"; };
+		47BA8F94CF8A6FFED7254058 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		53085C174F562D5998A5E90F /* rotate.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rotate.mp3; sourceTree = "<group>"; };
+		598896F541BCC0FF28658811 /* FlowerShowStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowStore.swift; sourceTree = "<group>"; };
+		5D05E3D1EECAAE3C8085F690 /* AppsFlyerLibConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = AppsFlyerLibConfig.plist; sourceTree = "<group>"; };
+		6C20CF28D0B8E860E5D4FFC6 /* FlowerShowClassBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowClassBookView.swift; sourceTree = "<group>"; };
+		7451BEB32E0B3EA12E6CC7BB /* FlowerShowSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowSolver.swift; sourceTree = "<group>"; };
+		7B0EB52BD63F0DBCE37444B0 /* win.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = win.mp3; sourceTree = "<group>"; };
+		7CD54C3EDBA3908E39F41E3E /* AudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
+		7E5B134D7622BF17D3553ABF /* FlowerShowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowTests.swift; sourceTree = "<group>"; };
+		8788E34DE9400EED35107F50 /* RingbloomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingbloomApp.swift; sourceTree = "<group>"; };
+		87AE647F94F6750DF7D425B6 /* Ringbloom.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ringbloom.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AE20BB96D55DDC4541275C0 /* GameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
+		8E95218CF6597F82E1A19CFB /* AppsFlyerAttribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsFlyerAttribution.swift; sourceTree = "<group>"; };
+		8EAC6688C57719EED4431BBE /* FlowerShowV3Catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FlowerShowV3Catalog.json; sourceTree = "<group>"; };
+		939465AD720E82164ECFDC62 /* ProductAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductAnalytics.swift; sourceTree = "<group>"; };
+		9BBD7035AC632A76EA9B779A /* FlowerShowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowViews.swift; sourceTree = "<group>"; };
+		9E2972F6B720DB6B3174A6E4 /* FlowerShowAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowAccess.swift; sourceTree = "<group>"; };
+		A2433511B57B16552D3E2963 /* FlowerShowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowModel.swift; sourceTree = "<group>"; };
+		A282E2CE0879EFA74A55F0BC /* FlowerShowContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowContent.swift; sourceTree = "<group>"; };
+		A98FCD577E4AA3C2E6637B32 /* legacy-v1-active-garden.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "legacy-v1-active-garden.json"; sourceTree = "<group>"; };
+		AB9E98C419DE623A14531023 /* FeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackService.swift; sourceTree = "<group>"; };
+		B36D86E3E3D587C236518DC4 /* legacy-v2-active-garden.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "legacy-v2-active-garden.json"; sourceTree = "<group>"; };
+		B8F126EC9691B6F5D13DA7DB /* bloom.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = bloom.mp3; sourceTree = "<group>"; };
+		C2877E5CD03589A5920F791B /* FlowerShowPurchaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowPurchaseView.swift; sourceTree = "<group>"; };
+		C7AA1FF4702315D29DE8EFBF /* FlowerShowAuthoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowAuthoring.swift; sourceTree = "<group>"; };
+		CAFD5CE43381C8F3CC90AA10 /* FlowerShowAuthoring */ = {isa = PBXFileReference; includeInIndex = 0; path = FlowerShowAuthoring; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC07B1EE0ADF0F0D2B260EE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DBA13BF0FCAB1A02E18DD394 /* RingbloomUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RingbloomUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DEF8B96FEE3D5DBE30CBA105 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
+		E14BF4144FD840D4CB1F4B18 /* ProductAnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductAnalyticsTests.swift; sourceTree = "<group>"; };
+		E22E8DB60A44D7E8DD5603F4 /* FlowerShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShow.swift; sourceTree = "<group>"; };
+		E3354FA2A211B140ADF56CB5 /* FlowerShowPurchaseContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowPurchaseContext.swift; sourceTree = "<group>"; };
+		E8AFE34E73563132B2FD5CB6 /* GameEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngineTests.swift; sourceTree = "<group>"; };
+		EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Analytics.xcconfig; sourceTree = "<group>"; };
+		F0B8CA2B28098B66F1C4B1FD /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		F778FEA3114FAAAE010E35D8 /* RingbloomUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingbloomUITests.swift; sourceTree = "<group>"; };
+		F93CE3E617AC755EEB79D9A1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		FA2775B02438EE25DEC0A1C5 /* FlowerShowReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowReducer.swift; sourceTree = "<group>"; };
+		FDACA1DAC0F36C74717B2E78 /* RingbloomTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RingbloomTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1C4B79A17D178FECFBFADCFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E42F51A8B70181A203716EF2 /* AppsFlyerLib-Strict in Frameworks */,
+				99591A5B07E7D55DC17460DD /* PostHog in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		099F1C07EDF14398B46DA10D = {
+			isa = PBXGroup;
+			children = (
+				5E1A1195A1B4A2BC7B5708BC /* Configuration */,
+				310D524530E50CADCE21CA1D /* Ringbloom */,
+				3DFBC5889612DD8027570503 /* RingbloomTests */,
+				36891DAB38A56197E9A41B19 /* RingbloomUITests */,
+				9C942C820C8D4A97C119E884 /* Tools */,
+				34A1C4871C2AB179E2B2150D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		310D524530E50CADCE21CA1D /* Ringbloom */ = {
+			isa = PBXGroup;
+			children = (
+				E38DE623FA1EC063C27389D2 /* Resources */,
+				320185AAE35336E747DC8529 /* Sources */,
+			);
+			path = Ringbloom;
+			sourceTree = "<group>";
+		};
+		320185AAE35336E747DC8529 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				8E95218CF6597F82E1A19CFB /* AppsFlyerAttribution.swift */,
+				7CD54C3EDBA3908E39F41E3E /* AudioService.swift */,
+				47BA8F94CF8A6FFED7254058 /* ContentView.swift */,
+				AB9E98C419DE623A14531023 /* FeedbackService.swift */,
+				E22E8DB60A44D7E8DD5603F4 /* FlowerShow.swift */,
+				9E2972F6B720DB6B3174A6E4 /* FlowerShowAccess.swift */,
+				6C20CF28D0B8E860E5D4FFC6 /* FlowerShowClassBookView.swift */,
+				A282E2CE0879EFA74A55F0BC /* FlowerShowContent.swift */,
+				A2433511B57B16552D3E2963 /* FlowerShowModel.swift */,
+				3169EBE43ECB7365B2894000 /* FlowerShowProgress.swift */,
+				E3354FA2A211B140ADF56CB5 /* FlowerShowPurchaseContext.swift */,
+				C2877E5CD03589A5920F791B /* FlowerShowPurchaseView.swift */,
+				FA2775B02438EE25DEC0A1C5 /* FlowerShowReducer.swift */,
+				31A865A7D837EA9552A76786 /* FlowerShowResultView.swift */,
+				7451BEB32E0B3EA12E6CC7BB /* FlowerShowSolver.swift */,
+				598896F541BCC0FF28658811 /* FlowerShowStore.swift */,
+				9BBD7035AC632A76EA9B779A /* FlowerShowViews.swift */,
+				240B0F48A34650B48ACDD1B2 /* GameBoardView.swift */,
+				8AE20BB96D55DDC4541275C0 /* GameEngine.swift */,
+				DEF8B96FEE3D5DBE30CBA105 /* GameModel.swift */,
+				939465AD720E82164ECFDC62 /* ProductAnalytics.swift */,
+				8788E34DE9400EED35107F50 /* RingbloomApp.swift */,
+				F0B8CA2B28098B66F1C4B1FD /* Theme.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		34A1C4871C2AB179E2B2150D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAFD5CE43381C8F3CC90AA10 /* FlowerShowAuthoring */,
+				87AE647F94F6750DF7D425B6 /* Ringbloom.app */,
+				FDACA1DAC0F36C74717B2E78 /* RingbloomTests.xctest */,
+				DBA13BF0FCAB1A02E18DD394 /* RingbloomUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		36891DAB38A56197E9A41B19 /* RingbloomUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F778FEA3114FAAAE010E35D8 /* RingbloomUITests.swift */,
+			);
+			path = RingbloomUITests;
+			sourceTree = "<group>";
+		};
+		3DFBC5889612DD8027570503 /* RingbloomTests */ = {
+			isa = PBXGroup;
+			children = (
+				5FCC3C068DB029B11508D231 /* Fixtures */,
+				32C463621EAAD4107375264A /* AppsFlyerAttributionTests.swift */,
+				2DFDF1823BB1ABF0D67F8939 /* FlowerShowAccessTests.swift */,
+				7E5B134D7622BF17D3553ABF /* FlowerShowTests.swift */,
+				E8AFE34E73563132B2FD5CB6 /* GameEngineTests.swift */,
+				E14BF4144FD840D4CB1F4B18 /* ProductAnalyticsTests.swift */,
+			);
+			path = RingbloomTests;
+			sourceTree = "<group>";
+		};
+		5E1A1195A1B4A2BC7B5708BC /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+		5FCC3C068DB029B11508D231 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				A98FCD577E4AA3C2E6637B32 /* legacy-v1-active-garden.json */,
+				B36D86E3E3D587C236518DC4 /* legacy-v2-active-garden.json */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		8CAF9BA3807E612F3585D7A7 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				B8F126EC9691B6F5D13DA7DB /* bloom.mp3 */,
+				2E66EF08C9ACEBC4119D95AA /* lose.mp3 */,
+				53085C174F562D5998A5E90F /* rotate.mp3 */,
+				7B0EB52BD63F0DBCE37444B0 /* win.mp3 */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		9C942C820C8D4A97C119E884 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				C7AA1FF4702315D29DE8EFBF /* FlowerShowAuthoring.swift */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
+		E38DE623FA1EC063C27389D2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8CAF9BA3807E612F3585D7A7 /* Audio */,
+				5D05E3D1EECAAE3C8085F690 /* AppsFlyerLibConfig.plist */,
+				CC07B1EE0ADF0F0D2B260EE9 /* Assets.xcassets */,
+				8EAC6688C57719EED4431BBE /* FlowerShowV3Catalog.json */,
+				F93CE3E617AC755EEB79D9A1 /* PrivacyInfo.xcprivacy */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		661967EC64DA1D58A2A7BC85 /* RingbloomUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EBF1A84D9146C2F68991DF7E /* Build configuration list for PBXNativeTarget "RingbloomUITests" */;
+			buildPhases = (
+				D8EFA4D6B13964CFA42912D6 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F509EEB35D1E3D6BB979871F /* PBXTargetDependency */,
+			);
+			name = RingbloomUITests;
+			packageProductDependencies = (
+			);
+			productName = RingbloomUITests;
+			productReference = DBA13BF0FCAB1A02E18DD394 /* RingbloomUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		6E3B556CD10389D8062355FF /* FlowerShowAuthoring */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DBAC7EFB5CA29D51AE54144C /* Build configuration list for PBXNativeTarget "FlowerShowAuthoring" */;
+			buildPhases = (
+				C5EF1E587702ECD921EC7F48 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FlowerShowAuthoring;
+			packageProductDependencies = (
+			);
+			productName = FlowerShowAuthoring;
+			productReference = CAFD5CE43381C8F3CC90AA10 /* FlowerShowAuthoring */;
+			productType = "com.apple.product-type.tool";
+		};
+		CC7229C7FC370537ADB222FB /* RingbloomTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1B39C154B2369D2D299D0BEA /* Build configuration list for PBXNativeTarget "RingbloomTests" */;
+			buildPhases = (
+				953E6A8E6914717ED0B6C20D /* Sources */,
+				D0001AC84C452E0D04C57514 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6947D6D5155F6C5052DB7E15 /* PBXTargetDependency */,
+			);
+			name = RingbloomTests;
+			packageProductDependencies = (
+			);
+			productName = RingbloomTests;
+			productReference = FDACA1DAC0F36C74717B2E78 /* RingbloomTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EC1E85CCA780B32C6A7D3C9A /* Ringbloom */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 39E768D509A8FD9341885389 /* Build configuration list for PBXNativeTarget "Ringbloom" */;
+			buildPhases = (
+				40A510FE16B96242BC014530 /* Sources */,
+				2E5176D72AB51A7A7645A208 /* Resources */,
+				1C4B79A17D178FECFBFADCFC /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Ringbloom;
+			packageProductDependencies = (
+				282EAA5BBF059957F1A6A0B2 /* AppsFlyerLib-Strict */,
+				83BBB764A5A0AFFD3DC5EF81 /* PostHog */,
+			);
+			productName = Ringbloom;
+			productReference = 87AE647F94F6750DF7D425B6 /* Ringbloom.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		80333681C0E81221104927BC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					661967EC64DA1D58A2A7BC85 = {
+						DevelopmentTeam = 5R8P82H779;
+						ProvisioningStyle = Automatic;
+						TestTargetID = EC1E85CCA780B32C6A7D3C9A;
+					};
+					6E3B556CD10389D8062355FF = {
+						DevelopmentTeam = 5R8P82H779;
+						ProvisioningStyle = Automatic;
+					};
+					CC7229C7FC370537ADB222FB = {
+						DevelopmentTeam = 5R8P82H779;
+						ProvisioningStyle = Automatic;
+					};
+					EC1E85CCA780B32C6A7D3C9A = {
+						DevelopmentTeam = 5R8P82H779;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9C27F05F8411138D39FA5D91 /* Build configuration list for PBXProject "Ringbloom" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 099F1C07EDF14398B46DA10D;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DEA7BCD54EE9393E24A8AB37 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Strict" */,
+				D0681A6959BB1D63FBDA8CAB /* XCRemoteSwiftPackageReference "posthog-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 34A1C4871C2AB179E2B2150D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6E3B556CD10389D8062355FF /* FlowerShowAuthoring */,
+				EC1E85CCA780B32C6A7D3C9A /* Ringbloom */,
+				CC7229C7FC370537ADB222FB /* RingbloomTests */,
+				661967EC64DA1D58A2A7BC85 /* RingbloomUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2E5176D72AB51A7A7645A208 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7B19B0F01C1B772DE0D429A /* AppsFlyerLibConfig.plist in Resources */,
+				EDB279BADB7FCE7DFCC7A416 /* Assets.xcassets in Resources */,
+				20F30CC0B0F017E9D0CB913C /* FlowerShowV3Catalog.json in Resources */,
+				2E45140D9AE95DD2EEE65015 /* PrivacyInfo.xcprivacy in Resources */,
+				1E63DC83C57B9E44FE380458 /* bloom.mp3 in Resources */,
+				9EED7F884C93D7581CB4631E /* lose.mp3 in Resources */,
+				0FD1399FBC0241BB9F74B124 /* rotate.mp3 in Resources */,
+				750395E3AE943B94EE1B4BC1 /* win.mp3 in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D0001AC84C452E0D04C57514 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E479836A8F4273C85233BFBE /* legacy-v1-active-garden.json in Resources */,
+				DB4E01A01C936E65BE2D0E65 /* legacy-v2-active-garden.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		40A510FE16B96242BC014530 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDC940278575802515D0DC14 /* AppsFlyerAttribution.swift in Sources */,
+				7089618B4050EF7506C16097 /* AudioService.swift in Sources */,
+				B55C9B5885576151D0EBB9E3 /* ContentView.swift in Sources */,
+				5D7960BB36194E94A9F75957 /* FeedbackService.swift in Sources */,
+				EF03A161BCCB934DF05F175B /* FlowerShow.swift in Sources */,
+				C2989808FBADC3687B1CCF88 /* FlowerShowAccess.swift in Sources */,
+				C054CBD1F191B05CB6AF572D /* FlowerShowClassBookView.swift in Sources */,
+				A4273EB3CE5B3957930746E1 /* FlowerShowContent.swift in Sources */,
+				58265DD6DB2D974C66770C7C /* FlowerShowModel.swift in Sources */,
+				91C7554A8FED6EA5CD219DFF /* FlowerShowProgress.swift in Sources */,
+				AED596F0534CFDB06860D1BD /* FlowerShowPurchaseContext.swift in Sources */,
+				D526C4F82DE00426B0C73486 /* FlowerShowPurchaseView.swift in Sources */,
+				38C1EE1EC631229303081278 /* FlowerShowReducer.swift in Sources */,
+				935D644B44873CF4711B1C06 /* FlowerShowResultView.swift in Sources */,
+				2409B11652647198A6DC26A7 /* FlowerShowSolver.swift in Sources */,
+				037AA6864F70CEFA0E7DC9C0 /* FlowerShowStore.swift in Sources */,
+				253627A5424B4B52389C207A /* FlowerShowViews.swift in Sources */,
+				7EFCA4C1DA816E1F6E9CEE4F /* GameBoardView.swift in Sources */,
+				8EF21C5107713E38A4D98C32 /* GameEngine.swift in Sources */,
+				EE73F8BF392C0C5FC758F70A /* GameModel.swift in Sources */,
+				03EE4074112512DF339F05D5 /* ProductAnalytics.swift in Sources */,
+				D6FAFDA424B307946C4908C1 /* RingbloomApp.swift in Sources */,
+				AF1123995A293A2299B62E3F /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		953E6A8E6914717ED0B6C20D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BC3F8105F45AA9222E0A152 /* AppsFlyerAttributionTests.swift in Sources */,
+				E4F83AE033F523801E08FB8B /* FlowerShowAccessTests.swift in Sources */,
+				B9A735195008848C98B974C5 /* FlowerShowTests.swift in Sources */,
+				BB612F80D362D4F0B917D7B5 /* GameEngineTests.swift in Sources */,
+				DD798C72014A3AC7F3EBACE7 /* ProductAnalyticsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C5EF1E587702ECD921EC7F48 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B1B31648A4D5BEFCE595E62 /* FlowerShow.swift in Sources */,
+				338090D2352B81E4E4E77C00 /* FlowerShowAuthoring.swift in Sources */,
+				36A9203DC3E2C55841D0CCB7 /* FlowerShowContent.swift in Sources */,
+				5DDE0AAB5CC7AF64441CCB62 /* FlowerShowModel.swift in Sources */,
+				9A98885927ECB6A56F15685D /* FlowerShowProgress.swift in Sources */,
+				430046D4E57FAC825AF0D783 /* FlowerShowReducer.swift in Sources */,
+				9EC75F2A16D357C752B312CB /* FlowerShowSolver.swift in Sources */,
+				4F994FB15E60CD8D946B5C86 /* GameEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8EFA4D6B13964CFA42912D6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98D9224258BC7C98A134C7C4 /* RingbloomUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6947D6D5155F6C5052DB7E15 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC1E85CCA780B32C6A7D3C9A /* Ringbloom */;
+			targetProxy = 5EE83A61A0AEDBA275CD007F /* PBXContainerItemProxy */;
+		};
+		F509EEB35D1E3D6BB979871F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC1E85CCA780B32C6A7D3C9A /* Ringbloom */;
+			targetProxy = D2DB2E7463F0B50D731AC94A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		13664531E4EDCB6104D3AB88 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tommurton.ringbloom.ui-tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Ringbloom;
+			};
+			name = Debug;
+		};
+		272EE5E8AD3ADC09D77EAB70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 9;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5R8P82H779;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		28928BA31B38FBEA89E4148F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommurton.ringbloom.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ringbloom.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Ringbloom";
+			};
+			name = Release;
+		};
+		437930E3BAA2EE1C733EC4A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommurton.ringbloom.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ringbloom.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Ringbloom";
+			};
+			name = Debug;
+		};
+		5C862EA380E44396832BEBE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommurton.ringbloom.authoring;
+				PRODUCT_MODULE_NAME = FlowerShowAuthoring;
+				PRODUCT_NAME = FlowerShowAuthoring;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		62AA683BED8794180C05D317 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tommurton.ringbloom.ui-tests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Ringbloom;
+			};
+			name = Release;
+		};
+		9181F7EC8CC0879B6779334F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Ringbloom/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Ringbloom;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommurton.ringbloom;
+				PRODUCT_MODULE_NAME = Ringbloom;
+				PRODUCT_NAME = Ringbloom;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		9C1BAC69B4C61727B5C3849B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 9;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5R8P82H779;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		E6E2FC81E1329D13C6F4A216 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommurton.ringbloom.authoring;
+				PRODUCT_MODULE_NAME = FlowerShowAuthoring;
+				PRODUCT_NAME = FlowerShowAuthoring;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F4D07C065504A59B10226321 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Ringbloom/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Ringbloom;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommurton.ringbloom;
+				PRODUCT_MODULE_NAME = Ringbloom;
+				PRODUCT_NAME = Ringbloom;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1B39C154B2369D2D299D0BEA /* Build configuration list for PBXNativeTarget "RingbloomTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				437930E3BAA2EE1C733EC4A5 /* Debug */,
+				28928BA31B38FBEA89E4148F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		39E768D509A8FD9341885389 /* Build configuration list for PBXNativeTarget "Ringbloom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9181F7EC8CC0879B6779334F /* Debug */,
+				F4D07C065504A59B10226321 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9C27F05F8411138D39FA5D91 /* Build configuration list for PBXProject "Ringbloom" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9C1BAC69B4C61727B5C3849B /* Debug */,
+				272EE5E8AD3ADC09D77EAB70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DBAC7EFB5CA29D51AE54144C /* Build configuration list for PBXNativeTarget "FlowerShowAuthoring" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C862EA380E44396832BEBE0 /* Debug */,
+				E6E2FC81E1329D13C6F4A216 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EBF1A84D9146C2F68991DF7E /* Build configuration list for PBXNativeTarget "RingbloomUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13664531E4EDCB6104D3AB88 /* Debug */,
+				62AA683BED8794180C05D317 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D0681A6959BB1D63FBDA8CAB /* XCRemoteSwiftPackageReference "posthog-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PostHog/posthog-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 3.59.3;
+			};
+		};
+		DEA7BCD54EE9393E24A8AB37 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Strict" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework-Strict.git";
+			requirement = {
+				kind = exactVersion;
+				version = 7.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		282EAA5BBF059957F1A6A0B2 /* AppsFlyerLib-Strict */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DEA7BCD54EE9393E24A8AB37 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Strict" */;
+			productName = "AppsFlyerLib-Strict";
+		};
+		83BBB764A5A0AFFD3DC5EF81 /* PostHog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0681A6959BB1D63FBDA8CAB /* XCRemoteSwiftPackageReference "posthog-ios" */;
+			productName = PostHog;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 80333681C0E81221104927BC /* Project object */;
+}

@@ -1,0 +1,14 @@
+# Local AppsFlyer credentials. Never commit the developer key.
+Configuration/AppsFlyer.local.xcconfig
+
+# Xcode and local build output.
+.DS_Store
+.build/
+.asc/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xcarchive
+*.ipa
+__pycache__/
+*.pyc
