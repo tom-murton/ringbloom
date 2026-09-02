@@ -20,21 +20,24 @@
 <body>
 <main>
   <h1>Ringbloom Privacy Policy</h1>
-  <p class="date">Effective 21 August 2026</p>
+  <p class="date">Effective 31 August 2026</p>
 
   <p class="date">This policy now lives at <a href="https://weevolve.app/ringbloom/privacy/">weevolve.app/ringbloom/privacy/</a>. This page remains available for older links.</p>
 
   <h2>The short version</h2>
-  <p>Ringbloom has no accounts or ads. It uses AppsFlyer to measure app installs, sessions and the one-time Flower Show purchase so we can understand whether our marketing works.</p>
+  <p>Ringbloom has no accounts or ads. It uses AppsFlyer for advertising attribution and PostHog for product analytics, including which screens and controls people use and how they interact with the Flower Show purchase screen.</p>
 
   <h2>What we collect</h2>
   <p>AppsFlyer receives app and device information when Ringbloom opens, including app version, device model, operating system, language, network information, an AppsFlyer installation identifier, Apple’s identifier for vendors (IDFV), and an approximate location derived from the IP address. It also receives install and session activity.</p>
   <p>AppsFlyer may also receive limited performance information, such as launch timing or battery information, for fraud detection and service measurement.</p>
   <p>After a verified purchase of Complete Flower Show, Ringbloom sends a purchase event containing the product identifier, StoreKit transaction identifier, revenue of £2.99 and currency GBP. Duplicate StoreKit updates and ordinary restores do not create another purchase event on the same installation.</p>
+  <p>PostHog receives an anonymous installation identifier and technical information such as app version, device model, operating system, language and network type. Ringbloom sends named app screens and controls, Garden and Flower Show progress, turn outcomes, hint and undo use, and game outcomes. Ringbloom disables PostHog’s GeoIP enrichment, so PostHog does not add city, postcode, coordinates or other location fields to these events.</p>
+  <p>For the Flower Show purchase screen, PostHog receives how the screen was reached, the target class where relevant, whether the product was available, actions such as purchase, restore, close or keep playing free, how long the screen was visible, and the purchase or restore outcome. PostHog does not receive a StoreKit transaction identifier, payment details, the game board, typed text, a screen recording, a name or an email address.</p>
 
   <h2>How we use and share it</h2>
-  <p>We use this information for attribution, campaign measurement, product analytics and fraud prevention. AppsFlyer acts as Ringbloom’s sole mobile measurement provider. Where we advertise through a partner such as TikTok, AppsFlyer may send that partner install and purchase postbacks for traffic attributed to that partner.</p>
+  <p>We use this information for attribution, campaign measurement, product analytics, improving gameplay and the purchase experience, and fraud prevention. AppsFlyer is Ringbloom’s mobile attribution provider. Where we advertise through a partner such as TikTok, AppsFlyer may send that partner install and purchase postbacks for traffic attributed to that partner. PostHog is Ringbloom’s product analytics provider and is not used to send advertising postbacks.</p>
   <p>Ringbloom uses AppsFlyer’s Strict iOS SDK. It does not collect the advertising identifier (IDFA), does not show an App Tracking Transparency prompt, and does not use this information for personalised ads or tracking across other companies’ apps and websites. Ringbloom does not include the TikTok SDK.</p>
+  <p>PostHog session replay, automatic element capture, surveys and user identification are disabled. Ringbloom sends only the explicit product events described above.</p>
 
   <h2>What stays on your device</h2>
   <p>Your best score, highest garden, tutorial state, and sound and haptic preferences are stored only on your device. If you delete the app, iOS deletes that local data with it.</p>
@@ -43,13 +46,14 @@
   <p>Payment is handled by Apple through the App Store. We never receive or store your card or bank details. We receive only the purchase event described above.</p>
 
   <h2>Children</h2>
-  <p>Ringbloom does not ask for a name, age, email address or account. The AppsFlyer processing described above occurs whenever the app runs.</p>
+  <p>Ringbloom does not ask for a name, age, email address or account. The AppsFlyer and PostHog processing described above occurs when the app runs.</p>
 
   <h2>Service provider and retention</h2>
   <p>AppsFlyer processes this information on our behalf under its <a href="https://www.appsflyer.com/legal/services-privacy-policy/">Services Privacy Policy</a>. AppsFlyer may process data in countries outside your own and retains it according to its agreement with us and applicable law.</p>
+  <p>PostHog processes product analytics on our behalf in its EU Cloud environment under its <a href="https://posthog.com/privacy">Privacy Policy</a>. PostHog retains it according to its agreement with us and applicable law.</p>
 
   <h2>Your choices</h2>
-  <p>You can stop future measurement by deleting Ringbloom. To ask about access, deletion or another privacy right, contact us below. Because Ringbloom has no account, we may need an AppsFlyer installation identifier to locate a record.</p>
+  <p>You can stop future measurement by deleting Ringbloom. To ask about access, deletion or another privacy right, contact us below. Because Ringbloom has no account, we may need an AppsFlyer or PostHog installation identifier and device information to locate a record.</p>
 
   <h2>Changes</h2>
   <p>We will update this page before a version with materially different data practices ships.</p>
