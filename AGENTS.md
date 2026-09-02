@@ -1,21 +1,16 @@
 # Ringbloom agent guide
 
-This benchmark app is not currently a Git worktree. Work only inside this directory and
-preserve benchmark evidence, human playtest results and App Store outcomes exactly as
-recorded.
+This repo (`~/GitHub/ringbloom`) is the canonical source for Ringbloom. As of
+`v1.5-b9` (2 Sep 2026 audit) it matches the App Store's live 1.5 build 9 exactly.
+
+`~/GitHub/Gaming Benchmark/GPT5.6 Sol Ultra - Ringbloom/` is a benchmark-run snapshot,
+not a source of truth — it is not a git repo. If it ever gets ahead of this repo again
+(check `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in `project.yml` against `asc
+status --app 6789952808`), sync it back in here rather than working from it directly.
 
 ## Physical iPhone testing
 
-When Tom asks to run or test the app on his attached iPhone, discover the current
-`.xcodeproj` or `.xcworkspace` and shared scheme. Prefer the workspace when the project
-uses workspace-managed dependencies, then run from this directory:
-
-```bash
-/Users/tommurton/GitHub/Build-an-app/scripts/test-on-iphone.sh <container> <scheme>
-```
-
-Use the helper's final `PHYSICAL_IPHONE_TESTS_PASSED` or
-`PHYSICAL_IPHONE_TESTS_FAILED` line as the result. Swift Testing results are separate
-from XCTest's potentially misleading `Executed 0 tests` footer. If the scheme has no
-test action or tests, report that limitation rather than treating build success as test
-coverage.
+Use the helper described in the global `~/.claude/CLAUDE.md` ("Physical iPhone
+testing"). Don't duplicate its instructions here — that file is the single source for
+how the `test-on-iphone.sh` helper works and how to handle a locked `AI-Build`
+keychain.
