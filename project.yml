@@ -13,8 +13,8 @@ settings:
     CODE_SIGN_STYLE: Automatic
     SWIFT_VERSION: "6.0"
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "1.4"
-    CURRENT_PROJECT_VERSION: "8"
+    MARKETING_VERSION: "1.5"
+    CURRENT_PROJECT_VERSION: "9"
     ENABLE_USER_SCRIPT_SANDBOXING: true
     CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: true
 
@@ -22,6 +22,9 @@ packages:
   AppsFlyer:
     url: https://github.com/AppsFlyerSDK/AppsFlyerFramework-Strict.git
     exactVersion: 7.0.1
+  PostHog:
+    url: https://github.com/PostHog/posthog-ios.git
+    exactVersion: 3.59.3
 
 targets:
   FlowerShowAuthoring:
@@ -55,9 +58,11 @@ targets:
     dependencies:
       - package: AppsFlyer
         product: AppsFlyerLib-Strict
+      - package: PostHog
+        product: PostHog
     configFiles:
-      Debug: Configuration/AppsFlyer.xcconfig
-      Release: Configuration/AppsFlyer.xcconfig
+      Debug: Configuration/Analytics.xcconfig
+      Release: Configuration/Analytics.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tommurton.ringbloom

@@ -1,4 +1,4 @@
-# Local credentials. Never commit the AppsFlyer developer key.
+# Local AppsFlyer credentials. Never commit the developer key.
 Configuration/AppsFlyer.local.xcconfig
 
 # Xcode and local build output.

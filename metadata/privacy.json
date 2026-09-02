@@ -4,7 +4,6 @@
     {
       "category": "COARSE_LOCATION",
       "purposes": [
-        "ANALYTICS",
         "APP_FUNCTIONALITY",
         "DEVELOPERS_ADVERTISING"
       ],
@@ -37,7 +36,6 @@
       "category": "PRODUCT_INTERACTION",
       "purposes": [
         "ANALYTICS",
-        "APP_FUNCTIONALITY",
         "DEVELOPERS_ADVERTISING"
       ],
       "dataProtections": [

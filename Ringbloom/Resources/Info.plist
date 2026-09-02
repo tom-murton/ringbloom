@@ -6,6 +6,10 @@
 	<string>$(APPSFLYER_APP_ID)</string>
 	<key>AppsFlyerDevKey</key>
 	<string>$(APPSFLYER_DEV_KEY)</string>
+	<key>PostHogHost</key>
+	<string>$(POSTHOG_HOST)</string>
+	<key>PostHogProjectToken</key>
+	<string>$(POSTHOG_PROJECT_TOKEN)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -62,6 +62,7 @@ struct RingbloomApp: App {
     @StateObject private var flowerShowStore: FlowerShowStore
     @StateObject private var audio = AudioService.shared
     @StateObject private var feedback = FeedbackService.shared
+    @StateObject private var analytics = ProductAnalytics.shared
 
     init() {
         let environment = ProcessInfo.processInfo.environment
@@ -98,6 +99,7 @@ struct RingbloomApp: App {
                 .environmentObject(flowerShowStore)
                 .environmentObject(audio)
                 .environmentObject(feedback)
+                .environmentObject(analytics)
                 .preferredColorScheme(.dark)
         }
     }

@@ -4,7 +4,7 @@ Last verified against AppsFlyer iOS SDK 7.0.1 and the AppsFlyer/TikTok documenta
 
 ## Implemented in the app
 
-- AppsFlyer is the sole mobile attribution and measurement SDK.
+- AppsFlyer is the sole mobile attribution SDK. PostHog is used separately for product analytics; see `POSTHOG_ANALYTICS.md`.
 - The app uses the official `AppsFlyerLib-Strict` Swift Package Manager product at exact version 7.0.1. Strict mode removes IDFA collection and the AdSupport dependency.
 - `RingbloomAppDelegate` initialises AppsFlyer once during `didFinishLaunchingWithOptions`. AppsFlyer then handles automatic install and session measurement.
 - SKAdNetwork measurement is enabled in `AppsFlyerLibConfig.plist`. Ringbloom does not contain `SKAdNetworkItems`: Apple defines that list for source apps that display ads, and Ringbloom displays no ads. Do not copy a publisher-side ad-network list into this advertised app.
@@ -80,9 +80,9 @@ Do not enable broad Advanced Data Sharing or send events from all media sources 
 ## 7. Privacy and release gate
 
 - The Ringbloom privacy policy is now canonical at `https://weevolve.app/ringbloom/privacy/`; the old GitHub Pages URL remains as a compatibility copy for older links.
-- Version 1.4 is now the App Store version being prepared and build 8 contains the AppsFlyer-enabled binary. The local declaration in `metadata/privacy.json` is staged for this version.
-- Before submitting 1.4, open App Store Connect → App Privacy for Ringbloom, replace the old **Data Not Collected** declaration with the staged AppsFlyer declaration, save it and publish it. Confirm the App Privacy policy URL is `https://weevolve.app/ringbloom/privacy/`.
-- The staged App Store declaration covers coarse location, other technical data (including IDFV), performance data, product interaction and purchase history; all are linked, used for the listed analytics/functionality/marketing purposes, and none is marked as tracking. **Device ID is not selected because the shipped strict configuration disables IDFA collection.**
+- Version 1.4 build 8 is live on the App Store. The analytics-enabled source is prepared as version 1.5 build 9. The local declaration in `metadata/privacy.json` is staged for the next release.
+- Before submitting an AppsFlyer- and PostHog-enabled build, open App Store Connect → App Privacy for Ringbloom, replace the old **Data Not Collected** declaration with the staged analytics declaration, save it and publish it. Confirm the canonical policy at `https://weevolve.app/ringbloom/privacy/` has been updated and deployed with both providers disclosed.
+- The staged App Store declaration covers coarse location, other technical data (including IDFV and anonymous installation identifiers), performance data, product interaction and purchase history; all are linked, used for the listed analytics/functionality/marketing purposes, and none is marked as tracking. **Advertising Device ID is not selected because the shipped strict configuration disables IDFA collection.**
 - Tom must perform the App Store privacy publication and any associated attestation. Do not submit a build or app version as part of this setup.
 
 ## Official references

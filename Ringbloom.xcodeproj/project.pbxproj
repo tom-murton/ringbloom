@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		037AA6864F70CEFA0E7DC9C0 /* FlowerShowStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598896F541BCC0FF28658811 /* FlowerShowStore.swift */; };
+		03EE4074112512DF339F05D5 /* ProductAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939465AD720E82164ECFDC62 /* ProductAnalytics.swift */; };
 		0FD1399FBC0241BB9F74B124 /* rotate.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 53085C174F562D5998A5E90F /* rotate.mp3 */; };
 		1E63DC83C57B9E44FE380458 /* bloom.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B8F126EC9691B6F5D13DA7DB /* bloom.mp3 */; };
 		20F30CC0B0F017E9D0CB913C /* FlowerShowV3Catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 8EAC6688C57719EED4431BBE /* FlowerShowV3Catalog.json */; };
@@ -31,6 +32,7 @@
 		91C7554A8FED6EA5CD219DFF /* FlowerShowProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3169EBE43ECB7365B2894000 /* FlowerShowProgress.swift */; };
 		935D644B44873CF4711B1C06 /* FlowerShowResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A865A7D837EA9552A76786 /* FlowerShowResultView.swift */; };
 		98D9224258BC7C98A134C7C4 /* RingbloomUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F778FEA3114FAAAE010E35D8 /* RingbloomUITests.swift */; };
+		99591A5B07E7D55DC17460DD /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = 83BBB764A5A0AFFD3DC5EF81 /* PostHog */; };
 		9A98885927ECB6A56F15685D /* FlowerShowProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3169EBE43ECB7365B2894000 /* FlowerShowProgress.swift */; };
 		9EC75F2A16D357C752B312CB /* FlowerShowSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7451BEB32E0B3EA12E6CC7BB /* FlowerShowSolver.swift */; };
 		9EED7F884C93D7581CB4631E /* lose.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2E66EF08C9ACEBC4119D95AA /* lose.mp3 */; };
@@ -46,6 +48,7 @@
 		D526C4F82DE00426B0C73486 /* FlowerShowPurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2877E5CD03589A5920F791B /* FlowerShowPurchaseView.swift */; };
 		D6FAFDA424B307946C4908C1 /* RingbloomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8788E34DE9400EED35107F50 /* RingbloomApp.swift */; };
 		DB4E01A01C936E65BE2D0E65 /* legacy-v2-active-garden.json in Resources */ = {isa = PBXBuildFile; fileRef = B36D86E3E3D587C236518DC4 /* legacy-v2-active-garden.json */; };
+		DD798C72014A3AC7F3EBACE7 /* ProductAnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14BF4144FD840D4CB1F4B18 /* ProductAnalyticsTests.swift */; };
 		E42F51A8B70181A203716EF2 /* AppsFlyerLib-Strict in Frameworks */ = {isa = PBXBuildFile; productRef = 282EAA5BBF059957F1A6A0B2 /* AppsFlyerLib-Strict */; };
 		E479836A8F4273C85233BFBE /* legacy-v1-active-garden.json in Resources */ = {isa = PBXBuildFile; fileRef = A98FCD577E4AA3C2E6637B32 /* legacy-v1-active-garden.json */; };
 		E4F83AE033F523801E08FB8B /* FlowerShowAccessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFDF1823BB1ABF0D67F8939 /* FlowerShowAccessTests.swift */; };
@@ -93,9 +96,9 @@
 		8AE20BB96D55DDC4541275C0 /* GameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
 		8E95218CF6597F82E1A19CFB /* AppsFlyerAttribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsFlyerAttribution.swift; sourceTree = "<group>"; };
 		8EAC6688C57719EED4431BBE /* FlowerShowV3Catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FlowerShowV3Catalog.json; sourceTree = "<group>"; };
+		939465AD720E82164ECFDC62 /* ProductAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductAnalytics.swift; sourceTree = "<group>"; };
 		9BBD7035AC632A76EA9B779A /* FlowerShowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowViews.swift; sourceTree = "<group>"; };
 		9E2972F6B720DB6B3174A6E4 /* FlowerShowAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowAccess.swift; sourceTree = "<group>"; };
-		9E44B38CA3C05F474E4D2194 /* AppsFlyer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppsFlyer.xcconfig; sourceTree = "<group>"; };
 		A2433511B57B16552D3E2963 /* FlowerShowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowModel.swift; sourceTree = "<group>"; };
 		A282E2CE0879EFA74A55F0BC /* FlowerShowContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowContent.swift; sourceTree = "<group>"; };
 		A98FCD577E4AA3C2E6637B32 /* legacy-v1-active-garden.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "legacy-v1-active-garden.json"; sourceTree = "<group>"; };
@@ -108,9 +111,11 @@
 		CC07B1EE0ADF0F0D2B260EE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DBA13BF0FCAB1A02E18DD394 /* RingbloomUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RingbloomUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEF8B96FEE3D5DBE30CBA105 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
+		E14BF4144FD840D4CB1F4B18 /* ProductAnalyticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductAnalyticsTests.swift; sourceTree = "<group>"; };
 		E22E8DB60A44D7E8DD5603F4 /* FlowerShow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShow.swift; sourceTree = "<group>"; };
 		E3354FA2A211B140ADF56CB5 /* FlowerShowPurchaseContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowerShowPurchaseContext.swift; sourceTree = "<group>"; };
 		E8AFE34E73563132B2FD5CB6 /* GameEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngineTests.swift; sourceTree = "<group>"; };
+		EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Analytics.xcconfig; sourceTree = "<group>"; };
 		F0B8CA2B28098B66F1C4B1FD /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		F778FEA3114FAAAE010E35D8 /* RingbloomUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingbloomUITests.swift; sourceTree = "<group>"; };
 		F93CE3E617AC755EEB79D9A1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -124,6 +129,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E42F51A8B70181A203716EF2 /* AppsFlyerLib-Strict in Frameworks */,
+				99591A5B07E7D55DC17460DD /* PostHog in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +180,7 @@
 				240B0F48A34650B48ACDD1B2 /* GameBoardView.swift */,
 				8AE20BB96D55DDC4541275C0 /* GameEngine.swift */,
 				DEF8B96FEE3D5DBE30CBA105 /* GameModel.swift */,
+				939465AD720E82164ECFDC62 /* ProductAnalytics.swift */,
 				8788E34DE9400EED35107F50 /* RingbloomApp.swift */,
 				F0B8CA2B28098B66F1C4B1FD /* Theme.swift */,
 			);
@@ -207,6 +214,7 @@
 				2DFDF1823BB1ABF0D67F8939 /* FlowerShowAccessTests.swift */,
 				7E5B134D7622BF17D3553ABF /* FlowerShowTests.swift */,
 				E8AFE34E73563132B2FD5CB6 /* GameEngineTests.swift */,
+				E14BF4144FD840D4CB1F4B18 /* ProductAnalyticsTests.swift */,
 			);
 			path = RingbloomTests;
 			sourceTree = "<group>";
@@ -214,7 +222,7 @@
 		5E1A1195A1B4A2BC7B5708BC /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				9E44B38CA3C05F474E4D2194 /* AppsFlyer.xcconfig */,
+				EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -331,6 +339,7 @@
 			name = Ringbloom;
 			packageProductDependencies = (
 				282EAA5BBF059957F1A6A0B2 /* AppsFlyerLib-Strict */,
+				83BBB764A5A0AFFD3DC5EF81 /* PostHog */,
 			);
 			productName = Ringbloom;
 			productReference = 87AE647F94F6750DF7D425B6 /* Ringbloom.app */;
@@ -375,6 +384,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DEA7BCD54EE9393E24A8AB37 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Strict" */,
+				D0681A6959BB1D63FBDA8CAB /* XCRemoteSwiftPackageReference "posthog-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 34A1C4871C2AB179E2B2150D /* Products */;
@@ -441,6 +451,7 @@
 				7EFCA4C1DA816E1F6E9CEE4F /* GameBoardView.swift in Sources */,
 				8EF21C5107713E38A4D98C32 /* GameEngine.swift in Sources */,
 				EE73F8BF392C0C5FC758F70A /* GameModel.swift in Sources */,
+				03EE4074112512DF339F05D5 /* ProductAnalytics.swift in Sources */,
 				D6FAFDA424B307946C4908C1 /* RingbloomApp.swift in Sources */,
 				AF1123995A293A2299B62E3F /* Theme.swift in Sources */,
 			);
@@ -454,6 +465,7 @@
 				E4F83AE033F523801E08FB8B /* FlowerShowAccessTests.swift in Sources */,
 				B9A735195008848C98B974C5 /* FlowerShowTests.swift in Sources */,
 				BB612F80D362D4F0B917D7B5 /* GameEngineTests.swift in Sources */,
+				DD798C72014A3AC7F3EBACE7 /* ProductAnalyticsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,7 +561,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5R8P82H779;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -564,7 +576,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -644,7 +656,7 @@
 		};
 		9181F7EC8CC0879B6779334F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9E44B38CA3C05F474E4D2194 /* AppsFlyer.xcconfig */;
+			baseConfigurationReference = EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -704,7 +716,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 5R8P82H779;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -725,7 +737,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -755,7 +767,7 @@
 		};
 		F4D07C065504A59B10226321 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9E44B38CA3C05F474E4D2194 /* AppsFlyer.xcconfig */;
+			baseConfigurationReference = EFD1E4AE6F1A33FCEC7122C0 /* Analytics.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -830,6 +842,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D0681A6959BB1D63FBDA8CAB /* XCRemoteSwiftPackageReference "posthog-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PostHog/posthog-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 3.59.3;
+			};
+		};
 		DEA7BCD54EE9393E24A8AB37 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Strict" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework-Strict.git";
@@ -845,6 +865,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DEA7BCD54EE9393E24A8AB37 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Strict" */;
 			productName = "AppsFlyerLib-Strict";
+		};
+		83BBB764A5A0AFFD3DC5EF81 /* PostHog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0681A6959BB1D63FBDA8CAB /* XCRemoteSwiftPackageReference "posthog-ios" */;
+			productName = PostHog;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

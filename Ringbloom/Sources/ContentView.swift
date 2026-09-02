@@ -3,19 +3,31 @@ import SwiftUI
 import UIKit
 
 struct ContentView: View {
-    private enum Screen {
+    private enum Screen: Equatable {
         case home
         case tutorial
         case flowerShowRules
         case classBook
         case purchase(FlowerShowPurchaseContext)
         case game
+
+        var analyticsName: String {
+            switch self {
+            case .home: "home"
+            case .tutorial: "tutorial"
+            case .flowerShowRules: "flower_show_rules"
+            case .classBook: "class_book"
+            case .purchase: "paywall"
+            case .game: "game"
+            }
+        }
     }
 
     @EnvironmentObject private var game: GameModel
     @EnvironmentObject private var flowerShowStore: FlowerShowStore
     @EnvironmentObject private var audio: AudioService
     @EnvironmentObject private var feedback: FeedbackService
+    @EnvironmentObject private var analytics: ProductAnalytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("ringbloom.tutorialSeen") private var tutorialSeen = false
     @State private var screen: Screen = .home
@@ -62,11 +74,9 @@ struct ContentView: View {
                             grandChampionAchieved: game.grandChampionAchieved,
                             play: beginPlay,
                             openFlowerShow: beginFlowerShow,
-                            openPurchase: { presentPurchase(context: $0) },
-                            openClassBook: {
-                                withAnimation(.easeInOut(duration: 0.25)) { screen = .classBook }
-                            },
-                            showTutorial: { withAnimation(.easeInOut(duration: 0.25)) { screen = .tutorial } }
+                            openPurchase: openHomePurchase,
+                            openClassBook: openClassBook,
+                            showTutorial: showTutorial
                         )
                         .transition(
                             reduceMotion
@@ -75,12 +85,8 @@ struct ContentView: View {
                         )
                     case .tutorial:
                         TutorialView(
-                            begin: {
-                                tutorialSeen = true
-                                game.startGarden(game.highestGarden)
-                                withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
-                            },
-                            close: { withAnimation(.easeInOut(duration: 0.25)) { screen = .home } }
+                            begin: beginFromTutorial,
+                            close: closeTutorial
                         )
                         .transition(
                             reduceMotion
@@ -115,14 +121,18 @@ struct ContentView: View {
                             radiantCount: game.radiantClassCount,
                             accessState: flowerShowStore.accessState,
                             selectClass: requestClassBookStart,
-                            purchase: { presentPurchase(context: .lockedClass($0)) },
-                            close: { withAnimation(.easeInOut(duration: 0.25)) { screen = .home } }
+                            purchase: requestLockedClassPurchase,
+                            close: closeClassBook
                         )
                         .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .trailing)))
                     case let .purchase(context):
                         FlowerShowPurchaseView(
                             context: context,
                             targetIsPlayable: context.targetClass.map(game.flowerShowProgressionAllows) ?? false,
+                            freeClassesCompleted: game.completedFlowerShowClasses.filter {
+                                FlowerShowAccessPolicy.isFreeClass($0)
+                            }.count,
+                            campaignClassesCompleted: game.completedFlowerShowClasses.count,
                             close: { closePurchase(context: context) },
                             goHome: goHome,
                             continueAfterPurchase: { continueAfterPurchase(context: context) }
@@ -155,7 +165,13 @@ struct ContentView: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .tint(RingbloomTheme.saffron)
-        .onAppear(perform: prepareLaunchMode)
+        .onAppear {
+            prepareLaunchMode()
+            trackScreen(screen)
+        }
+        .onChange(of: screen) { _, newScreen in
+            trackScreen(newScreen)
+        }
         .alert(
             replacementAlertTitle,
             isPresented: Binding(
@@ -197,11 +213,18 @@ struct ContentView: View {
     }
 
     private func beginPlay() {
+        analytics.buttonTapped(
+            game.hasActiveGarden ? "resume_garden" : "play_garden",
+            screen: "home",
+            properties: analyticsProgressProperties
+        )
         if game.hasActiveGarden {
             game.resumeGarden()
+            captureGardenStarted(startType: "resume")
             withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
         } else if tutorialSeen || ProcessInfo.processInfo.arguments.contains("--skip-tutorial") {
             game.startGarden(game.highestGarden)
+            captureGardenStarted(startType: "new")
             withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
         } else {
             withAnimation(.easeInOut(duration: 0.25)) { screen = .tutorial }
@@ -210,6 +233,11 @@ struct ContentView: View {
 
     private func beginFlowerShow() {
         guard game.flowerShowQualified else { return }
+        analytics.buttonTapped(
+            game.hasActiveFlowerShow ? "resume_flower_show" : "open_flower_show",
+            screen: "home",
+            properties: analyticsProgressProperties
+        )
         if game.pendingFlowerShowNoticeVersion != nil {
             showsFlowerShowRedesignNotice = true
             return
@@ -217,6 +245,16 @@ struct ContentView: View {
         if game.hasActiveFlowerShow {
             switch game.resumeFlowerShow() {
             case .started:
+                analytics.capture(
+                    "game_started",
+                    properties: analyticsProgressProperties.merging(
+                        [
+                            "class_number": game.currentFlowerShowClass,
+                            "mode": GameMode.flowerShow.analyticsName,
+                            "start_type": "resume",
+                        ]
+                    ) { _, startValue in startValue }
+                )
                 withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
             case .purchaseRequired:
                 presentPurchase(context: .lockedClass(game.currentFlowerShowClass))
@@ -247,6 +285,16 @@ struct ContentView: View {
         }
         switch result {
         case .started:
+            analytics.capture(
+                "game_started",
+                properties: analyticsProgressProperties.merging(
+                    [
+                        "mode": GameMode.flowerShow.analyticsName,
+                        "start_type": flowerShowRulesPresentation == .preClass ? "new" : "resume",
+                        "class_number": game.currentFlowerShowClass,
+                    ]
+                ) { _, startValue in startValue }
+            )
             withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
         case .purchaseRequired:
             presentPurchase(context: .lockedClass(selectedFlowerShowClass))
@@ -256,8 +304,20 @@ struct ContentView: View {
     }
 
     private func requestClassBookStart(_ classNumber: Int) {
+        analytics.capture(
+            "class_selected",
+            properties: analyticsProgressProperties.merging(["class_number": classNumber]) { _, classValue in classValue }
+        )
         switch game.flowerShowAccessAction(for: classNumber) {
         case .purchaseRequired:
+            analytics.capture(
+                "locked_content_tapped",
+                properties: [
+                    "content": "flower_show_class",
+                    "class_number": classNumber,
+                    "screen": "class_book",
+                ]
+            )
             presentPurchase(context: .lockedClass(classNumber))
             return
         case .waitForAccess, .qualificationRequired, .progressionLocked:
@@ -299,6 +359,7 @@ struct ContentView: View {
     }
 
     private func closeFlowerShowRules() {
+        analytics.buttonTapped("close_rules", screen: "flower_show_rules", properties: analyticsProgressProperties)
         if flowerShowRulesPresentation == .inGame {
             if game.resumeFlowerShow() == .started {
                 withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
@@ -309,7 +370,28 @@ struct ContentView: View {
     }
 
     private func presentPurchase(context: FlowerShowPurchaseContext) {
+        analytics.capture(
+            "paywall_requested",
+            properties: analyticsProgressProperties.merging(context.analyticsProperties) { _, contextValue in contextValue }
+        )
         withAnimation(.easeInOut(duration: 0.25)) { screen = .purchase(context) }
+    }
+
+    private func openHomePurchase(context: FlowerShowPurchaseContext) {
+        analytics.buttonTapped("unlock_full_show", screen: "home", properties: analyticsProgressProperties)
+        presentPurchase(context: context)
+    }
+
+    private func requestLockedClassPurchase(_ classNumber: Int) {
+        analytics.capture(
+            "locked_content_tapped",
+            properties: [
+                "content": "flower_show_class",
+                "class_number": classNumber,
+                "screen": "class_book",
+            ]
+        )
+        presentPurchase(context: .lockedClass(classNumber))
     }
 
     private func closePurchase(context: FlowerShowPurchaseContext) {
@@ -337,6 +419,77 @@ struct ContentView: View {
         flowerShowRulesPresentation = .preClass
         flowerShowRulesReturnScreen = context.origin == .lockedClass ? .classBook : .home
         withAnimation(.easeInOut(duration: 0.25)) { screen = .flowerShowRules }
+    }
+
+    private func beginFromTutorial() {
+        analytics.buttonTapped("begin_garden", screen: "tutorial", properties: analyticsProgressProperties)
+        tutorialSeen = true
+        game.startGarden(game.highestGarden)
+        captureGardenStarted(startType: "tutorial")
+        analytics.capture(
+            "tutorial_completed",
+            properties: ["garden": game.highestGarden]
+        )
+        withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
+    }
+
+    private func closeTutorial() {
+        analytics.buttonTapped("close_tutorial", screen: "tutorial")
+        withAnimation(.easeInOut(duration: 0.25)) { screen = .home }
+    }
+
+    private func captureGardenStarted(startType: String) {
+        analytics.capture(
+            "game_started",
+            properties: analyticsProgressProperties.merging(
+                [
+                    "garden": game.garden,
+                    "mode": GameMode.garden.analyticsName,
+                    "start_type": startType,
+                ]
+            ) { _, startValue in startValue }
+        )
+    }
+
+    private func showTutorial() {
+        analytics.buttonTapped("how_to_play", screen: "home", properties: analyticsProgressProperties)
+        withAnimation(.easeInOut(duration: 0.25)) { screen = .tutorial }
+    }
+
+    private func openClassBook() {
+        analytics.buttonTapped("class_book", screen: "home", properties: analyticsProgressProperties)
+        withAnimation(.easeInOut(duration: 0.25)) { screen = .classBook }
+    }
+
+    private func closeClassBook() {
+        analytics.buttonTapped("close_class_book", screen: "class_book", properties: analyticsProgressProperties)
+        withAnimation(.easeInOut(duration: 0.25)) { screen = .home }
+    }
+
+    private func trackScreen(_ screen: Screen) {
+        var properties = analyticsProgressProperties
+        if case let .purchase(context) = screen {
+            properties.merge(context.analyticsProperties) { _, contextValue in contextValue }
+        }
+        analytics.screenViewed(screen.analyticsName, properties: properties)
+    }
+
+    private var analyticsProgressProperties: [String: Any] {
+        [
+            "campaign_classes_completed": game.completedFlowerShowClasses.count,
+            "current_flower_show_class": game.currentFlowerShowClass,
+            "flower_show_access": flowerShowAccessAnalyticsName,
+            "highest_garden": game.highestGarden,
+        ]
+    }
+
+    private var flowerShowAccessAnalyticsName: String {
+        switch flowerShowStore.accessState {
+        case .checking: "checking"
+        case .sample: "sample"
+        case .full(.legacyPaidApp): "legacy_paid_app"
+        case .full(.storePurchase): "store_purchase"
+        }
     }
 
     private func prepareLaunchMode() {
@@ -520,6 +673,7 @@ private struct HomeView: View {
 
     @EnvironmentObject private var audio: AudioService
     @EnvironmentObject private var feedback: FeedbackService
+    @EnvironmentObject private var analytics: ProductAnalytics
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
@@ -620,7 +774,17 @@ private struct HomeView: View {
                             enabledSymbol: "speaker.wave.2.fill",
                             disabledSymbol: "speaker.slash.fill",
                             identifier: "soundToggle",
-                            action: { _ = audio.toggleSound() }
+                            action: {
+                                let enabled = audio.toggleSound()
+                                analytics.capture(
+                                    "setting_changed",
+                                    properties: [
+                                        "enabled": enabled,
+                                        "setting": "sound",
+                                        "screen": "home",
+                                    ]
+                                )
+                            }
                         )
                         SettingButton(
                             title: "Haptics",
@@ -628,7 +792,17 @@ private struct HomeView: View {
                             enabledSymbol: "waveform.path",
                             disabledSymbol: "waveform.path.badge.minus",
                             identifier: "hapticsToggle",
-                            action: { _ = feedback.toggleHaptics() }
+                            action: {
+                                let enabled = feedback.toggleHaptics()
+                                analytics.capture(
+                                    "setting_changed",
+                                    properties: [
+                                        "enabled": enabled,
+                                        "setting": "haptics",
+                                        "screen": "home",
+                                    ]
+                                )
+                            }
                         )
                     }
                     .padding(.horizontal, 20)
@@ -729,6 +903,7 @@ private struct GameScreen: View {
     @EnvironmentObject private var flowerShowStore: FlowerShowStore
     @EnvironmentObject private var audio: AudioService
     @EnvironmentObject private var feedback: FeedbackService
+    @EnvironmentObject private var analytics: ProductAnalytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.requestReview) private var requestReview
@@ -802,8 +977,8 @@ private struct GameScreen: View {
                                         accessChecking: isResultAccessChecking,
                                         retryAccessCheck: retryResultAccessCheck,
                                         continueProgression: nextExperience,
-                                        openClassBook: showClassBook,
-                                        home: showHome
+                                        openClassBook: openClassBookFromResult,
+                                        home: leaveOutcomeForHome
                                     )
                                 } else {
                                     OutcomeCard(
@@ -819,7 +994,7 @@ private struct GameScreen: View {
                                         undo: undo,
                                         retry: retry,
                                         next: nextExperience,
-                                        home: showHome
+                                        home: leaveOutcomeForHome
                                     )
                                 }
                             }
@@ -984,7 +1159,7 @@ private struct GameScreen: View {
     private var gameActions: some View {
         HStack(spacing: 8) {
             if game.activeMode == .flowerShow {
-                Button(action: showFlowerShowRules) {
+                Button(action: openRules) {
                     VStack(spacing: 1) {
                         Image(systemName: "book.closed.fill")
                             .font(.system(size: 16, weight: .semibold))
@@ -1041,7 +1216,17 @@ private struct GameScreen: View {
             .accessibilityIdentifier("hintButton")
 
             Button {
-                _ = audio.toggleSound()
+                let enabled = audio.toggleSound()
+                analytics.capture(
+                    "setting_changed",
+                    properties: gameplayAnalyticsProperties.merging(
+                        [
+                            "enabled": enabled,
+                            "setting": "sound",
+                            "screen": "game",
+                        ]
+                    ) { _, settingValue in settingValue }
+                )
             } label: {
                 Image(systemName: audio.isSoundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
                     .font(.system(size: 19, weight: .semibold))
@@ -1273,6 +1458,10 @@ private struct GameScreen: View {
         }
         if changed {
             feedback.selectionChanged()
+            analytics.capture(
+                "ring_selected",
+                properties: gameplayAnalyticsProperties.merging(["ring": ring.analyticsName]) { _, ringValue in ringValue }
+            )
         }
         statusText = "\(ring.displayName) ring selected"
     }
@@ -1292,6 +1481,7 @@ private struct GameScreen: View {
     }
 
     private func retry() {
+        analytics.capture("game_restarted", properties: gameplayAnalyticsProperties.merging(["source": "result"]) { _, sourceValue in sourceValue })
         if game.activeMode == .flowerShow,
            game.flowerShowAccessAction(for: game.currentFlowerShowClass) == .purchaseRequired
         {
@@ -1310,6 +1500,7 @@ private struct GameScreen: View {
     }
 
     private func nextExperience() {
+        analytics.buttonTapped("continue", screen: "result", properties: gameplayAnalyticsProperties)
         if game.activeMode == .garden {
             game.nextGarden()
             resetPresentation()
@@ -1332,11 +1523,13 @@ private struct GameScreen: View {
     }
 
     private func retryResultAccessCheck() {
+        analytics.buttonTapped("retry_access_check", screen: "result", properties: gameplayAnalyticsProperties)
         Task { await flowerShowStore.retryAccessCheck() }
     }
 
     private func undo() {
         guard !isResolvingTurn, game.undoFlowerShowTurn() else { return }
+        analytics.capture("undo_used", properties: gameplayAnalyticsProperties)
         resetPresentation()
         statusText = "Last turn restored · Undo used"
         feedback.selectionChanged()
@@ -1405,6 +1598,22 @@ private struct GameScreen: View {
         }
 
         guard let result = game.rotate(move.direction) else { return }
+        analytics.capture(
+            "turn_completed",
+            properties: gameplayAnalyticsProperties.merging(
+                [
+                    "bloom_count": result.bloomCount,
+                    "combo": result.combo,
+                    "direction": move.direction.analyticsName,
+                    "did_reshuffle": result.didReshuffle,
+                    "moves_remaining": game.movesRemaining,
+                    "points": result.points,
+                    "ring": move.ring.analyticsName,
+                    "score": game.score,
+                    "turn_number": result.turnNumber,
+                ]
+            ) { _, turnValue in turnValue }
+        )
         withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) {
             displayBoard = game.board
             bloomSpokes = []
@@ -1461,9 +1670,33 @@ private struct GameScreen: View {
 
         switch result.phase {
         case .won:
+            analytics.capture(
+                "game_finished",
+                properties: gameplayAnalyticsProperties.merging(
+                    [
+                        "best_streak": game.bestStreak,
+                        "blooms": game.blooms,
+                        "moves_remaining": game.movesRemaining,
+                        "outcome": "won",
+                        "score": game.score,
+                    ]
+                ) { _, resultValue in resultValue }
+            )
             audio.playWin()
             feedback.success()
         case .lost:
+            analytics.capture(
+                "game_finished",
+                properties: gameplayAnalyticsProperties.merging(
+                    [
+                        "best_streak": game.bestStreak,
+                        "blooms": game.blooms,
+                        "moves_remaining": game.movesRemaining,
+                        "outcome": "lost",
+                        "score": game.score,
+                    ]
+                ) { _, resultValue in resultValue }
+            )
             audio.playLose()
             feedback.failure()
         case .playing:
@@ -1477,6 +1710,16 @@ private struct GameScreen: View {
               game.phase == .playing,
               game.canPlayCurrentFlowerShow
         else { return }
+
+        analytics.capture(
+            "hint_requested",
+            properties: gameplayAnalyticsProperties.merging(
+                [
+                    "hints_remaining_before": game.hintsRemaining,
+                    "hint_already_visible": hintMove != nil,
+                ]
+            ) { _, hintValue in hintValue }
+        )
 
         if let hintMove {
             statusText = hintText(hintMove)
@@ -1670,20 +1913,24 @@ private struct GameScreen: View {
 
     private func pause() {
         guard !isResolvingTurn, game.phase == .playing else { return }
+        analytics.capture("game_paused", properties: gameplayAnalyticsProperties)
         audio.stopAll()
         isPaused = true
     }
 
     private func resume() {
+        analytics.capture("game_resumed", properties: gameplayAnalyticsProperties)
         isPaused = false
     }
 
     private func leaveForHome() {
+        analytics.capture("game_left_to_home", properties: gameplayAnalyticsProperties.merging(["source": "pause"]) { _, sourceValue in sourceValue })
         isPaused = false
         showHome()
     }
 
     private func restartFromPause() {
+        analytics.capture("game_restarted", properties: gameplayAnalyticsProperties.merging(["source": "pause"]) { _, sourceValue in sourceValue })
         switch game.retry() {
         case .started:
             resetPresentation()
@@ -1695,6 +1942,36 @@ private struct GameScreen: View {
         case .qualificationRequired, .progressionLocked, .accessChecking:
             break
         }
+    }
+
+    private func openRules() {
+        analytics.buttonTapped("rules", screen: "game", properties: gameplayAnalyticsProperties)
+        showFlowerShowRules()
+    }
+
+    private func openClassBookFromResult() {
+        analytics.buttonTapped("class_book", screen: "result", properties: gameplayAnalyticsProperties)
+        showClassBook()
+    }
+
+    private func leaveOutcomeForHome() {
+        analytics.capture("game_left_to_home", properties: gameplayAnalyticsProperties.merging(["source": "result"]) { _, sourceValue in sourceValue })
+        showHome()
+    }
+
+    private var gameplayAnalyticsProperties: [String: Any] {
+        var properties: [String: Any] = [
+            "mode": game.activeMode.analyticsName,
+            "moves_remaining": game.movesRemaining,
+        ]
+        switch game.activeMode {
+        case .garden:
+            properties["garden"] = game.garden
+        case .flowerShow:
+            properties["class_number"] = game.flowerShowDefinition.number
+            properties["is_circuit"] = game.flowerShowDefinition.number > FlowerShowClassDefinition.classCount
+        }
+        return properties
     }
 
     private func prepareGameplay() {

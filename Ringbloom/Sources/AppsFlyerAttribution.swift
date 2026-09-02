@@ -110,6 +110,7 @@ final class RingbloomAppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         AppsFlyerAttribution.shared.initialise(launchOptions: launchOptions)
+        ProductAnalytics.shared.configure()
         return true
     }
 }

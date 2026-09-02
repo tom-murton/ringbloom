@@ -3,14 +3,19 @@ import SwiftUI
 struct FlowerShowPurchaseView: View {
     let context: FlowerShowPurchaseContext
     let targetIsPlayable: Bool
+    let freeClassesCompleted: Int
+    let campaignClassesCompleted: Int
     let close: () -> Void
     let goHome: () -> Void
     let continueAfterPurchase: () -> Void
 
     @EnvironmentObject private var store: FlowerShowStore
+    @EnvironmentObject private var analytics: ProductAnalytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AccessibilityFocusState private var focusedHeading: Bool
     @State private var showsSuccess = false
+    @State private var appearedAt = Date()
+    @State private var lastAction = "none"
 
     var body: some View {
         ZStack {
@@ -39,11 +44,26 @@ struct FlowerShowPurchaseView: View {
         }
         .accessibilityIdentifier("flowerShowPurchaseView")
         .onAppear {
+            appearedAt = Date()
             showsSuccess = store.hasFullFlowerShowAccess
             focusedHeading = true
+            analytics.capture("paywall_viewed", properties: paywallProperties)
+        }
+        .onDisappear {
+            analytics.capture(
+                "paywall_session_ended",
+                properties: paywallProperties.merging(
+                    [
+                        "last_action": lastAction,
+                        "seconds_visible": secondsVisible,
+                        "unlocked": store.hasFullFlowerShowAccess,
+                    ]
+                ) { _, sessionValue in sessionValue }
+            )
         }
         .onChange(of: store.accessState) { _, newState in
             if case .full = newState {
+                analytics.capture("paywall_unlocked", properties: paywallProperties)
                 withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) {
                     showsSuccess = true
                 }
@@ -59,7 +79,7 @@ struct FlowerShowPurchaseView: View {
     private var closeButton: some View {
         HStack {
             Spacer()
-            Button(action: close) {
+            Button(action: { dismissPaywall(action: "close") }) {
                 Image(systemName: "xmark")
                     .font(.system(size: 20, weight: .semibold))
                     .frame(width: 44, height: 44)
@@ -79,7 +99,7 @@ struct FlowerShowPurchaseView: View {
                 heading: "PURCHASES UNAVAILABLE",
                 bodyText: "Purchases aren’t available on this device.",
                 primaryTitle: "KEEP PLAYING FREE",
-                primaryAction: close,
+                primaryAction: { dismissPaywall(action: "keep_playing_free") },
                 primaryIdentifier: "flowerShowKeepPlayingButton",
                 showsRestore: true
             )
@@ -88,7 +108,7 @@ struct FlowerShowPurchaseView: View {
                 heading: "PURCHASE PENDING",
                 bodyText: "Flower Show will unlock when the purchase is approved.",
                 primaryTitle: "KEEP PLAYING FREE",
-                primaryAction: close,
+                primaryAction: { dismissPaywall(action: "keep_playing_free") },
                 primaryIdentifier: "flowerShowKeepPlayingButton",
                 showsRestore: false
             )
@@ -103,7 +123,7 @@ struct FlowerShowPurchaseView: View {
                 primaryIdentifier: "flowerShowPurchaseRetryButton",
                 showsRestore: true,
                 secondaryTitle: "KEEP PLAYING FREE",
-                secondaryAction: close,
+                secondaryAction: { dismissPaywall(action: "keep_playing_free") },
                 secondaryIdentifier: "flowerShowKeepPlayingButton"
             )
         case .idle, .purchasing, .restoring, .success:
@@ -137,7 +157,7 @@ struct FlowerShowPurchaseView: View {
             .accessibilityHint("Permanently unlocks Classes 6 through 30 and the Champion Circuit")
             .accessibilityIdentifier("flowerShowPurchaseButton")
 
-            Button("KEEP PLAYING FREE", action: close)
+            Button("KEEP PLAYING FREE", action: { dismissPaywall(action: "keep_playing_free") })
                 .buttonStyle(RingbloomButtonStyle())
                 .accessibilityHint("Return to the free Garden and sampler Classes")
                 .accessibilityIdentifier("flowerShowKeepPlayingButton")
@@ -166,14 +186,20 @@ struct FlowerShowPurchaseView: View {
                 .foregroundStyle(RingbloomTheme.mint)
                 .accessibilityHidden(true)
 
-            Button(action: continueAfterPurchase) {
+            Button(action: {
+                recordPaywallAction("continue_after_purchase")
+                continueAfterPurchase()
+            }) {
                 Text(successTitle)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(RingbloomButtonStyle(prominent: true))
             .accessibilityIdentifier("flowerShowPurchaseSuccessButton")
 
-            Button("BACK TO HOME", action: goHome)
+            Button("BACK TO HOME") {
+                recordPaywallAction("back_to_home")
+                goHome()
+            }
                 .buttonStyle(RingbloomButtonStyle())
                 .accessibilityIdentifier("flowerShowPurchaseHomeButton")
         }
@@ -188,7 +214,7 @@ struct FlowerShowPurchaseView: View {
             primaryIdentifier: "flowerShowPurchaseRetryButton",
             showsRestore: true,
             secondaryTitle: "KEEP PLAYING FREE",
-            secondaryAction: close,
+            secondaryAction: { dismissPaywall(action: "keep_playing_free") },
             secondaryIdentifier: "flowerShowKeepPlayingButton"
         )
     }
@@ -347,14 +373,115 @@ struct FlowerShowPurchaseView: View {
     }
 
     private func purchase() {
-        Task { await store.purchase() }
+        recordPaywallAction("purchase")
+        analytics.capture("purchase_started", properties: paywallProperties)
+        Task {
+            await store.purchase()
+            analytics.capture(
+                "purchase_outcome",
+                properties: paywallProperties.merging(["outcome": purchaseOutcome]) { _, outcomeValue in outcomeValue }
+            )
+        }
     }
 
     private func restore() {
-        Task { await store.restorePurchases() }
+        recordPaywallAction("restore")
+        analytics.capture("restore_started", properties: paywallProperties)
+        Task {
+            await store.restorePurchases()
+            analytics.capture(
+                "restore_outcome",
+                properties: paywallProperties.merging(["outcome": restoreOutcome]) { _, outcomeValue in outcomeValue }
+            )
+        }
     }
 
     private func retryProduct() {
-        Task { await store.retryProductLoad() }
+        recordPaywallAction("retry_product")
+        Task {
+            await store.retryProductLoad()
+            analytics.capture(
+                "product_load_outcome",
+                properties: paywallProperties.merging(["outcome": productStateName]) { _, outcomeValue in outcomeValue }
+            )
+        }
+    }
+
+    private func dismissPaywall(action: String) {
+        recordPaywallAction(action)
+        close()
+    }
+
+    private func recordPaywallAction(_ action: String) {
+        lastAction = action
+        analytics.capture(
+            "paywall_action",
+            properties: paywallProperties.merging(
+                [
+                    "action": action,
+                    "seconds_visible": secondsVisible,
+                ]
+            ) { _, actionValue in actionValue }
+        )
+    }
+
+    private var paywallProperties: [String: Any] {
+        context.analyticsProperties.merging(
+            [
+                "campaign_classes_completed": campaignClassesCompleted,
+                "free_classes_completed": freeClassesCompleted,
+                "product_state": productStateName,
+                "purchase_state": purchaseStateName,
+                "target_is_playable": targetIsPlayable,
+            ]
+        ) { _, paywallValue in paywallValue }
+    }
+
+    private var secondsVisible: Double {
+        max(0, Date().timeIntervalSince(appearedAt))
+    }
+
+    private var productStateName: String {
+        switch store.productState {
+        case .loading: "loading"
+        case .available: "available"
+        case .unavailable: "unavailable"
+        }
+    }
+
+    private var purchaseStateName: String {
+        switch store.purchaseState {
+        case .idle: "idle"
+        case .purchasing: "purchasing"
+        case .pending: "pending"
+        case .success: "success"
+        case .failed: "failed"
+        case .disabled: "disabled"
+        case .restoring: "restoring"
+        }
+    }
+
+    private var purchaseOutcome: String {
+        switch store.purchaseState {
+        case .success: "success"
+        case .pending: "pending"
+        case .failed: "failed"
+        case .disabled: "disabled"
+        case .idle: isProductUnavailable ? "product_unavailable" : "cancelled"
+        case .purchasing: "in_progress"
+        case .restoring: "unexpected_restore"
+        }
+    }
+
+    private var restoreOutcome: String {
+        switch store.purchaseState {
+        case .success: "access_restored"
+        case .idle: "no_purchase_found"
+        case .failed: "failed"
+        case .disabled: "disabled"
+        case .pending: "pending"
+        case .purchasing: "unexpected_purchase"
+        case .restoring: "in_progress"
+        }
     }
 }
