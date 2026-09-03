@@ -12,3 +12,18 @@ xcuserdata/
 *.ipa
 __pycache__/
 *.pyc
+
+# Standard studio ignore rules (3 Sep 2026 audit)
+.env
+.env.*
+!.env.example
+!.env.sample
+excalidraw.log
+firebase-debug.log
+.claude/settings.local.json
+build/
+.asc/artifacts/
+*.xcresult
+*.mobileprovision
+*.p8
+*.p12
