@@ -17,6 +17,11 @@
     .petals { display:flex; justify-content:center; gap:10px; margin:22px 0 34px; }
     .petals i { display:block; width:12px; height:24px; border-radius:90% 10% 90% 10%; transform:rotate(45deg); }
     .card { background:#18243acc; border:1px solid #ffffff14; border-radius:20px; padding:22px 24px; margin:16px 0; box-shadow:0 12px 40px #0003; }
+    .store-card { text-align:center; }
+    .store-cta { display:inline-block; margin:.85em 0 .45em; padding:.72em 1.05em; border-radius:999px; background:var(--mint); color:#10271f; font-weight:750; text-decoration:none; box-shadow:0 8px 22px #0004; }
+    .store-cta:hover { background:#75e3bb; }
+    .store-cta:focus-visible { outline:3px solid var(--ivory); outline-offset:4px; }
+    .store-note { color:var(--muted); font-size:.94rem; }
     h2 { margin:0 0 .5em; font-size:.86rem; letter-spacing:.18em; text-transform:uppercase; color:var(--saffron); }
     p { margin:.55em 0; }
     ol { margin:.6em 0 .15em; padding-left:1.35em; }
@@ -35,6 +40,13 @@
       <i style="background:var(--coral)"></i><i style="background:var(--saffron)"></i><i style="background:var(--mint)"></i><i style="background:var(--sky)"></i>
     </div>
   </header>
+
+  <section class="card store-card" aria-labelledby="play-heading">
+    <h2 id="play-heading">Play on iPhone</h2>
+    <p>Play the endless Garden and the first five Flower Show Classes free. No ads.</p>
+    <a class="store-cta" href="https://apps.apple.com/app/id6789952808">Get Ringbloom on the App Store</a>
+    <p class="store-note">One permanent purchase unlocks 25 more Classes and the Champion Circuit.</p>
+  </section>
 
   <section class="card">
     <h2>How to play</h2>
