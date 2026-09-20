@@ -44,6 +44,157 @@ private func testScenario(
     )
 }
 
+struct FlowerShowShareCardTests {
+    @Test func sharingAnAchievementRequiresAHealthyCommittedSave() {
+        #expect(FlowerShowAchievementSharePolicy.isEligible(progressSaveHealth: .saved))
+        #expect(FlowerShowAchievementSharePolicy.isEligible(progressSaveHealth: .pending) == false)
+        #expect(FlowerShowAchievementSharePolicy.isEligible(progressSaveHealth: .blocked) == false)
+    }
+
+    @Test func radiantCardContainsOnlyTheEarnedClassRatingAndAllowedResultFacts() {
+        let card = FlowerShowShareCardData(summary: shareSummary(
+            kind: .campaign,
+            classNumber: 12,
+            rating: .radiant,
+            movesUsed: 7,
+            radiantPar: 7
+        ))
+
+        #expect(card.heading == "Ringbloom Flower Show")
+        #expect(card.achievementLine == "Class 12 complete")
+        #expect(card.classAndRatingLine == "Class 12 · RADIANT")
+        #expect(card.detailLine == "7 moves · no Hint · no Undo")
+        #expect(card.shareText.contains(FlowerShowShareCardData.appStoreURL.absoluteString))
+        #expect(card.shareText.contains("score") == false)
+        #expect(card.shareText.contains("board") == false)
+    }
+
+    @Test func flourishingSeedlingAndMilestoneCardsUseTheirActualEarnedStates() {
+        let flourishing = FlowerShowShareCardData(summary: shareSummary(
+            kind: .campaign,
+            classNumber: 9,
+            rating: .flourishing,
+            movesUsed: 9,
+            radiantPar: 8
+        ))
+        #expect(flourishing.detailLine == "9 moves · no Hint · no Undo")
+
+        let seedling = FlowerShowShareCardData(summary: shareSummary(
+            kind: .replay,
+            classNumber: 5,
+            rating: .seedling,
+            didUseHint: true
+        ))
+        #expect(seedling.detailLine == "Hint used.")
+
+        let seedlingWithoutHint = FlowerShowShareCardData(summary: shareSummary(
+            kind: .campaign,
+            classNumber: 1,
+            rating: .seedling
+        ))
+        #expect(seedlingWithoutHint.detailLine == nil)
+
+        let milestone = FlowerShowShareCardData(summary: shareSummary(
+            kind: .campaign,
+            classNumber: 30,
+            rating: .radiant,
+            milestone: .grandChampion
+        ))
+        #expect(milestone.achievementLine == "Grand Champion earned")
+        #expect(milestone.classAndRatingLine == "Class 30 · RADIANT")
+    }
+
+    @Test func circuitCardKeepsTheEntireDecimalClassNumber() {
+        let card = FlowerShowShareCardData(summary: shareSummary(
+            kind: .circuit,
+            classNumber: 1_000_000,
+            rating: .seedling,
+            milestone: .circuitCup
+        ))
+
+        #expect(card.heading == "Ringbloom Champion Circuit")
+        #expect(card.classNumberText == "1000000")
+        #expect(card.achievementLine == "Circuit Cup earned")
+        #expect(card.classAndRatingLine == "Class 1000000 · SEEDLING")
+        #expect(card.detailLine == nil)
+    }
+
+    @MainActor
+    @Test func shareCardRendererWritesInspectableFixedSizePNGFixtures() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomShareCardVerification", isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let cards: [(String, FlowerShowShareCardData)] = [
+            ("class-1-seedling", FlowerShowShareCardData(summary: shareSummary(
+                kind: .campaign, classNumber: 1, rating: .seedling
+            ))),
+            ("class-30-grand-champion-radiant", FlowerShowShareCardData(summary: shareSummary(
+                kind: .campaign, classNumber: 30, rating: .radiant, milestone: .grandChampion
+            ))),
+            ("class-1000000-circuit", FlowerShowShareCardData(summary: shareSummary(
+                kind: .circuit, classNumber: 1_000_000, rating: .seedling, milestone: .circuitCup
+            ))),
+            ("class-9-flourishing", FlowerShowShareCardData(summary: shareSummary(
+                kind: .campaign, classNumber: 9, rating: .flourishing, radiantPar: 8
+            ))),
+        ]
+
+        for (name, card) in cards {
+            let data = try #require(FlowerShowShareCardRenderer.pngData(for: card))
+            #expect(data.isEmpty == false)
+            let destination = directory.appendingPathComponent("\(name).png")
+            try data.write(to: destination, options: .atomic)
+            print("RINGBLOOM_SHARE_CARD_VERIFICATION=\(destination.path)")
+        }
+    }
+
+    @Test func cancellationAndDuplicateCallbacksNeverRecordCompletionAndAnalyticsExcludePrivateTargets() {
+        let card = FlowerShowShareCardData(summary: shareSummary(
+            kind: .campaign,
+            classNumber: 6,
+            rating: .seedling,
+            didUseHint: true
+        ))
+        var cancelledGate = FlowerShowShareCompletionGate()
+        #expect(cancelledGate.consume(completed: false) == false)
+        #expect(cancelledGate.didFinish)
+        #expect(cancelledGate.consume(completed: true) == false)
+
+        var completedGate = FlowerShowShareCompletionGate()
+        let firstCompletion = completedGate.consume(completed: true)
+        #expect(firstCompletion)
+        #expect(completedGate.didFinish)
+        #expect(completedGate.consume(completed: true) == false)
+        #expect(completedGate.consume(completed: false) == false)
+        #expect(card.analyticsProperties["class_number"] as? Int == 6)
+        #expect(card.analyticsProperties.keys.contains("attempt_id") == false)
+        #expect(card.analyticsProperties.keys.contains("recipient") == false)
+        #expect(card.analyticsProperties.keys.contains("destination") == false)
+    }
+}
+
+private func shareSummary(
+    kind: FlowerShowAttemptKind,
+    classNumber: Int,
+    rating: FlowerShowRating,
+    movesUsed: Int = 8,
+    radiantPar: Int = 7,
+    didUseHint: Bool = false,
+    milestone: FlowerShowMilestone? = nil
+) -> FlowerShowResultSummary {
+    FlowerShowResultSummary(
+        attemptID: UUID(),
+        context: FlowerShowAttemptContext(kind: kind, classNumber: classNumber),
+        rating: rating,
+        movesUsed: movesUsed,
+        radiantPar: radiantPar,
+        didUseHint: didUseHint,
+        didUseUndo: false,
+        isNewBest: false,
+        milestone: milestone
+    )
+}
+
 private final class FixtureBundleToken: NSObject {}
 
 @MainActor
@@ -281,7 +432,6 @@ struct FlowerShowV3SolverTests {
         let scenario = FlowerShowContent.resolve(classNumber: 30).scenario
         var state = FlowerShowEngine(scenario: scenario).state
         let solution = try #require(FlowerShowExactSolver.shortestRoute(from: state, scenario: scenario))
-
         #expect(solution.moves.count <= scenario.radiantPar)
         for move in solution.moves {
             state = FlowerShowReducer.apply(move, to: state, rules: scenario).stateAfter
@@ -455,6 +605,358 @@ struct FlowerShowV3ProgressTests {
     }
 }
 
+struct FlowerShowPersistenceRegressionTests {
+    @MainActor
+    private final class ToggleProgressStore: GameProgressStoring {
+        var progress: GameProgress
+        var acceptsWrites = false
+        var saveReasonCode = "write_failed"
+
+        init(progress: GameProgress) { self.progress = progress }
+        func load() -> GameProgress { progress }
+        func save(_ progress: GameProgress) -> Bool {
+            guard acceptsWrites else { return false }
+            self.progress = progress
+            saveReasonCode = "saved"
+            return true
+        }
+    }
+
+    private var championRatings: [Int: FlowerShowRating] {
+        Dictionary(uniqueKeysWithValues: (1 ... 30).map { ($0, .flourishing) })
+    }
+
+    private func movedEngine(classNumber: Int) throws -> FlowerShowEngine {
+        let scenario = FlowerShowContent.resolve(classNumber: classNumber).scenario
+        for ring in Ring.allCases {
+            for direction in [RotationDirection.clockwise, .counterClockwise] {
+                var candidate = FlowerShowEngine(scenario: scenario)
+                candidate.select(ring)
+                _ = candidate.rotate(direction, scenario: scenario)
+                if candidate.state.phase == .playing { return candidate }
+            }
+        }
+        throw FlowerShowValidationError.invalid("No playable first move in test scenario.")
+    }
+
+    @MainActor
+    @Test("Move, select another ring and reload retains the exact active attempt")
+    func selectionAfterMoveSurvivesReload() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomSelection-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        var engine = try movedEngine(classNumber: 198)
+        engine.select(Ring.allCases.first { $0 != engine.state.selectedRing }!)
+        let progress = GameProgress(
+            bestScore: 500,
+            highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: championRatings,
+                nextCircuitClass: 198,
+                activeAttempt: PersistedFlowerShowAttempt(
+                    contentVersion: FlowerShowContent.contentVersion,
+                    context: FlowerShowAttemptContext(kind: .circuit, classNumber: 198),
+                    engine: engine
+                )
+            )
+        )
+        #expect(FileGameProgressStore(fileURL: destination).save(progress))
+        let store = FileGameProgressStore(fileURL: destination)
+        let loaded = store.load()
+        #expect(loaded.flowerShowProgress.activeAttempt?.engine == engine)
+        #expect(loaded.flowerShowProgress.nextCircuitClass == 198)
+        #expect(loaded.bestScore == 500)
+        guard case .loaded = store.lastLoadOutcome else {
+            Issue.record("A valid changed selection must not trigger repair.")
+            return
+        }
+    }
+
+    @MainActor
+    @Test("Selection, next move, Undo and reload retain the selected historical board")
+    func selectionUndoSurvivesReload() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomSelectionUndo-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        let scenario = FlowerShowContent.resolve(classNumber: 198).scenario
+        var engine = try movedEngine(classNumber: 198)
+        engine.select(Ring.allCases.first { $0 != engine.state.selectedRing }!)
+        let selectedState = engine.state
+        var second: FlowerShowEngine?
+        for direction in [RotationDirection.clockwise, .counterClockwise] {
+            var candidate = engine
+            _ = candidate.rotate(direction, scenario: scenario)
+            if candidate.canUndo { second = candidate; break }
+        }
+        engine = try #require(second)
+        func progress(for engine: FlowerShowEngine) -> GameProgress {
+            GameProgress(bestScore: 0, highestGarden: 11, flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: championRatings,
+                nextCircuitClass: 198,
+                activeAttempt: PersistedFlowerShowAttempt(
+                    contentVersion: FlowerShowContent.contentVersion,
+                    context: FlowerShowAttemptContext(kind: .circuit, classNumber: 198),
+                    engine: engine
+                )
+            ))
+        }
+        #expect(FileGameProgressStore(fileURL: destination).save(progress(for: engine)))
+        var reloaded = try #require(FileGameProgressStore(fileURL: destination).load()
+            .flowerShowProgress.activeAttempt?.engine)
+        let didUndo = reloaded.useUndo()
+        #expect(didUndo)
+        #expect(reloaded.state == selectedState)
+        #expect(FileGameProgressStore(fileURL: destination).save(progress(for: reloaded)))
+        let final = FileGameProgressStore(fileURL: destination).load()
+        #expect(final.flowerShowProgress.activeAttempt?.engine.state == selectedState)
+        #expect(final.flowerShowProgress.activeAttempt?.engine.didUseUndo == true)
+    }
+
+    @MainActor
+    @Test("A selected ring does not excuse altered board or score", arguments: ["board", "score"])
+    func selectionStillRejectsAlteredGameplay(field: String) throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomSelectionTamper-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = directory.appendingPathComponent("progress.json")
+        var engine = try movedEngine(classNumber: 198)
+        engine.select(Ring.allCases.first { $0 != engine.state.selectedRing }!)
+        if field == "score" {
+            engine.state.score += 1
+        } else {
+            let initialBoard = FlowerShowContent.resolve(classNumber: 198).scenario.initialBoard
+            try #require(engine.state.board != initialBoard)
+            engine.state.board = initialBoard
+        }
+        let progress = GameProgress(bestScore: 500, highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: championRatings, nextCircuitClass: 198,
+                activeAttempt: PersistedFlowerShowAttempt(
+                    contentVersion: FlowerShowContent.contentVersion,
+                    context: FlowerShowAttemptContext(kind: .circuit, classNumber: 198),
+                    engine: engine
+                )
+            ))
+        try JSONEncoder().encode(progress).write(to: destination, options: .atomic)
+        let store = FileGameProgressStore(fileURL: destination)
+        let loaded = store.load()
+        #expect(loaded.flowerShowProgress.activeAttempt == nil)
+        #expect(loaded.flowerShowProgress.nextCircuitClass == 198)
+        #expect(loaded.flowerShowProgress.bestCampaignRatings == championRatings)
+        guard case .repaired = store.lastLoadOutcome else {
+            Issue.record("Altered gameplay state must be repaired, not resumed.")
+            return
+        }
+    }
+
+    @MainActor
+    @Test("A damaged primary recovers the latest valid earned cursor and ratings")
+    func damagedPrimaryRecovers() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomRecovery-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        let store = FileGameProgressStore(fileURL: destination)
+        #expect(store.save(GameProgress(bestScore: 800, highestGarden: 11,
+                                        flowerShowProgress: FlowerShowProgressV3(
+                                            bestCampaignRatings: championRatings,
+                                            nextCircuitClass: 230))))
+        let damaged = Data("{ damaged primary".utf8)
+        try damaged.write(to: destination, options: .atomic)
+        let recoveredStore = FileGameProgressStore(fileURL: destination)
+        let recovered = recoveredStore.load()
+        #expect(recovered.flowerShowProgress.nextCircuitClass == 230)
+        #expect(recovered.flowerShowProgress.bestCampaignRatings == championRatings)
+        #expect(recovered.bestScore == 800)
+        #expect(recoveredStore.persistenceEnabled)
+        guard case let .repaired(_, backupURL) = recoveredStore.lastLoadOutcome else {
+            Issue.record("Expected a recovered load with the damaged original preserved.")
+            return
+        }
+        #expect(try Data(contentsOf: backupURL) == damaged)
+    }
+
+    @MainActor
+    @Test("A failed model write retains earned progress and recovers on retry")
+    func modelRetainsPendingProgress() throws {
+        let store = ToggleProgressStore(progress: GameProgress(
+            bestScore: 0, highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: championRatings, nextCircuitClass: 198
+            )
+        ))
+        let model = GameModel(
+            launchMode: .uiTest(seed: 198),
+            progressStore: store,
+            flowerShowAccess: FullFlowerShowAccessProvider()
+        )
+        try #require(model.prepareFlowerShowWinFixture(classNumber: 198))
+        #expect(model.nextCircuitClass == 199)
+        #expect(model.progressSaveHealth == .pending)
+        #expect(store.progress.flowerShowProgress.nextCircuitClass == 198)
+        store.acceptsWrites = true
+        model.retryPendingProgress()
+        #expect(model.progressSaveHealth == .saved)
+        #expect(store.progress.flowerShowProgress.nextCircuitClass == 199)
+        #expect(store.progress.flowerShowProgress.bestCampaignRatings == championRatings)
+    }
+
+    @MainActor
+    @Test("Restarting a completed replay replaces its result with a relaunchable saved attempt")
+    func completedReplayRestartPersists() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomReplayRestart-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        let store = FileGameProgressStore(fileURL: destination)
+        #expect(store.save(GameProgress(
+            bestScore: 0,
+            highestGarden: 2,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: [1: .seedling]
+            )
+        )))
+        let model = GameModel(
+            launchMode: .uiTest(seed: 0x571),
+            progressStore: store,
+            flowerShowAccess: FullFlowerShowAccessProvider()
+        )
+
+        #expect(model.startFlowerShowClass(1) == .started)
+        let winningRoute = [
+            GameMove(ring: .middle, direction: .counterClockwise),
+            GameMove(ring: .outer, direction: .clockwise),
+            GameMove(ring: .middle, direction: .counterClockwise),
+            GameMove(ring: .inner, direction: .counterClockwise),
+            GameMove(ring: .middle, direction: .clockwise),
+        ]
+        for move in winningRoute {
+            model.select(move.ring)
+            _ = model.rotate(move.direction)
+        }
+        #expect(model.pendingFlowerShowResult?.context.kind == .replay)
+        #expect(model.retry() == .started)
+        #expect(model.progressSaveHealth == .saved)
+        #expect(model.pendingFlowerShowResult == nil)
+
+        let relaunched = GameModel(
+            launchMode: .production,
+            progressStore: FileGameProgressStore(fileURL: destination),
+            flowerShowAccess: FullFlowerShowAccessProvider()
+        )
+        #expect(relaunched.hasActiveFlowerShow)
+        #expect(relaunched.savedFlowerShowAttemptContext == FlowerShowAttemptContext(kind: .replay, classNumber: 1))
+        #expect(relaunched.pendingFlowerShowResult == nil)
+    }
+
+    @MainActor
+    @Test("Starting another Class after a result persists only the new attempt")
+    func classBookStartAfterResultPersists() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomResultClassStart-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        let resultID = UUID()
+        let result = FlowerShowResultSummary(
+            attemptID: resultID,
+            context: FlowerShowAttemptContext(kind: .campaign, classNumber: 1),
+            rating: .seedling,
+            movesUsed: 8,
+            radiantPar: 7,
+            didUseHint: false,
+            didUseUndo: false,
+            isNewBest: true,
+            milestone: nil
+        )
+        let store = FileGameProgressStore(fileURL: destination)
+        #expect(store.save(GameProgress(
+            bestScore: 0,
+            highestGarden: 2,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: [1: .seedling],
+                pendingResult: result,
+                committedAttemptIDs: [resultID]
+            )
+        )))
+        let model = GameModel(
+            launchMode: .uiTest(seed: 0x581),
+            progressStore: store,
+            flowerShowAccess: FullFlowerShowAccessProvider()
+        )
+
+        #expect(model.pendingFlowerShowResult != nil)
+        #expect(model.startFlowerShowClass(2) == .started)
+        #expect(model.progressSaveHealth == .saved)
+        #expect(model.pendingFlowerShowResult == nil)
+
+        let relaunched = GameModel(
+            launchMode: .production,
+            progressStore: FileGameProgressStore(fileURL: destination),
+            flowerShowAccess: FullFlowerShowAccessProvider()
+        )
+        #expect(relaunched.hasActiveFlowerShow)
+        #expect(relaunched.savedFlowerShowAttemptContext == FlowerShowAttemptContext(kind: .campaign, classNumber: 2))
+        #expect(relaunched.pendingFlowerShowResult == nil)
+    }
+
+    @MainActor
+    @Test("If the newest recovery slot is damaged, the previous valid revision survives")
+    func previousValidRecoverySurvives() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomPreviousRecovery-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        let store = FileGameProgressStore(fileURL: destination)
+        #expect(store.save(GameProgress(bestScore: 100, highestGarden: 11,
+                                        flowerShowProgress: FlowerShowProgressV3(
+                                            bestCampaignRatings: championRatings,
+                                            nextCircuitClass: 229))))
+        #expect(store.save(GameProgress(bestScore: 200, highestGarden: 11,
+                                        flowerShowProgress: FlowerShowProgressV3(
+                                            bestCampaignRatings: championRatings,
+                                            nextCircuitClass: 230))))
+        let latest = destination.appendingPathExtension("recovery-v1-0")
+        try Data("damaged recovery".utf8).write(to: latest, options: .atomic)
+        try Data("damaged primary".utf8).write(to: destination, options: .atomic)
+        let recovered = FileGameProgressStore(fileURL: destination).load()
+        #expect(recovered.flowerShowProgress.nextCircuitClass == 229)
+        #expect(recovered.bestScore == 100)
+        #expect(recovered.flowerShowProgress.bestCampaignRatings == championRatings)
+    }
+
+    @MainActor
+    @Test("Circuit 198 through 230 survives a relaunch after every earned win")
+    func repeatedCircuitRelaunches() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomRepeatedCircuit-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        #expect(FileGameProgressStore(fileURL: destination).save(GameProgress(
+            bestScore: 0, highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: championRatings, nextCircuitClass: 198
+            )
+        )))
+        for number in 198 ... 230 {
+            let model = GameModel(
+                launchMode: .uiTest(seed: UInt64(number)),
+                progressStore: FileGameProgressStore(fileURL: destination),
+                flowerShowAccess: FullFlowerShowAccessProvider()
+            )
+            #expect(model.nextCircuitClass == number)
+            #expect(model.bestCampaignRatings == championRatings)
+            try #require(model.prepareFlowerShowWinFixture(classNumber: number))
+            #expect(model.progressSaveHealth == .saved)
+            let relaunched = FileGameProgressStore(fileURL: destination).load()
+            #expect(relaunched.flowerShowProgress.nextCircuitClass == number + 1)
+            #expect(relaunched.flowerShowProgress.bestCampaignRatings == championRatings)
+        }
+    }
+}
+
 struct FlowerShowV3MigrationTests {
     private struct StoredFixtureResult {
         let progress: GameProgress
@@ -617,7 +1119,7 @@ struct FlowerShowV3MigrationTests {
     }
 
     @MainActor
-    @Test("A future-version save is not rewritten by legacy backup recovery")
+    @Test("A future-version save remains read-only and is not rewritten by legacy backup recovery")
     func futureVersionSaveIsNotRewrittenByLegacyBackupRecovery() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("RingbloomFutureVersionSafety-\(UUID().uuidString)", isDirectory: true)
@@ -651,15 +1153,91 @@ struct FlowerShowV3MigrationTests {
         #expect(loaded.flowerShowProgress.bestCampaignRatings == [1: .radiant])
         #expect(try Data(contentsOf: destination) == futureData)
         #expect(try Data(contentsOf: backupURL) == legacyData)
-        #expect(store.persistenceEnabled)
-        guard case .loaded = store.lastLoadOutcome else {
-            Issue.record("A future-version representation should load without legacy recovery or rewriting.")
+        #expect(store.persistenceEnabled == false)
+        #expect(store.save(.fresh) == false)
+        #expect(try Data(contentsOf: destination) == futureData)
+        #expect(store.loadReasonCode == "future_version")
+        guard case .failed = store.lastLoadOutcome else {
+            Issue.record("A future-version representation should be read-only without rewriting.")
             return
         }
     }
 
     @MainActor
-    @Test("A mismatched legacy migration backup fails closed before rewriting the source")
+    @Test("A future-version save with an invalid optional attempt is never downgraded")
+    func futureVersionInvalidAttemptPreservesSource() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomFutureAttempt-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = directory.appendingPathComponent("progress.json")
+        let scenario = FlowerShowContent.resolve(classNumber: 198).scenario
+        let original = GameProgress(bestScore: 800, highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: [1: .radiant], nextCircuitClass: 230,
+                activeAttempt: PersistedFlowerShowAttempt(
+                    contentVersion: FlowerShowContent.contentVersion,
+                    context: FlowerShowAttemptContext(kind: .circuit, classNumber: 198),
+                    engine: FlowerShowEngine(scenario: scenario)
+                )
+            ))
+        var root = try #require(JSONSerialization.jsonObject(
+            with: JSONEncoder().encode(original)) as? [String: Any])
+        root["flowerShowCampaignVersion"] = 4
+        root["futureSchemaPayload"] = ["mustSurvive": true]
+        let futureData = try JSONSerialization.data(withJSONObject: root, options: [.sortedKeys])
+        try futureData.write(to: destination, options: .atomic)
+        let store = FileGameProgressStore(fileURL: destination)
+        let loaded = store.load()
+        #expect(loaded.flowerShowProgress.activeAttempt == nil)
+        #expect(loaded.flowerShowProgress.nextCircuitClass == 230)
+        #expect(store.persistenceEnabled == false)
+        #expect(store.save(loaded) == false)
+        #expect(try Data(contentsOf: destination) == futureData)
+        #expect(store.loadReasonCode == "future_version")
+    }
+
+    @MainActor
+    @Test("Older recovery records cannot replace a future-version primary")
+    func futureVersionIgnoresOlderRecovery() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomFutureRecovery-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let destination = directory.appendingPathComponent("progress.json")
+        let store = FileGameProgressStore(fileURL: destination)
+        let oldAttempt = Date(timeIntervalSince1970: 1_700_000_000)
+        let futureAttempt = Date(timeIntervalSince1970: 1_800_000_000)
+        #expect(store.save(GameProgress(bestScore: 900, highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: [1: .radiant], nextCircuitClass: 300
+            ), reviewRequestState: ReviewRequestState(
+                successfulGardenCompletions: 9,
+                attemptedAppVersion: "1.6", attemptedDate: oldAttempt
+            ))))
+        var root = try #require(JSONSerialization.jsonObject(
+            with: JSONEncoder().encode(GameProgress(bestScore: 800, highestGarden: 11,
+                flowerShowProgress: FlowerShowProgressV3(
+                    bestCampaignRatings: [1: .seedling], nextCircuitClass: 230
+                ), reviewRequestState: ReviewRequestState(
+                    successfulGardenCompletions: 3,
+                    attemptedAppVersion: "1.7", attemptedDate: futureAttempt
+                )))) as? [String: Any])
+        root["flowerShowCampaignVersion"] = 4
+        root["futureSchemaPayload"] = ["mustSurvive": true]
+        let futureData = try JSONSerialization.data(withJSONObject: root, options: [.sortedKeys])
+        try futureData.write(to: destination, options: .atomic)
+        let loadedStore = FileGameProgressStore(fileURL: destination)
+        let loaded = loadedStore.load()
+        #expect(loaded.reviewRequestState.successfulGardenCompletions == 3)
+        #expect(loaded.reviewRequestState.attemptedVersions == ["1.7"])
+        #expect(loaded.flowerShowProgress.nextCircuitClass == 230)
+        #expect(loaded.flowerShowProgress.bestCampaignRatings[1] == .seedling)
+        #expect(loadedStore.persistenceEnabled == false)
+        #expect(try Data(contentsOf: destination) == futureData)
+    }
+
+    @MainActor
+    @Test("A second legacy migration preserves each distinct original")
     func mismatchedLegacyMigrationBackupPreservesCurrentSource() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("RingbloomLegacyBackupCollision-\(UUID().uuidString)", isDirectory: true)
@@ -686,13 +1264,101 @@ struct FlowerShowV3MigrationTests {
             4: .seedling,
             5: .seedling,
         ])
-        #expect(try Data(contentsOf: destination) == source)
+        #expect(try Data(contentsOf: destination) != source)
         #expect(try Data(contentsOf: backupURL) == mismatchedBackup)
-        #expect(store.persistenceEnabled == false)
-        guard case .failed = store.lastLoadOutcome else {
-            Issue.record("A mismatched migration backup must fail closed.")
+        #expect(store.persistenceEnabled)
+        guard case let .migrated(_, newBackupURL) = store.lastLoadOutcome else {
+            Issue.record("A second migration should preserve its original and continue saving.")
             return
         }
+        #expect(newBackupURL != backupURL)
+        #expect(try Data(contentsOf: newBackupURL) == source)
+    }
+
+    @MainActor
+    @Test("A later suffixed legacy backup restores the highest valid earned Circuit cursor")
+    func suffixedLegacyBackupRestoresHighestCursor() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomSuffixedLegacy-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = directory.appendingPathComponent("progress.json")
+        let ratings = Dictionary(uniqueKeysWithValues: (1 ... 30).map {
+            ($0, FlowerShowRating.flourishing)
+        })
+        let regressed = GameProgress(bestScore: 1_000, highestGarden: 11,
+            flowerShowProgress: FlowerShowProgressV3(
+                bestCampaignRatings: ratings, nextCircuitClass: 198
+            ))
+        try JSONEncoder().encode(regressed).write(to: destination, options: .atomic)
+        let legacy = try #require(JSONSerialization.jsonObject(
+            with: Data(contentsOf: fixtureURL(version: 2))) as? [String: Any])
+        for (suffix, cursor) in [("flower-show-v2-backup", 198),
+                                 ("flower-show-v2-backup-2", 230)] {
+            var versioned = legacy
+            versioned["completedFlowerShowClasses"] = Array(1 ... 30)
+            versioned["currentFlowerShowClass"] = cursor
+            let data = try JSONSerialization.data(withJSONObject: versioned, options: [.sortedKeys])
+            try data.write(to: destination.appendingPathExtension(suffix), options: .atomic)
+        }
+        let store = FileGameProgressStore(fileURL: destination)
+        let recovered = store.load()
+        #expect(recovered.flowerShowProgress.nextCircuitClass == 230)
+        #expect(recovered.flowerShowProgress.bestCampaignRatings == ratings)
+        #expect(recovered.bestScore == 1_000)
+        #expect(store.persistenceEnabled)
+        let relaunched = FileGameProgressStore(fileURL: destination).load()
+        #expect(relaunched.flowerShowProgress.nextCircuitClass == 230)
+    }
+
+    @MainActor
+    @Test("Review history from recovery is durably merged without inventing old sessions")
+    func reviewHistoryRecoveryRetainsGardenDatesVersionsAndObservedSessions() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RingbloomReviewRecovery-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = directory.appendingPathComponent("progress.json")
+        let firstID = "00000000-0000-0000-0000-000000000571"
+        let secondID = "00000000-0000-0000-0000-000000000572"
+        let olderDate = Date(timeIntervalSince1970: 1_700_000_000)
+        let newerDate = Date(timeIntervalSince1970: 1_710_000_000)
+        let recoveryState = ReviewRequestState(
+            successfulGardenCompletions: 6,
+            committedCampaignResults: 2,
+            completedClassFive: true,
+            meaningfulSessionIDs: [firstID],
+            attemptedAppVersion: "1.6",
+            attemptedDate: newerDate
+        )
+        let store = FileGameProgressStore(fileURL: destination)
+        #expect(store.save(GameProgress(bestScore: 100, highestGarden: 7,
+                                        reviewRequestState: recoveryState)))
+        let regressedState = ReviewRequestState(
+            successfulGardenCompletions: 3,
+            committedCircuitResults: 1,
+            meaningfulSessionIDs: [secondID],
+            attemptedAppVersion: "1.5",
+            attemptedDate: olderDate
+        )
+        try JSONEncoder().encode(GameProgress(saveRevision: 2, bestScore: 100, highestGarden: 4,
+                                               reviewRequestState: regressedState))
+            .write(to: destination, options: .atomic)
+
+        let recovered = FileGameProgressStore(fileURL: destination).load()
+        let state = recovered.reviewRequestState
+        #expect(state.successfulGardenCompletions == 6)
+        #expect(state.committedCampaignResults == 2)
+        #expect(state.completedClassFive)
+        #expect(state.committedCircuitResults == 1)
+        #expect(Set(state.meaningfulSessionIDs) == [firstID, secondID])
+        #expect(state.attemptedVersions == ["1.5", "1.6"])
+        #expect(state.attemptedVersionDates["1.5"] == olderDate)
+        #expect(state.attemptedVersionDates["1.6"] == newerDate)
+        #expect(state.attemptedDate == newerDate)
+        #expect(recovered.highestGarden == 7)
+        #expect(recovered.saveRevision > 2)
+        #expect(FileGameProgressStore(fileURL: destination).load().reviewRequestState == state)
     }
 
     @MainActor
@@ -840,7 +1506,7 @@ struct FlowerShowV3MigrationTests {
 
     @MainActor
     @Test(
-        "A mismatched repair backup fails closed without replacing the current source",
+        "A second repair keeps both distinct originals and continues saving",
         .bug("https://linear.app/weevolve/issue/TOM-58")
     )
     func mismatchedRepairBackupPreservesCurrentSourceAndDisablesPersistence() throws {
@@ -866,15 +1532,16 @@ struct FlowerShowV3MigrationTests {
 
         let store = FileGameProgressStore(fileURL: destination)
         let loaded = store.load()
-        store.save(.fresh)
+        #expect(store.save(loaded))
 
         #expect(loaded.flowerShowProgress.nextCircuitClass == FlowerShowContent.circuitStartClass)
-        #expect(store.persistenceEnabled == false)
-        guard case .failed = store.lastLoadOutcome else {
-            Issue.record("Expected a failed load outcome for the mismatched repair backup.")
+        #expect(store.persistenceEnabled)
+        guard case let .repaired(_, newBackupURL) = store.lastLoadOutcome else {
+            Issue.record("Expected a repaired outcome despite the earlier backup.")
             return
         }
-        #expect(try Data(contentsOf: destination) == currentSource)
+        #expect(newBackupURL != backupURL)
+        #expect(try Data(contentsOf: newBackupURL) == currentSource)
         #expect(try Data(contentsOf: backupURL) == olderCorruptSource)
     }
 

@@ -1,10 +1,14 @@
-# App Review Notes — Ringbloom 1.5
+# App Review Notes — Ringbloom 1.6
 
 Ringbloom is free to download. Garden and Flower Show Classes 1–5 are free. A single non-consumable in-app purchase, **Complete Flower Show**, unlocks Classes 6–30 and the Champion Circuit. No account, login, demo credentials, subscription, advertising, or special hardware is required.
 
-## What changed in 1.5
+## What changed in 1.6
 
-Version 1.5 adds anonymous product analytics so the purchase journey and gameplay controls can be improved from real usage. Ringbloom includes AppsFlyer’s Strict iOS SDK as its sole mobile attribution provider. AppsFlyer automatically measures installs and sessions; Ringbloom sends one idempotent `af_purchase` event after the verified £2.99 Complete Flower Show purchase. PostHog separately receives explicit product analytics for screens, controls, gameplay outcomes and the Flower Show purchase journey. Session replay, element autocapture, GeoIP enrichment and user identification are disabled. AppsFlyer uses no IDFA and Ringbloom does not show an ATT prompt.
+Version 1.6 adds an optional anonymous feedback form. A visible invitation on Home and a permanent **Send feedback** row in Settings let players share ideas, feature requests or problems. Settings also includes a **Feedback reminders** toggle for the occasional post-result invitation; switching reminders off does not remove either manual entry point. The form explains that no email is needed and no individual reply is available. Feedback text goes only to the shared feedback service after the player presses Send and is never sent to PostHog or AppsFlyer.
+
+## Analytics added in 1.5
+
+Version 1.5 adds anonymous product analytics so the purchase journey and gameplay controls can be improved from real usage. Ringbloom includes AppsFlyer’s Strict iOS SDK as its sole mobile attribution provider. AppsFlyer automatically measures installs and sessions; Ringbloom sends one idempotent `af_purchase` event after a verified Complete Flower Show purchase, using the transaction’s localised price and currency. PostHog separately receives explicit product analytics for screens, controls, gameplay outcomes and the Flower Show purchase journey. Session replay, element autocapture, GeoIP enrichment and user identification are disabled. AppsFlyer uses no IDFA and Ringbloom does not show an ATT prompt.
 
 ## Core review path
 
@@ -18,7 +22,7 @@ Version 1.5 adds anonymous product analytics so the purchase journey and gamepla
 
 1. Complete Flower Show Classes 1–5. The complete Class 5 result appears first; tap **Continue** to open the purchase screen.
 2. Alternatively, open **Class Book** and tap any locked Class 6–30 tile.
-3. The purchase screen is headed **CONTINUE THE SHOW** and shows the localised price. Tap **UNLOCK FOR £2.99** and complete the sandbox non-consumable purchase.
+3. The purchase screen is headed **CONTINUE THE SHOW** and shows the localised price. Tap the **UNLOCK FOR [displayed local price]** button and complete the sandbox non-consumable purchase.
 4. The success screen confirms that Classes 6–30 and the Champion Circuit are ready. **Restore Purchases** is available on the purchase screen and no account is required.
 5. Customers who acquired paid production builds 1–4 receive full access automatically through a verified production app transaction. This legacy path intentionally does not trigger in TestFlight/sandbox, where Apple reports original app version 1.0.
 
@@ -34,6 +38,6 @@ During a playing Garden or Flower Show class, make at least one move and tap the
 
 Sound and haptics are optional and can be switched off independently. Gameplay remains understandable without either. Petal colours are paired with distinct glyphs; VoiceOver, Larger Text layouts, Increased Contrast and Reduce Motion are supported.
 
-All game state and preferences are stored locally on-device. Ringbloom has no login, account or advertising system. Network access is used for Apple StoreKit purchase/restore operations, AppsFlyer’s privacy-preserving attribution, and anonymous PostHog product analytics. PostHog receives named screens, controls and outcomes, but not game-board contents, transaction IDs, typed text or screen recordings. AppsFlyer is the sole mobile attribution provider; no TikTok SDK is included. Full details are in the linked privacy policy.
+All game state and preferences are stored locally on-device. Ringbloom has no login, account or advertising system. Network access is used for Apple StoreKit purchase/restore operations, AppsFlyer’s privacy-preserving attribution, anonymous PostHog product analytics, and the optional anonymous feedback form. PostHog receives named screens, controls and outcomes, but not game-board contents, transaction IDs, typed text or screen recordings. Feedback text goes only to the shared feedback service after the user presses Send; it is not sent to PostHog or AppsFlyer. AppsFlyer is the sole mobile attribution provider; no TikTok SDK is included. Full details are in the linked privacy policy.
 
 App Review contact: Tom Murton · shopping@tommurton.com · +447957357194.

@@ -140,7 +140,8 @@ struct FlowerShowProgressV3: Codable, Equatable, Sendable {
         let scenario = FlowerShowContent.resolve(classNumber: classNumber).scenario
         guard isValidEngineState(engine.state, for: scenario),
               engine.lastTransition.map({
-                  isValidTransition($0, for: scenario) && $0.stateAfter == engine.state
+                  isValidTransition($0, for: scenario)
+                      && matchesAfterSelection($0.stateAfter, engine.state)
               }) ?? true
         else { return false }
 
@@ -149,8 +150,17 @@ struct FlowerShowProgressV3: Codable, Equatable, Sendable {
             && undo.state.phase == .playing
             && isValidEngineState(undo.state, for: scenario)
             && (undo.lastTransition.map({
-                isValidTransition($0, for: scenario) && $0.stateAfter == undo.state
+                isValidTransition($0, for: scenario)
+                    && matchesAfterSelection($0.stateAfter, undo.state)
             }) ?? true)
+    }
+
+    /// Selection is a legal action after a turn and does not rewrite that turn's history.
+    /// Every other field still has to match the reducer's recorded outcome exactly.
+    private func matchesAfterSelection(_ historical: FlowerShowState, _ current: FlowerShowState) -> Bool {
+        var selected = historical
+        selected.selectedRing = current.selectedRing
+        return selected == current
     }
 
     private func isValidEngineState(

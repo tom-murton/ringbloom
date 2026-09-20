@@ -213,6 +213,95 @@ struct FlowerShowAccessPolicyTests {
     }
 }
 
+struct FlowerShowPurchasePreviewTests {
+    @Test func classSixPreviewUsesTheVerifiedProductionReducerChainWithoutCompletingAClass() throws {
+        let preview = try #require(FlowerShowClass6Preview.make())
+
+        #expect(preview.scenario.scenarioID == "campaign-06")
+        #expect(preview.scenario.scenarioDigest == "9a6261a14bf719236b43e948d1330006906e79bf1362700efdefc4ab159d5da9")
+        #expect(preview.scenario.refillSource.seed == 6_510_615_556_070_394_423)
+        #expect(preview.scenario.objectives.unbrokenChain == 2)
+        #expect(preview.initialState.phase == .playing)
+
+        let first = preview.firstTransition
+        #expect(first.ring == .middle)
+        #expect(first.direction == .clockwise)
+        #expect(first.bloomSpokes == [2])
+        #expect(first.unbrokenAfter.current == 1)
+        #expect(first.phase == .playing)
+
+        let second = preview.secondTransition
+        #expect(second.ring == .inner)
+        #expect(second.direction == .counterClockwise)
+        #expect(second.bloomSpokes == [0])
+        #expect(second.unbrokenAfter.current == 2)
+        #expect(second.unbrokenAfter.best == 2)
+        #expect(second.phase == .playing)
+        #expect(preview.states.count == 3)
+    }
+
+    @Test func purchasePreviewCopyNamesClassSixOnlyWhenItIsTheActualTarget() {
+        let afterFive = FlowerShowPurchasePreviewCopy(context: .afterClassFive)
+        let classSix = FlowerShowPurchasePreviewCopy(context: .lockedClass(6))
+        #expect(afterFive.eyebrow == "NEXT · CLASS 6")
+        #expect(afterFive.title == "UNBROKEN")
+        #expect(classSix == afterFive)
+
+        let later = FlowerShowPurchasePreviewCopy(context: .lockedClass(8))
+        #expect(later.eyebrow == "CLASS 6 RULE EXAMPLE")
+        #expect(later.title == "UNBROKEN")
+        #expect(later.targetTitle == "TARGET · CLASS 8 · UNBROKEN HEATS")
+
+        let home = FlowerShowPurchasePreviewCopy(context: .home)
+        #expect(home.eyebrow == "NEXT · CLASS 6")
+        #expect(home.targetTitle == nil)
+    }
+
+    @Test func classSixPreviewPresentationDepictsBothRealRotationsAndBlooms() throws {
+        let preview = try #require(FlowerShowClass6Preview.make())
+
+        let opening = preview.presentation(for: .initial)
+        #expect(opening.board == preview.initialState.board)
+        #expect(opening.rotatingRing == nil)
+        #expect(opening.bloomSpokes.isEmpty)
+
+        let firstRotation = preview.presentation(for: .firstRotation)
+        #expect(firstRotation.board == preview.initialState.board)
+        #expect(firstRotation.selectedRing == .middle)
+        #expect(firstRotation.rotatingRing == .middle)
+        #expect(firstRotation.rotationDegrees == 45)
+
+        let firstBloom = preview.presentation(for: .firstBloom)
+        #expect(firstBloom.board == preview.initialState.board.rotated(.middle, direction: .clockwise))
+        #expect(firstBloom.rotatingRing == nil)
+        #expect(firstBloom.bloomSpokes == [2])
+        #expect(firstBloom.bloomToken == 1)
+        #expect(preview.presentation(for: .firstSettled).board == preview.firstTransition.stateAfter.board)
+
+        let secondRotation = preview.presentation(for: .secondRotation)
+        #expect(secondRotation.board == preview.firstTransition.stateAfter.board)
+        #expect(secondRotation.selectedRing == .inner)
+        #expect(secondRotation.rotatingRing == .inner)
+        #expect(secondRotation.rotationDegrees == -45)
+
+        let secondBloom = preview.presentation(for: .secondBloom)
+        #expect(secondBloom.board == preview.firstTransition.stateAfter.board.rotated(.inner, direction: .counterClockwise))
+        #expect(secondBloom.rotatingRing == nil)
+        #expect(secondBloom.bloomSpokes == [0])
+        #expect(secondBloom.bloomToken == 2)
+        #expect(preview.presentation(for: .complete).board == preview.secondTransition.stateAfter.board)
+    }
+
+    @Test func classSixPreviewPhasesAdvanceWithoutLeavingACompletedPauseAction() {
+        #expect(FlowerShowClass6PreviewPhase.initial.wait == .milliseconds(600))
+        #expect(FlowerShowClass6PreviewPhase.initial.next == .firstRotation)
+        #expect(FlowerShowClass6PreviewPhase.firstBloom.next == .firstSettled)
+        #expect(FlowerShowClass6PreviewPhase.secondBloom.next == .complete)
+        #expect(FlowerShowClass6PreviewPhase.complete.isComplete)
+        #expect(FlowerShowClass6PreviewPhase.complete.next == .complete)
+    }
+}
+
 private enum FlowerShowAccessTransactionSnapshotFactory {
     static func make(
         environment: FlowerShowTransactionEnvironment,
@@ -240,8 +329,29 @@ private final class TestFullFlowerShowAccessProvider: FlowerShowAccessProviding 
 private final class RecordingPurchaseAttributionTracker: PurchaseAttributionTracking {
     private(set) var transactionIDs: [UInt64] = []
 
-    func trackUnlockPurchase(transactionID: UInt64) {
-        transactionIDs.append(transactionID)
+    func trackVerifiedNewPurchase(_ transaction: FlowerShowPurchaseTransaction) {
+        guard !transactionIDs.contains(transaction.id) else { return }
+        transactionIDs.append(transaction.id)
+    }
+}
+
+@MainActor
+private final class PayloadPurchaseAttributionTracker: PurchaseAttributionTracking {
+    let reporter: IdempotentAppsFlyerPurchaseReporter
+    init(defaults: UserDefaults, logger: @escaping (String, [AnyHashable: Any]) -> Void) {
+        reporter = IdempotentAppsFlyerPurchaseReporter(defaults: defaults, eventLogger: logger)
+    }
+    func trackVerifiedNewPurchase(_ transaction: FlowerShowPurchaseTransaction) {
+        reporter.reportVerifiedNewPurchase(.init(transaction))
+    }
+}
+
+@MainActor
+private final class RecordingPurchaseBoundaryAnalytics: PurchaseBoundaryAnalyticsTracking {
+    private(set) var events: [(String, String, String)] = []
+
+    func purchaseVerifiedNew(source: String, environment: String, moneyStatus: String) {
+        events.append((source, environment, moneyStatus))
     }
 }
 
@@ -606,6 +716,17 @@ struct FlowerShowHomeProgressTests {
 
 @MainActor
 struct FlowerShowStoreClientCompositionTests {
+    @Test func analyticsPurchaseFixtureRequiresAllExplicitTestGuards() {
+        let args = ["--ui-testing", "--analytics-purchase-fixture"]
+        #expect(FlowerShowStoreClientComposition.resolve(environment: [:], arguments: args) == .production)
+        #expect(FlowerShowStoreClientComposition.resolve(environment: ["RINGBLOOM_ANALYTICS_TEST_INGESTION": "1"], arguments: []) == .production)
+        #expect(FlowerShowStoreClientComposition.resolve(environment: ["RINGBLOOM_ANALYTICS_TEST_INGESTION": "true"], arguments: args) == .production)
+        #expect(FlowerShowStoreClientComposition.resolve(environment: ["RINGBLOOM_ANALYTICS_TEST_INGESTION": "1"], arguments: args) == .analyticsUIVerification)
+        #expect(FlowerShowStoreClientComposition.resolve(environment: [
+            "RINGBLOOM_ANALYTICS_TEST_INGESTION": "1", "XCInjectBundle": "/tmp/RingbloomTests.xctest",
+        ], arguments: args) == .hostedUnitTests)
+    }
+
     @Test(
         "Hosted tests use a no-I/O client while ordinary launches retain StoreKit",
         .bug("https://linear.app/weevolve/issue/TOM-62")
@@ -684,7 +805,13 @@ private final class FakeFlowerShowStoreClient: FlowerShowStoreClient {
                     id: 42,
                     productID: FlowerShowAccessPolicy.productID,
                     isVerified: true,
-                    isRevoked: false
+                    isRevoked: false,
+                    price: Decimal(string: "2.11"),
+                    currencyCode: "GBP",
+                    purchaseDate: .distantFuture,
+                    originalPurchaseDate: .distantFuture,
+                    environment: .sandbox,
+                    ownership: .purchased
                 )
             )
         ),
@@ -954,6 +1081,28 @@ private final class CheckedRequest<Value: Sendable>: @unchecked Sendable {
     }
 }
 
+/// Every fake-client test gets its own durable provenance domain. Tests that exercise a
+/// relaunch explicitly pass the same provenance store across instances.
+@MainActor
+private func isolatedFlowerShowStore(
+    client: any FlowerShowStoreClient,
+    launchOverrides: FlowerShowLaunchOverrides = .production,
+    purchaseAttribution: any PurchaseAttributionTracking = NoOpPurchaseAttributionTracker(),
+    purchaseAnalytics: any PurchaseBoundaryAnalyticsTracking = RecordingPurchaseBoundaryAnalytics(),
+    purchaseProvenance: (any FlowerShowPurchaseProvenanceStoring)? = nil,
+    now: @escaping () -> Date = Date.init
+) -> FlowerShowStore {
+    guard let defaults = UserDefaults(suiteName: "StoreCase.\(UUID().uuidString)") else {
+        preconditionFailure("Cannot create isolated test defaults")
+    }
+    return FlowerShowStore(
+        client: client, launchOverrides: launchOverrides, purchaseAttribution: purchaseAttribution,
+        purchaseAnalytics: purchaseAnalytics,
+        purchaseProvenance: purchaseProvenance ?? UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults),
+        now: now
+    )
+}
+
 @MainActor
 private func waitForAccessState(
     _ expectedState: FlowerShowAccessState,
@@ -1006,7 +1155,13 @@ private enum StoreTestFixture {
             id: id,
             productID: FlowerShowAccessPolicy.productID,
             isVerified: true,
-            isRevoked: revoked
+            isRevoked: revoked,
+            price: Decimal(string: "2.11"),
+            currencyCode: "GBP",
+            purchaseDate: .distantFuture,
+            originalPurchaseDate: .distantFuture,
+            environment: .sandbox,
+            ownership: .purchased
         )
     }
 
@@ -1023,6 +1178,251 @@ private enum StoreTestFixture {
 
 @MainActor
 struct FlowerShowStoreTests {
+    @Test func pendingApprovalAfterRelaunchReportsOnceAndDoesNotRepeatPostHog() async throws {
+        let defaults = try #require(UserDefaults(suiteName: "FlowerShowPending.\(UUID().uuidString)"))
+        let provenance = UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults)
+        let firstClient = FakeFlowerShowStoreClient(purchaseOutcome: .success(.pending))
+        let firstStore = isolatedFlowerShowStore(
+            client: firstClient, launchOverrides: .production, purchaseProvenance: provenance,
+            now: { Date(timeIntervalSince1970: 1_000) }
+        )
+        await waitForProductState(
+            .available(FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")),
+            in: firstStore
+        )
+        let firstResult = await firstStore.purchase()
+        #expect(firstResult == false)
+        firstStore.stopTransactionListener()
+
+        let attribution = RecordingPurchaseAttributionTracker()
+        let analytics = RecordingPurchaseBoundaryAnalytics()
+        let secondClient = FakeFlowerShowStoreClient()
+        let secondStore = isolatedFlowerShowStore(
+            client: secondClient, launchOverrides: .production, purchaseAttribution: attribution,
+            purchaseAnalytics: analytics, purchaseProvenance: provenance,
+            now: { Date(timeIntervalSince1970: 1_001) }
+        )
+        #expect(secondStore.purchaseState == .pending)
+        let retryResult = await secondStore.purchase()
+        #expect(retryResult == false)
+        #expect(secondClient.purchaseCallCount == 0)
+        let approved = FlowerShowPurchaseTransaction(
+            id: 501, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+            price: Decimal(string: "2.54"), currencyCode: "USD",
+            purchaseDate: Date(timeIntervalSince1970: 1_001), originalPurchaseDate: Date(timeIntervalSince1970: 1_001),
+            environment: .sandbox, ownership: .purchased
+        )
+        secondClient.yieldTransaction(approved)
+        await secondClient.waitForFinishedTransaction(after: 0)
+        secondClient.yieldTransaction(approved)
+        await waitForAccessState(.full(.storePurchase), in: secondStore)
+        #expect(attribution.transactionIDs == [501])
+        #expect(analytics.events.count == 1)
+        #expect(analytics.events.first?.0 == "pending_approved")
+        #expect(analytics.events.first?.1 == "sandbox")
+        #expect(analytics.events.first?.2 == "positive")
+        secondStore.stopTransactionListener()
+    }
+
+    @Test(.timeLimit(.minutes(1)), arguments: [true, false])
+    func pendingApprovalDuringRestoreReportsActualMoneyAndFinishesOnce(isPending: Bool) async throws {
+        let suite = "PendingRestore.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let provenance = UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults)
+        provenance.beginIntent(for: FlowerShowAccessPolicy.productID, at: Date(timeIntervalSince1970: 1_000))
+        if isPending { provenance.markIntentPending() }
+        var events: [[AnyHashable: Any]] = []
+        let attribution = PayloadPurchaseAttributionTracker(defaults: defaults) { _, payload in events.append(payload) }
+        let analytics = RecordingPurchaseBoundaryAnalytics()
+        let client = FakeFlowerShowStoreClient(suspendsSyncRequests: true)
+        let store = isolatedFlowerShowStore(
+            client: client, launchOverrides: .production, purchaseAttribution: attribution,
+            purchaseAnalytics: analytics, purchaseProvenance: provenance,
+            now: { Date(timeIntervalSince1970: 1_002) }
+        )
+        defer { store.stopTransactionListener() }
+        let restore = Task { await store.restorePurchases() }
+        await client.waitForSyncCall(after: 0)
+        let approved = FlowerShowPurchaseTransaction(
+            id: 503, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+            price: Decimal(string: "2.54"), currencyCode: "USD",
+            purchaseDate: Date(timeIntervalSince1970: 1_001), originalPurchaseDate: Date(timeIntervalSince1970: 1_001),
+            environment: .sandbox, ownership: .purchased
+        )
+        client.yieldTransaction(approved)
+        await client.waitForFinishedTransaction(after: 0)
+        client.completeSyncRequest(at: 0, with: .success(()))
+        await restore.value
+        #expect(store.hasFullFlowerShowAccess)
+        #expect(client.finishedIDs == [503])
+        #expect(analytics.events.count == (isPending ? 1 : 0))
+        #expect(events.count == (isPending ? 1 : 0))
+        if isPending {
+            #expect(analytics.events.first?.0 == "pending_approved")
+            #expect(events.first?["af_revenue"] as? Decimal == Decimal(string: "2.54"))
+            #expect(events.first?["af_currency"] as? String == "USD")
+        }
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func pendingIntentSurvivesRestoreAndResetButExpiresWithoutRelaunch() async throws {
+        let suite = "PendingExpiry.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let provenance = UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults)
+        var date = Date(timeIntervalSince1970: 1_000)
+        provenance.beginIntent(for: FlowerShowAccessPolicy.productID, at: date)
+        provenance.markIntentPending()
+        let client = FakeFlowerShowStoreClient(purchaseOutcome: .success(.userCancelled))
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production, purchaseProvenance: provenance, now: { date })
+        defer { store.stopTransactionListener() }
+        await waitForProductState(.available(FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")), in: store)
+        await store.restorePurchases()
+        store.resetPurchaseState()
+        #expect(store.purchaseState == .pending)
+        #expect(await store.purchase() == false)
+        #expect(client.purchaseCallCount == 0)
+        #expect(provenance.hasPendingIntent(at: date))
+        date = date.addingTimeInterval(7 * 24 * 60 * 60 + 1)
+        store.refreshPendingPurchaseState()
+        #expect(store.purchaseState == .idle)
+        #expect(await store.purchase() == false)
+        #expect(client.purchaseCallCount == 1)
+        #expect(provenance.hasPendingIntent(at: date) == false)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func historicDirectPurchaseBeforeBootstrapGrantsAccessWithoutNewOutcome() async throws {
+        let suite = "HistoricDirect.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let transaction = FlowerShowPurchaseTransaction(
+            id: 504, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+            price: Decimal(string: "2.11"), currencyCode: "GBP",
+            purchaseDate: Date(timeIntervalSince1970: 999), originalPurchaseDate: Date(timeIntervalSince1970: 999),
+            environment: .production, ownership: .purchased
+        )
+        let client = FakeFlowerShowStoreClient(purchaseOutcome: .success(.success(transaction)), suspendsEntitlementRequests: true)
+        let attribution = RecordingPurchaseAttributionTracker()
+        let analytics = RecordingPurchaseBoundaryAnalytics()
+        let store = isolatedFlowerShowStore(
+            client: client, launchOverrides: .production, purchaseAttribution: attribution,
+            purchaseAnalytics: analytics, purchaseProvenance: UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults),
+            now: { Date(timeIntervalSince1970: 1_000) }
+        )
+        defer { store.stopTransactionListener() }
+        await waitForProductState(.available(FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")), in: store)
+        await client.waitForEntitlementCall(after: 0)
+        let purchase = Task { await store.purchase() }
+        await client.waitForEntitlementCall(after: 1)
+        client.completeEntitlementRequest(at: 1, with: .success(StoreTestFixture.emptySnapshot))
+        let result = await purchase.value
+        #expect(result == false)
+        #expect(store.hasFullFlowerShowAccess)
+        #expect(client.finishedIDs == [504])
+        #expect(attribution.transactionIDs.isEmpty)
+        #expect(analytics.events.isEmpty)
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func missingMoneyLaterUpdateCompletesRevenueWithoutSecondBoundaryEvent() async throws {
+        let suite = "LaterMoney.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let purchaseDate = Date(timeIntervalSince1970: 1_001)
+        func transaction(price: Decimal?, currency: String?) -> FlowerShowPurchaseTransaction {
+            FlowerShowPurchaseTransaction(
+                id: 505, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+                price: price, currencyCode: currency, purchaseDate: purchaseDate, originalPurchaseDate: purchaseDate,
+                environment: .sandbox, ownership: .purchased
+            )
+        }
+        let client = FakeFlowerShowStoreClient(purchaseOutcome: .success(.success(transaction(price: nil, currency: nil))))
+        var events: [[AnyHashable: Any]] = []
+        let attribution = PayloadPurchaseAttributionTracker(defaults: defaults) { _, payload in events.append(payload) }
+        let analytics = RecordingPurchaseBoundaryAnalytics()
+        let store = isolatedFlowerShowStore(
+            client: client, launchOverrides: .production, purchaseAttribution: attribution,
+            purchaseAnalytics: analytics, purchaseProvenance: UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults),
+            now: { Date(timeIntervalSince1970: 1_000) }
+        )
+        defer { store.stopTransactionListener() }
+        await waitForProductState(.available(FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")), in: store)
+        #expect(await store.purchase())
+        #expect(events.isEmpty)
+        #expect(analytics.events.count == 1)
+        #expect(analytics.events.first?.2 == "unavailable")
+        let calls = client.entitlementCallCount
+        client.yieldTransaction(transaction(price: Decimal(string: "2.54"), currency: "USD"))
+        await client.waitForEntitlementCall(after: calls)
+        #expect(events.count == 1)
+        #expect(events.first?["af_currency"] as? String == "USD")
+        #expect(events.first?["af_revenue"] as? Decimal == Decimal(string: "2.54"))
+        #expect(analytics.events.count == 1)
+        #expect(client.finishedIDs == [505])
+    }
+
+    @Test(arguments: [
+        (Decimal(-1) as Decimal?, "GBP" as String?, "unavailable"),
+        (Decimal(1), "ZZZ", "unavailable"),
+        (Decimal.nan, "GBP", "unavailable"),
+        (nil, nil, "unavailable"),
+        (Decimal(0), "JPY", "zero"),
+    ])
+    func purchaseMoneyStatusUsesTheSameValidationAsRevenue(
+        price: Decimal?, currency: String?, expectedStatus: String
+    ) async throws {
+        let suite = "MoneyStatus.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let transaction = FlowerShowPurchaseTransaction(
+            id: 506, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+            price: price, currencyCode: currency,
+            purchaseDate: Date(timeIntervalSince1970: 1_001), originalPurchaseDate: Date(timeIntervalSince1970: 1_001),
+            environment: .sandbox, ownership: .purchased
+        )
+        let client = FakeFlowerShowStoreClient(purchaseOutcome: .success(.success(transaction)))
+        var events: [[AnyHashable: Any]] = []
+        let attribution = PayloadPurchaseAttributionTracker(defaults: defaults) { _, payload in events.append(payload) }
+        let analytics = RecordingPurchaseBoundaryAnalytics()
+        let store = isolatedFlowerShowStore(
+            client: client, launchOverrides: .production, purchaseAttribution: attribution,
+            purchaseAnalytics: analytics, purchaseProvenance: UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults),
+            now: { Date(timeIntervalSince1970: 1_000) }
+        )
+        defer { store.stopTransactionListener() }
+        await waitForProductState(.available(FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")), in: store)
+        #expect(await store.purchase())
+        #expect(analytics.events.count == 1)
+        #expect(analytics.events.first?.2 == expectedStatus)
+        #expect(events.count == (expectedStatus == "zero" ? 1 : 0))
+    }
+
+    @Test func historicOrFamilyOwnershipStillUnlocksButNeverQualifiesAsLocalRevenue() async throws {
+        let defaults = try #require(UserDefaults(suiteName: "FlowerShowHistoric.\(UUID().uuidString)"))
+        let provenance = UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults)
+        provenance.beginIntent(for: FlowerShowAccessPolicy.productID, at: Date(timeIntervalSince1970: 1_000))
+        let attribution = RecordingPurchaseAttributionTracker()
+        let analytics = RecordingPurchaseBoundaryAnalytics()
+        let client = FakeFlowerShowStoreClient()
+        let store = isolatedFlowerShowStore(
+            client: client, launchOverrides: .production, purchaseAttribution: attribution,
+            purchaseAnalytics: analytics, purchaseProvenance: provenance,
+            now: { Date(timeIntervalSince1970: 1_001) }
+        )
+        client.yieldTransaction(FlowerShowPurchaseTransaction(
+            id: 502, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+            price: Decimal(string: "2.11"), currencyCode: "GBP",
+            purchaseDate: Date(timeIntervalSince1970: 999), originalPurchaseDate: Date(timeIntervalSince1970: 999),
+            environment: .production, ownership: .purchased
+        ))
+        await client.waitForFinishedTransaction(after: 0)
+        #expect(store.hasFullFlowerShowAccess)
+        #expect(attribution.transactionIDs.isEmpty)
+        #expect(analytics.events.isEmpty)
+        store.stopTransactionListener()
+    }
     @Test(
         arguments: [
             FlowerShowAppTransactionCheck.unverified,
@@ -1041,7 +1441,7 @@ struct FlowerShowStoreTests {
         let client = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(appTransaction: appTransaction)
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         let progressStore = InMemoryGameProgressStore(
             progress: GameProgress(
                 bestScore: 9_999,
@@ -1068,7 +1468,7 @@ struct FlowerShowStoreTests {
     @Test func verifiedPurchaseUnlocksAndFinishesExactlyOnce() async {
         let client = FakeFlowerShowStoreClient()
         let attribution = RecordingPurchaseAttributionTracker()
-        let store = FlowerShowStore(
+        let store = isolatedFlowerShowStore(
             client: client,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .sample,
@@ -1092,9 +1492,26 @@ struct FlowerShowStoreTests {
         #expect(attribution.transactionIDs == [42])
     }
 
+    @Test func repeatedDirectResultForKnownTransactionIsNotNewPurchaseSuccess() async {
+        let client = FakeFlowerShowStoreClient()
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
+        await waitForProductState(
+            .available(FlowerShowProductInfo(
+                productID: FlowerShowAccessPolicy.productID,
+                displayPrice: "£2.99"
+            )), in: store
+        )
+
+        #expect(await store.purchase())
+        #expect(await store.purchase() == false)
+        #expect(store.accessState == .full(.storePurchase))
+        #expect(client.finishedIDs == [42])
+        store.stopTransactionListener()
+    }
+
     @Test func cancellationDoesNotChangeAccessOrShowAnError() async {
         let client = FakeFlowerShowStoreClient(purchaseOutcome: .success(.userCancelled))
-        let store = FlowerShowStore(
+        let store = isolatedFlowerShowStore(
             client: client,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .sample,
@@ -1122,7 +1539,7 @@ struct FlowerShowStoreTests {
                 )
             )
         )
-        let store = FlowerShowStore(
+        let store = isolatedFlowerShowStore(
             client: client,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .sample,
@@ -1150,7 +1567,7 @@ struct FlowerShowStoreTests {
                 )
             )
         )
-        let store = FlowerShowStore(
+        let store = isolatedFlowerShowStore(
             client: client,
             launchOverrides: .production
         )
@@ -1172,7 +1589,7 @@ struct FlowerShowStoreTests {
             entitlement: StoreTestFixture.snapshot(purchase: transaction),
             purchaseOutcome: .success(.success(transaction))
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await store.retryProductLoad()
         await store.purchase()
         #expect(store.accessState == .full(.storePurchase))
@@ -1199,7 +1616,7 @@ struct FlowerShowStoreTests {
             entitlement: StoreTestFixture.emptySnapshot,
             suspendsEntitlementRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await client.waitForEntitlementCall(after: 0)
 
         client.yieldTransaction(StoreTestFixture.purchase(id: 101))
@@ -1223,7 +1640,7 @@ struct FlowerShowStoreTests {
             entitlement: StoreTestFixture.emptySnapshot,
             suspendsEntitlementRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await client.waitForEntitlementCall(after: 0)
 
         client.yieldTransaction(StoreTestFixture.purchase(id: 102))
@@ -1250,7 +1667,7 @@ struct FlowerShowStoreTests {
             entitlement: StoreTestFixture.emptySnapshot,
             suspendsEntitlementRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await client.waitForEntitlementCall(after: 0)
 
         let firstRefresh = Task { await store.retryAccessCheck() }
@@ -1279,7 +1696,7 @@ struct FlowerShowStoreTests {
         let client = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(purchase: StoreTestFixture.purchase(id: 103))
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
 
         client.suspendsEntitlementRequests = true
@@ -1313,7 +1730,7 @@ struct FlowerShowStoreTests {
             purchaseOutcome: .success(.success(transaction)),
             suspendsFinishRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForProductState(
             .available(
                 FlowerShowProductInfo(
@@ -1365,7 +1782,7 @@ struct FlowerShowStoreTests {
             suspendsEntitlementRequests: true,
             suspendsPurchaseRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForProductState(
             .available(
                 FlowerShowProductInfo(
@@ -1409,7 +1826,7 @@ struct FlowerShowStoreTests {
             purchaseOutcome: .success(.success(newTransaction)),
             suspendsFinishRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForProductState(
             .available(
                 FlowerShowProductInfo(
@@ -1453,7 +1870,7 @@ struct FlowerShowStoreTests {
         let client = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(purchase: oldTransaction)
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         client.entitlement = StoreTestFixture.snapshot(purchase: newTransaction)
 
@@ -1494,7 +1911,7 @@ struct FlowerShowStoreTests {
                 purchase: StoreTestFixture.purchase(id: 104)
             )
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         client.entitlement = StoreTestFixture.emptySnapshot
 
@@ -1517,7 +1934,7 @@ struct FlowerShowStoreTests {
             purchaseOutcome: .success(.success(transaction)),
             suspendsPurchaseRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForProductState(
             .available(
                 FlowerShowProductInfo(
@@ -1550,7 +1967,7 @@ struct FlowerShowStoreTests {
             purchaseOutcome: .success(.success(directTransaction)),
             suspendsFinishRequests: true
         )
-        let directStore = FlowerShowStore(
+        let directStore = isolatedFlowerShowStore(
             client: directClient,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .sample,
@@ -1572,7 +1989,7 @@ struct FlowerShowStoreTests {
             entitlement: StoreTestFixture.emptySnapshot,
             suspendsFinishRequests: true
         )
-        let updateStore = FlowerShowStore(client: updateClient, launchOverrides: .production)
+        let updateStore = isolatedFlowerShowStore(client: updateClient, launchOverrides: .production)
         await waitForAccessState(.sample, in: updateStore)
         updateClient.yieldTransaction(updateTransaction)
         await updateClient.waitForFinishedTransaction(after: 0)
@@ -1594,7 +2011,7 @@ struct FlowerShowStoreTests {
             suspendsProductRequests: true,
             suspendsEntitlementRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await client.waitForProductCall(after: 0)
         await client.waitForEntitlementCall(after: 0)
 
@@ -1620,7 +2037,7 @@ struct FlowerShowStoreTests {
             suspendsProductRequests: true,
             suspendsEntitlementRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await client.waitForProductCall(after: 0)
         await client.waitForEntitlementCall(after: 0)
 
@@ -1644,7 +2061,7 @@ struct FlowerShowStoreTests {
             entitlement: StoreTestFixture.snapshot(purchase: StoreTestFixture.purchase(id: 107))
         )
         client.loadProductError = FlowerShowStoreClientError.failed
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
 
         await waitForAccessState(.full(.storePurchase), in: store)
         await waitForProductState(.unavailable, in: store)
@@ -1662,7 +2079,7 @@ struct FlowerShowStoreTests {
             suspendsProductRequests: true,
             suspendsEntitlementRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await client.waitForProductCall(after: 0)
         await client.waitForEntitlementCall(after: 0)
         client.completeEntitlementRequest(at: 0, with: .success(StoreTestFixture.emptySnapshot))
@@ -1683,7 +2100,7 @@ struct FlowerShowStoreTests {
             suspendsProductRequests: true,
             suspendsEntitlementRequests: true
         )
-        var store: FlowerShowStore? = FlowerShowStore(client: client, launchOverrides: .production)
+        var store: FlowerShowStore? = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         weak let weakStore = store
         await client.waitForProductCall(after: 0)
         await client.waitForEntitlementCall(after: 0)
@@ -1704,7 +2121,7 @@ struct FlowerShowStoreTests {
     )
     func doublePurchaseInvokesClientOnce() async {
         let client = FakeFlowerShowStoreClient(suspendsPurchaseRequests: true)
-        let store = FlowerShowStore(
+        let store = isolatedFlowerShowStore(
             client: client,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .sample,
@@ -1733,7 +2150,7 @@ struct FlowerShowStoreTests {
             entitlement: StoreTestFixture.emptySnapshot,
             suspendsSyncRequests: true
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.sample, in: store)
         let first = Task { await store.restorePurchases() }
         await client.waitForSyncCall(after: 0)
@@ -1753,7 +2170,7 @@ struct FlowerShowStoreTests {
     )
     func restoreCannotBeginDuringPurchase() async {
         let client = FakeFlowerShowStoreClient(suspendsPurchaseRequests: true)
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForProductState(
             .available(FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")),
             in: store
@@ -1774,7 +2191,7 @@ struct FlowerShowStoreTests {
     )
     func purchaseCannotBeginDuringRestore() async {
         let client = FakeFlowerShowStoreClient(suspendsSyncRequests: true)
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForProductState(
             .available(FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")),
             in: store
@@ -1796,7 +2213,7 @@ struct FlowerShowStoreTests {
     func transactionListenerUnlocksDuringRestore() async {
         let client = FakeFlowerShowStoreClient(suspendsSyncRequests: true)
         let attribution = RecordingPurchaseAttributionTracker()
-        let store = FlowerShowStore(
+        let store = isolatedFlowerShowStore(
             client: client,
             launchOverrides: .production,
             purchaseAttribution: attribution
@@ -1825,7 +2242,7 @@ struct FlowerShowStoreTests {
             purchase: StoreTestFixture.purchase(id: 109)
         )
         let client = FakeFlowerShowStoreClient(entitlement: legacyAndPurchase)
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         client.entitlement = StoreTestFixture.snapshot(
             appTransaction: StoreTestFixture.legacyAppTransaction
@@ -1849,7 +2266,7 @@ struct FlowerShowStoreTests {
                 purchase: StoreTestFixture.purchase(id: 110)
             )
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         client.entitlementError = FlowerShowStoreClientError.failed
         client.yieldTransaction(StoreTestFixture.purchase(id: 110, revoked: true))
@@ -1868,7 +2285,7 @@ struct FlowerShowStoreTests {
         let client = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(purchase: StoreTestFixture.purchase(id: 111))
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         client.entitlement = StoreTestFixture.emptySnapshot
         client.yieldTransaction(StoreTestFixture.purchase(id: 111, revoked: true))
@@ -1887,7 +2304,7 @@ struct FlowerShowStoreTests {
         let client = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(purchase: StoreTestFixture.purchase(id: 112))
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         client.entitlementError = FlowerShowStoreClientError.failed
         client.yieldTransaction(StoreTestFixture.purchase(id: 112, revoked: true))
@@ -1907,7 +2324,7 @@ struct FlowerShowStoreTests {
         let client = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(purchase: StoreTestFixture.purchase(id: 113))
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         client.entitlement = StoreTestFixture.emptySnapshot
 
@@ -1929,7 +2346,7 @@ struct FlowerShowStoreTests {
         let client = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(purchase: transaction)
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: store)
         let progressStore = InMemoryGameProgressStore(
             progress: GameProgress(
@@ -1966,7 +2383,7 @@ struct FlowerShowStoreTests {
     )
     func restoreWithoutEntitlementReturnsToIdle() async {
         let client = FakeFlowerShowStoreClient(entitlement: StoreTestFixture.emptySnapshot)
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForAccessState(.sample, in: store)
 
         await store.restorePurchases()
@@ -1993,7 +2410,7 @@ struct FlowerShowStoreTests {
             ),
             purchaseOutcome: .failure(FlowerShowStoreClientError.productUnavailable)
         )
-        let store = FlowerShowStore(client: client, launchOverrides: .production)
+        let store = isolatedFlowerShowStore(client: client, launchOverrides: .production)
         await waitForProductState(.available(product), in: store)
         await waitForAccessState(.full(.storePurchase), in: store)
 
@@ -2023,7 +2440,7 @@ struct FlowerShowStoreTests {
             client: FakeFlowerShowStoreClient,
             purchase: FlowerShowLaunchPurchaseOverride? = nil
         ) -> FlowerShowStore {
-            FlowerShowStore(
+            isolatedFlowerShowStore(
                 client: client,
                 launchOverrides: FlowerShowLaunchOverrides(
                     access: .sample,
@@ -2059,7 +2476,7 @@ struct FlowerShowStoreTests {
         let syncClient = FakeFlowerShowStoreClient(
             entitlement: StoreTestFixture.snapshot(purchase: StoreTestFixture.purchase(id: 203))
         )
-        let syncStore = FlowerShowStore(client: syncClient, launchOverrides: .production)
+        let syncStore = isolatedFlowerShowStore(client: syncClient, launchOverrides: .production)
         await waitForAccessState(.full(.storePurchase), in: syncStore)
         syncClient.syncError = FlowerShowStoreClientError.failed
         await syncStore.restorePurchases()
@@ -2072,7 +2489,7 @@ struct FlowerShowStoreTests {
     @Test("Deterministic access retry transitions avoid StoreKit", .bug("https://linear.app/weevolve/issue/TOM-57"))
     func deterministicAccessRetryTransitionsAvoidStoreKit() async {
         let client = FakeFlowerShowStoreClient()
-        let fullStore = FlowerShowStore(
+        let fullStore = isolatedFlowerShowStore(
             client: client,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .checkingThenFull,
@@ -2084,7 +2501,7 @@ struct FlowerShowStoreTests {
         await fullStore.retryAccessCheck()
         #expect(fullStore.accessState == .full(.storePurchase))
 
-        let sampleStore = FlowerShowStore(
+        let sampleStore = isolatedFlowerShowStore(
             client: client,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .checkingThenSample,
@@ -2109,7 +2526,7 @@ struct FlowerShowStoreTests {
             purchase: FlowerShowLaunchPurchaseOverride? = nil,
             restore: FlowerShowLaunchRestoreOverride? = nil
         ) -> FlowerShowStore {
-            FlowerShowStore(
+            isolatedFlowerShowStore(
                 client: client,
                 launchOverrides: FlowerShowLaunchOverrides(
                     access: .sample,
@@ -2158,7 +2575,7 @@ struct FlowerShowStoreTests {
     @Test func productRetryCanRecoverFromAProductLoadFailure() async {
         let client = FakeFlowerShowStoreClient()
         client.product = nil
-        let store = FlowerShowStore(
+        let store = isolatedFlowerShowStore(
             client: client,
             launchOverrides: FlowerShowLaunchOverrides(
                 access: .sample,

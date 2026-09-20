@@ -24,6 +24,71 @@ private let allMoves = Ring.allCases.flatMap { ring in
     RotationDirection.allCases.map { GameMove(ring: ring, direction: $0) }
 }
 
+struct ReviewRequestPolicyTests {
+    private let firstSession = "00000000-0000-0000-0000-000000000571"
+    private let secondSession = "00000000-0000-0000-0000-000000000572"
+    private let now = Date(timeIntervalSince1970: 1_800_000_000)
+
+    @Test func legacyReviewHistoryDecodesWithoutInventingSessions() throws {
+        let legacy = Data("""
+        {"successfulGardenCompletions":7,"attemptedAppVersion":"1.5","attemptedDate":1000}
+        """.utf8)
+        let state = try JSONDecoder().decode(ReviewRequestState.self, from: legacy)
+        #expect(state.successfulGardenCompletions == 7)
+        #expect(state.attemptedAppVersion == "1.5")
+        #expect(state.attemptedDate == Date(timeIntervalSinceReferenceDate: 1000))
+        #expect(state.attemptedVersions.contains("1.5"))
+        #expect(state.meaningfulSessionIDs.isEmpty)
+        #expect(ReviewRequestPolicy.isEligible(state: state, now: now, appVersion: "1.6") == false)
+    }
+
+    @Test func twoGardenWinsInOneProcessDoNotQualifyUntilAnotherMeaningfulSession() {
+        var state = ReviewRequestState()
+        ReviewRequestPolicy.registerSuccessfulGarden(state: &state, sessionID: firstSession)
+        ReviewRequestPolicy.registerSuccessfulGarden(state: &state, sessionID: firstSession)
+        #expect(state.successfulGardenCompletions == 2)
+        #expect(state.meaningfulSessionIDs.count == 1)
+        #expect(ReviewRequestPolicy.eligibleReason(state: state, now: now, appVersion: "1.6") == nil)
+        ReviewRequestPolicy.registerSuccessfulGarden(state: &state, sessionID: secondSession)
+        #expect(ReviewRequestPolicy.eligibleReason(state: state, now: now, appVersion: "1.6") == .gardenEstablishedUse)
+    }
+
+    @Test func crossModeAndCircuitRoutesNeedRealSessionsAndIgnoreRepeatedMarker() {
+        var crossMode = ReviewRequestState()
+        ReviewRequestPolicy.registerSuccessfulGarden(state: &crossMode, sessionID: firstSession)
+        ReviewRequestPolicy.registerCommittedCampaign(state: &crossMode, classNumber: 5, sessionID: firstSession)
+        #expect(crossMode.completedClassFive)
+        #expect(ReviewRequestPolicy.eligibleReason(state: crossMode, now: now, appVersion: "1.6") == nil)
+        ReviewRequestPolicy.registerCommittedCampaign(state: &crossMode, classNumber: 6, sessionID: secondSession)
+        #expect(ReviewRequestPolicy.eligibleReason(state: crossMode, now: now, appVersion: "1.6") == .gardenToFlowerShow)
+
+        var circuit = ReviewRequestState()
+        ReviewRequestPolicy.registerAdvancedCircuit(state: &circuit, sessionID: firstSession)
+        ReviewRequestPolicy.registerAdvancedCircuit(state: &circuit, sessionID: firstSession)
+        #expect(circuit.meaningfulSessionIDs.count == 1)
+        #expect(ReviewRequestPolicy.eligibleReason(state: circuit, now: now, appVersion: "1.6") == nil)
+        ReviewRequestPolicy.registerAdvancedCircuit(state: &circuit, sessionID: secondSession)
+        #expect(ReviewRequestPolicy.eligibleReason(state: circuit, now: now, appVersion: "1.6") == .establishedCircuit)
+    }
+
+    @Test func sameVersionAndOneHundredTwentyDayCooldownApplyToEveryRoute() throws {
+        var state = ReviewRequestState(successfulGardenCompletions: 2,
+            meaningfulSessionIDs: [firstSession, secondSession])
+        #expect(ReviewRequestPolicy.recordAttemptIfEligible(state: &state, now: now, appVersion: "1.6"))
+        let day = TimeInterval(24 * 60 * 60)
+        #expect(ReviewRequestPolicy.eligibleReason(state: state, now: now.addingTimeInterval(121 * day),
+                                                   appVersion: "1.6") == nil)
+        #expect(ReviewRequestPolicy.eligibleReason(state: state, now: now.addingTimeInterval(119 * day),
+                                                   appVersion: "1.7") == nil)
+        #expect(ReviewRequestPolicy.eligibleReason(state: state, now: now.addingTimeInterval(120 * day),
+                                                   appVersion: "1.7") == .gardenEstablishedUse)
+        let encoded = try JSONEncoder().encode(state)
+        let reloaded = try JSONDecoder().decode(ReviewRequestState.self, from: encoded)
+        #expect(reloaded.attemptedVersionDates["1.6"] == now)
+        #expect(reloaded.attemptedVersions.contains("1.6"))
+    }
+}
+
 struct GameBoardTests {
     @Test func petalKindsHaveUniqueNonColourCues() {
         #expect(Set(PetalKind.allCases.map(\.glyph)).count == PetalKind.allCases.count)
@@ -609,6 +674,61 @@ struct GameModelTests {
         #expect(store.progress.activeGame == nil)
         #expect(store.progress.activeGardenSeed == nil)
         #expect(store.progress.radiantGardens.contains(1))
+    }
+
+    @Test func firstQualificationWinOffersFlowerShowButLaterGardenWinsDoNot() throws {
+        let model = GameModel(seed: 0x574)
+        model.startGarden(1)
+        while model.phase == .playing {
+            let move = try #require(model.suggestedMove)
+            model.select(move.ring)
+            _ = try #require(model.rotate(move.direction))
+        }
+        #expect(model.highestGarden == 2)
+        #expect(model.showsFirstFlowerShowOffer)
+
+        model.dismissFirstFlowerShowOffer()
+        model.startGarden(2)
+        while model.phase == .playing {
+            let move = try #require(model.suggestedMove)
+            model.select(move.ring)
+            _ = try #require(model.rotate(move.direction))
+        }
+        #expect(model.showsFirstFlowerShowOffer == false)
+    }
+
+    @Test func qualifyingGardenWinPreservesAnActiveFlowerShowAttemptInsteadOfOfferingANewOne() throws {
+        let scenario = FlowerShowContent.resolve(classNumber: 1).scenario
+        let savedAttempt = PersistedFlowerShowAttempt(
+            contentVersion: FlowerShowContent.contentVersion,
+            context: FlowerShowAttemptContext(kind: .campaign, classNumber: 1),
+            engine: FlowerShowEngine(scenario: scenario)
+        )
+        let store = InMemoryGameProgressStore(progress: GameProgress(
+            bestScore: 0,
+            highestGarden: 1,
+            flowerShowProgress: FlowerShowProgressV3(activeAttempt: savedAttempt)
+        ))
+        let model = GameModel(seed: 0x574, progressStore: store)
+        let savedAttemptID = savedAttempt.engine.attemptID
+
+        #expect(model.hasActiveFlowerShow)
+        #expect(model.savedFlowerShowAttemptContext == savedAttempt.context)
+
+        model.startGarden(1)
+        while model.phase == .playing {
+            let move = try #require(model.suggestedMove)
+            model.select(move.ring)
+            _ = try #require(model.rotate(move.direction))
+        }
+
+        #expect(model.highestGarden == 2)
+        #expect(model.showsFirstFlowerShowOffer == false)
+        #expect(store.progress.flowerShowProgress.activeAttempt?.context == savedAttempt.context)
+        #expect(store.progress.flowerShowProgress.activeAttempt?.engine.attemptID == savedAttemptID)
+        #expect(model.resumeFlowerShow() == .started)
+        #expect(model.analyticsAttemptID == savedAttemptID)
+        #expect(model.savedFlowerShowAttemptContext == savedAttempt.context)
     }
 
     @Test func modelHintRequestPersistsItsLimitedUse() throws {

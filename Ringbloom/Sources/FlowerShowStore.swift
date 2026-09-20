@@ -139,7 +139,13 @@ final class StoreKitFlowerShowStoreClient: FlowerShowStoreClient {
                 id: transaction.id,
                 productID: transaction.productID,
                 isVerified: true,
-                isRevoked: transaction.revocationDate != nil
+                isRevoked: transaction.revocationDate != nil,
+                price: transaction.price,
+                currencyCode: transaction.currency?.identifier,
+                purchaseDate: transaction.purchaseDate,
+                originalPurchaseDate: transaction.originalPurchaseDate,
+                environment: environment(for: transaction.environment),
+                ownership: ownership(for: transaction.ownershipType)
             )
         case let .unverified(transaction, _):
             transactions[transaction.id] = transaction
@@ -147,7 +153,13 @@ final class StoreKitFlowerShowStoreClient: FlowerShowStoreClient {
                 id: transaction.id,
                 productID: transaction.productID,
                 isVerified: false,
-                isRevoked: transaction.revocationDate != nil
+                isRevoked: transaction.revocationDate != nil,
+                price: transaction.price,
+                currencyCode: transaction.currency?.identifier,
+                purchaseDate: transaction.purchaseDate,
+                originalPurchaseDate: transaction.originalPurchaseDate,
+                environment: environment(for: transaction.environment),
+                ownership: ownership(for: transaction.ownershipType)
             )
         }
     }
@@ -157,8 +169,97 @@ final class StoreKitFlowerShowStoreClient: FlowerShowStoreClient {
         case .production: .production
         case .sandbox: .sandbox
         case .xcode: .xcode
-        default: .sandbox
+        default: .unknown
         }
+    }
+
+    private func ownership(for ownership: StoreKit.Transaction.OwnershipType) -> FlowerShowPurchaseOwnership {
+        switch ownership {
+        case .purchased: .purchased
+        case .familyShared: .familyShared
+        default: .unknown
+        }
+    }
+}
+
+@MainActor
+protocol FlowerShowPurchaseProvenanceStoring: AnyObject {
+    func hasPendingIntent(at date: Date) -> Bool
+    func beginIntent(for productID: String, at date: Date)
+    func markIntentPending()
+    func cancelIntent()
+    func matchingIntentSource(for transaction: FlowerShowPurchaseTransaction, now: Date) -> String?
+    func qualifiedSource(for transactionID: UInt64) -> String?
+    func recordQualified(transactionID: UInt64, source: String)
+}
+
+/// Local provenance only. It cannot prove network delivery or distinguish every clock anomaly;
+/// it prevents entitlement/bootstrap ownership from becoming revenue without a local flow.
+@MainActor
+final class UserDefaultsFlowerShowPurchaseProvenanceStore: FlowerShowPurchaseProvenanceStoring {
+    private static let intentKey = "FlowerShowPendingPurchaseIntentV1"
+    private static let qualifiedKey = "FlowerShowQualifiedPurchaseSourcesV1"
+    private static let maximumIntentAge: TimeInterval = 7 * 24 * 60 * 60
+    private let defaults: UserDefaults
+
+    init(defaults: UserDefaults = .standard) { self.defaults = defaults }
+
+    func hasPendingIntent(at date: Date) -> Bool {
+        guard let intent = defaults.dictionary(forKey: Self.intentKey),
+              let started = intent["startedAt"] as? Double,
+              intent["state"] as? String == "pending"
+        else { return false }
+        guard date.timeIntervalSince(Date(timeIntervalSince1970: started)) <= Self.maximumIntentAge else {
+            cancelIntent()
+            return false
+        }
+        return true
+    }
+
+    func beginIntent(for productID: String, at date: Date) {
+        defaults.set(
+            ["productID": productID, "startedAt": date.timeIntervalSince1970, "state": "initiated"],
+            forKey: Self.intentKey
+        )
+    }
+
+    func markIntentPending() {
+        guard var intent = defaults.dictionary(forKey: Self.intentKey) else { return }
+        intent["state"] = "pending"
+        defaults.set(intent, forKey: Self.intentKey)
+    }
+
+    func cancelIntent() { defaults.removeObject(forKey: Self.intentKey) }
+
+    func matchingIntentSource(for transaction: FlowerShowPurchaseTransaction, now: Date) -> String? {
+        guard transaction.ownership == .purchased,
+              let intent = defaults.dictionary(forKey: Self.intentKey),
+              let productID = intent["productID"] as? String,
+              let started = intent["startedAt"] as? Double,
+              transaction.productID == productID
+        else { return nil }
+        let startedAt = Date(timeIntervalSince1970: started)
+        guard now.timeIntervalSince(startedAt) <= Self.maximumIntentAge else {
+            cancelIntent()
+            return nil
+        }
+        // A historic entitlement returned by product.purchase is not evidence of a new charge.
+        guard let purchaseDate = transaction.purchaseDate,
+              purchaseDate >= startedAt,
+              (transaction.originalPurchaseDate ?? purchaseDate) >= startedAt
+        else { return nil }
+        return intent["state"] as? String == "pending" ? "pending_approved" : "direct_purchase"
+    }
+
+    func qualifiedSource(for transactionID: UInt64) -> String? {
+        (defaults.dictionary(forKey: Self.qualifiedKey)?[String(transactionID)] as? String)
+    }
+
+    func recordQualified(transactionID: UInt64, source: String) {
+        var sources = defaults.dictionary(forKey: Self.qualifiedKey) ?? [:]
+        sources[String(transactionID)] = source
+        defaults.set(sources, forKey: Self.qualifiedKey)
+        cancelIntent()
     }
 }
 
@@ -171,6 +272,9 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
     private let client: any FlowerShowStoreClient
     private let launchOverrides: FlowerShowLaunchOverrides
     private let purchaseAttribution: any PurchaseAttributionTracking
+    private let purchaseAnalytics: any PurchaseBoundaryAnalyticsTracking
+    private let purchaseProvenance: any FlowerShowPurchaseProvenanceStoring
+    private let now: () -> Date
     private var bootstrapProductTask: Task<Void, Never>?
     private var bootstrapAccessTask: Task<Void, Never>?
     private var transactionTask: Task<Void, Never>?
@@ -219,11 +323,17 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
     init(
         client: any FlowerShowStoreClient = StoreKitFlowerShowStoreClient(),
         launchOverrides: FlowerShowLaunchOverrides = .production,
-        purchaseAttribution: any PurchaseAttributionTracking = NoOpPurchaseAttributionTracker()
+        purchaseAttribution: any PurchaseAttributionTracking = NoOpPurchaseAttributionTracker(),
+        purchaseAnalytics: any PurchaseBoundaryAnalyticsTracking = ProductAnalytics.shared,
+        purchaseProvenance: any FlowerShowPurchaseProvenanceStoring = UserDefaultsFlowerShowPurchaseProvenanceStore(),
+        now: @escaping () -> Date = Date.init
     ) {
         self.client = client
         self.launchOverrides = launchOverrides
         self.purchaseAttribution = purchaseAttribution
+        self.purchaseAnalytics = purchaseAnalytics
+        self.purchaseProvenance = purchaseProvenance
+        self.now = now
         self.accessState = Self.accessState(for: launchOverrides.access)
         self.verifiedSources = Self.verifiedSources(for: launchOverrides.access)
         self.productState = if launchOverrides.productUnavailable {
@@ -240,6 +350,9 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         } else {
             .loading
         }
+        if launchOverrides.access == nil, purchaseProvenance.hasPendingIntent(at: now()) {
+            purchaseState = .pending
+        }
 
         if launchOverrides.access == nil {
             startTransactionListener()
@@ -255,7 +368,16 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
 
     func resetPurchaseState() {
         guard storefrontOperation == nil else { return }
-        purchaseState = .idle
+        purchaseState = purchaseProvenance.hasPendingIntent(at: now()) ? .pending : .idle
+    }
+
+    func refreshPendingPurchaseState() {
+        guard storefrontOperation == nil, hasFullFlowerShowAccess == false else { return }
+        if purchaseProvenance.hasPendingIntent(at: now()) {
+            purchaseState = .pending
+        } else if purchaseState == .pending, launchOverrides.purchase != .pending {
+            purchaseState = .idle
+        }
     }
 
     func startTransactionListener() {
@@ -298,59 +420,84 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         }
     }
 
-    func purchase() async {
+    @discardableResult
+    func purchase() async -> Bool {
+        guard storefrontOperation == nil else { return false }
+        if purchaseProvenance.hasPendingIntent(at: now()) {
+            purchaseState = .pending
+            return false
+        }
+        if purchaseState == .pending {
+            guard launchOverrides.purchase != .pending else { return false }
+            // The durable request expired while this process remained alive.
+            purchaseState = .idle
+        }
         guard case .available = productState else {
             purchaseState = .failed
-            return
+            return false
         }
-        guard beginStorefrontOperation(.purchase) else { return }
+        guard beginStorefrontOperation(.purchase) else { return false }
         defer { endStorefrontOperation(.purchase) }
+        let knownTransactionIDs = activePurchaseTransactionIDs
+            .union(finishedTransactionIDs)
+            .union(revokedTransactionIDs)
 
         if launchOverrides.purchase == .pending {
             purchaseState = .pending
-            return
+            return false
         }
         if launchOverrides.purchase == .failed {
             purchaseState = .failed
-            return
+            return false
         }
         if launchOverrides.purchase == .userCancelled {
             purchaseState = .idle
-            return
+            return false
         }
         if launchOverrides.purchase == .success {
             verifiedSources.insert(.storePurchase)
             publishAccessState()
             purchaseState = .success
-            return
+            return true
         }
         if launchOverrides.purchase == .disabled {
             purchaseState = .disabled
-            return
+            return false
         }
 
         purchaseState = .purchasing
+        // Persist before awaiting StoreKit: an update may arrive before purchase() returns.
+        purchaseProvenance.beginIntent(for: FlowerShowAccessPolicy.productID, at: now())
         if launchOverrides.purchase == .purchasing {
             await waitUntilCancelled()
-            return
+            return false
         }
         do {
             switch try await client.purchase() {
             case let .success(transaction):
-                await deliver(transaction)
+                let delivered = await deliver(transaction)
+                return delivered && !knownTransactionIDs.contains(transaction.id)
             case .pending:
+                purchaseProvenance.markIntentPending()
                 purchaseState = .pending
+                return false
             case .userCancelled:
+                purchaseProvenance.cancelIntent()
                 purchaseState = .idle
+                return false
             }
         } catch FlowerShowStoreClientError.productUnavailable {
+            purchaseProvenance.cancelIntent()
             productState = .unavailable
             purchaseState = .idle
         } catch FlowerShowStoreClientError.purchasesDisabled {
+            purchaseProvenance.cancelIntent()
             purchaseState = .disabled
         } catch {
+            purchaseProvenance.cancelIntent()
             purchaseState = .failed
         }
+        return false
     }
 
     func restorePurchases() async {
@@ -455,10 +602,12 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         activePurchaseTransactionIDs.insert(transaction.id)
         verifiedSources.insert(.storePurchase)
         publishAccessState()
-        if case .restore = storefrontOperation {
-            // Restores recover access but must not create fresh purchase revenue.
-        } else {
-            purchaseAttribution.trackUnlockPurchase(transactionID: transaction.id)
+        let qualifiedSource = purchaseProvenance.qualifiedSource(for: transaction.id)
+        let matchingSource = purchaseProvenance.matchingIntentSource(for: transaction, now: now())
+        if let source = qualifiedSource ?? matchingSource,
+           storefrontOperation != .restore || qualifiedSource != nil || source == "pending_approved" {
+            // A matching locally pending request remains revenue evidence even during Restore.
+            qualifyVerifiedNewPurchase(transaction, source: source)
         }
         if storefrontOperation == nil {
             purchaseState = .success
@@ -468,32 +617,77 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         await completeAccessRefresh(refreshRequest)
     }
 
-    private func deliver(_ transaction: FlowerShowPurchaseTransaction) async {
+    private func deliver(_ transaction: FlowerShowPurchaseTransaction) async -> Bool {
         guard FlowerShowAccessPolicy.hasPurchaseAccess(transaction) else {
+            purchaseProvenance.cancelIntent()
             purchaseState = .failed
-            return
+            return false
         }
         guard revokedTransactionIDs.contains(transaction.id) == false else {
             await finishIfNeeded(transaction)
             purchaseState = hasFullFlowerShowAccess ? .success : .idle
-            return
+            return false
         }
         activePurchaseTransactionIDs.insert(transaction.id)
         verifiedSources.insert(.storePurchase)
         publishAccessState()
-        purchaseAttribution.trackUnlockPurchase(transactionID: transaction.id)
+        let qualifiedNewPurchase = qualifyVerifiedNewPurchase(transaction, source: "direct_purchase")
         purchaseState = .success
         let refreshRequest = beginAccessRefresh(reason: .postPurchase)
         await finishIfNeeded(transaction)
         await completeAccessRefresh(refreshRequest)
         if revokedTransactionIDs.contains(transaction.id) {
             purchaseState = hasFullFlowerShowAccess ? .success : .idle
+            return false
         }
+        return qualifiedNewPurchase
     }
 
     private func finishIfNeeded(_ transaction: FlowerShowPurchaseTransaction) async {
         guard finishedTransactionIDs.insert(transaction.id).inserted else { return }
         await client.finish(transactionID: transaction.id)
+    }
+
+    private func qualifyVerifiedNewPurchase(
+        _ transaction: FlowerShowPurchaseTransaction,
+        source: String
+    ) -> Bool {
+        guard transaction.ownership == .purchased else { return false }
+        if let knownSource = purchaseProvenance.qualifiedSource(for: transaction.id) {
+            // A moneyless first copy may later arrive with price/currency. The reporter owns
+            // revenue deduplication; the PostHog boundary event remains one per transaction.
+            purchaseAttribution.trackVerifiedNewPurchase(transaction)
+            return knownSource == source
+        }
+        guard let matchedSource = purchaseProvenance.matchingIntentSource(for: transaction, now: now()),
+              matchedSource == source
+        else { return false }
+        purchaseProvenance.recordQualified(transactionID: transaction.id, source: source)
+        purchaseAttribution.trackVerifiedNewPurchase(transaction)
+        purchaseAnalytics.purchaseVerifiedNew(
+            source: source,
+            environment: analyticsEnvironment(for: transaction.environment),
+            moneyStatus: moneyStatus(for: transaction)
+        )
+        return true
+    }
+
+    private func analyticsEnvironment(for environment: FlowerShowTransactionEnvironment) -> String {
+        switch environment {
+        case .production: "production"
+        case .sandbox: "sandbox"
+        case .xcode: "xcode"
+        case .unknown: "unknown"
+        }
+    }
+
+    private func moneyStatus(for transaction: FlowerShowPurchaseTransaction) -> String {
+        guard isValidStoreKitMoney(price: transaction.price, currencyCode: transaction.currencyCode),
+              let price = transaction.price
+        else {
+            return "unavailable"
+        }
+        return price > 0 ? "positive" : "zero"
     }
 
     private func beginAccessRefresh(reason: AccessRefreshReason) -> AccessRefreshRequest {

@@ -13,12 +13,15 @@ settings:
     CODE_SIGN_STYLE: Automatic
     SWIFT_VERSION: "6.0"
     SWIFT_STRICT_CONCURRENCY: complete
-    MARKETING_VERSION: "1.5"
-    CURRENT_PROJECT_VERSION: "9"
+    MARKETING_VERSION: "1.6"
+    CURRENT_PROJECT_VERSION: "12"
     ENABLE_USER_SCRIPT_SANDBOXING: true
     CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: true
 
 packages:
+  FeedbackKit:
+    url: https://github.com/tom-murton/app-services.git
+    exactVersion: 0.2.4
   AppsFlyer:
     url: https://github.com/AppsFlyerSDK/AppsFlyerFramework-Strict.git
     exactVersion: 7.0.1
@@ -56,6 +59,8 @@ targets:
           - Info.plist
           - Ringbloom.storekit
     dependencies:
+      - package: FeedbackKit
+        product: FeedbackKit
       - package: AppsFlyer
         product: AppsFlyerLib-Strict
       - package: PostHog
@@ -84,6 +89,11 @@ targets:
     platform: iOS
     sources:
       - path: RingbloomTests
+        excludes:
+          - Ringbloom.storekit
+      # Keep the local StoreKit fixture in the test bundle when XcodeGen regenerates the project.
+      - path: RingbloomTests/Ringbloom.storekit
+        buildPhase: resources
     dependencies:
       - target: Ringbloom
     settings:

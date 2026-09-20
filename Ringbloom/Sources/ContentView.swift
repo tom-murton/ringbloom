@@ -27,8 +27,10 @@ struct ContentView: View {
     @EnvironmentObject private var flowerShowStore: FlowerShowStore
     @EnvironmentObject private var audio: AudioService
     @EnvironmentObject private var feedback: FeedbackService
+    @EnvironmentObject private var feedbackPrompts: FeedbackPromptCoordinator
     @EnvironmentObject private var analytics: ProductAnalytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("ringbloom.tutorialSeen") private var tutorialSeen = false
     @State private var screen: Screen = .home
     @State private var flowerShowRulesPresentation: FlowerShowRulesPresentation = .preClass
@@ -50,6 +52,23 @@ struct ContentView: View {
                     .accessibilityHidden(true)
 
                 VStack(spacing: 0) {
+                    if game.progressSaveHealth != .saved {
+                        HStack(spacing: 10) {
+                            Image(systemName: "exclamationmark.arrow.triangle.2.circlepath")
+                            Text(game.progressSaveHealth == .blocked
+                                ? "Progress can't be saved. Keep the app open and contact support."
+                                : "Progress hasn't been saved yet. Keep the app open; we'll retry.")
+                            if game.progressSaveHealth == .pending {
+                                Button("Retry") { game.retryPendingProgress() }
+                                    .accessibilityIdentifier("retryProgressSaveButton")
+                            }
+                        }
+                        .font(.caption)
+                        .padding(10)
+                        .frame(maxWidth: .infinity)
+                        .background(RingbloomTheme.saffron.opacity(0.18))
+                        .accessibilityIdentifier("progressSaveWarning")
+                    }
                     if let storeCaption {
                         StoreScreenshotCaption(text: storeCaption)
                     }
@@ -71,6 +90,7 @@ struct ContentView: View {
                             }.count,
                             hasActiveFlowerShow: game.hasActiveFlowerShow,
                             savedFlowerShowAttempt: game.savedFlowerShowAttemptContext,
+                            progressIsSaved: game.progressSaveHealth == .saved,
                             grandChampionAchieved: game.grandChampionAchieved,
                             play: beginPlay,
                             openFlowerShow: beginFlowerShow,
@@ -140,6 +160,7 @@ struct ContentView: View {
                         .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .bottom)))
                     case .game:
                         GameScreen(
+                            beginFlowerShow: beginFlowerShow,
                             showHome: { withAnimation(.easeInOut(duration: 0.25)) { screen = .home } },
                             showFlowerShowRules: {
                                 flowerShowRulesPresentation = .inGame
@@ -167,7 +188,23 @@ struct ContentView: View {
         .tint(RingbloomTheme.saffron)
         .onAppear {
             prepareLaunchMode()
+            game.emitSessionStartedIfNeeded()
+            analytics.observeScenePhase(scenePhase)
             trackScreen(screen)
+            analytics.capture("progress_load_outcome", properties: [
+                "reason_code": game.progressLoadReasonCode,
+                "circuit_cursor": game.nextCircuitClass,
+                "save_revision": game.progressRevision,
+            ])
+        }
+        .onChange(of: scenePhase) { _, phase in
+            analytics.observeScenePhase(phase)
+            if phase == .active {
+                feedbackPrompts.sceneDidBecomeActive()
+                game.retryPendingProgress()
+            } else if phase == .background {
+                feedbackPrompts.sceneDidEnterBackground()
+            }
         }
         .onChange(of: screen) { _, newScreen in
             trackScreen(newScreen)
@@ -252,6 +289,8 @@ struct ContentView: View {
                             "class_number": game.currentFlowerShowClass,
                             "mode": GameMode.flowerShow.analyticsName,
                             "start_type": "resume",
+                            "attempt_id": game.analyticsAttemptID?.uuidString ?? "",
+                            "attempt_kind": game.analyticsAttemptKind,
                         ]
                     ) { _, startValue in startValue }
                 )
@@ -281,7 +320,7 @@ struct ContentView: View {
         if flowerShowRulesPresentation == .preClass {
             result = game.startFlowerShowClass(selectedFlowerShowClass)
         } else {
-            result = game.resumeFlowerShow()
+            result = game.resumeFlowerShow(source: "rules")
         }
         switch result {
         case .started:
@@ -292,6 +331,8 @@ struct ContentView: View {
                         "mode": GameMode.flowerShow.analyticsName,
                         "start_type": flowerShowRulesPresentation == .preClass ? "new" : "resume",
                         "class_number": game.currentFlowerShowClass,
+                        "attempt_id": game.analyticsAttemptID?.uuidString ?? "",
+                        "attempt_kind": game.analyticsAttemptKind,
                     ]
                 ) { _, startValue in startValue }
             )
@@ -328,7 +369,7 @@ struct ContentView: View {
         if let saved = game.savedFlowerShowAttemptContext,
            saved.classNumber == classNumber
         {
-            if game.resumeFlowerShow() == .started {
+            if game.resumeFlowerShow(source: "class_book") == .started {
                 withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
             }
             return
@@ -428,7 +469,11 @@ struct ContentView: View {
         captureGardenStarted(startType: "tutorial")
         analytics.capture(
             "tutorial_completed",
-            properties: ["garden": game.highestGarden]
+            properties: [
+                "garden": game.garden,
+                "attempt_id": game.analyticsAttemptID?.uuidString ?? "",
+                "tutorial_variant": "standard",
+            ]
         )
         withAnimation(.easeInOut(duration: 0.25)) { screen = .game }
     }
@@ -446,6 +491,8 @@ struct ContentView: View {
                     "garden": game.garden,
                     "mode": GameMode.garden.analyticsName,
                     "start_type": startType,
+                    "attempt_id": game.analyticsAttemptID?.uuidString ?? "",
+                    "attempt_kind": game.analyticsAttemptKind,
                 ]
             ) { _, startValue in startValue }
         )
@@ -664,6 +711,7 @@ private struct HomeView: View {
     let flowerShowCompletedFree: Int
     let hasActiveFlowerShow: Bool
     let savedFlowerShowAttempt: FlowerShowAttemptContext?
+    let progressIsSaved: Bool
     let grandChampionAchieved: Bool
     let play: () -> Void
     let openFlowerShow: () -> Void
@@ -671,10 +719,10 @@ private struct HomeView: View {
     let openClassBook: () -> Void
     let showTutorial: () -> Void
 
-    @EnvironmentObject private var audio: AudioService
-    @EnvironmentObject private var feedback: FeedbackService
-    @EnvironmentObject private var analytics: ProductAnalytics
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State private var presentsTutorialAfterSettings = false
+    @State private var showsFeedback = false
+    @State private var showsSettings = false
 
     var body: some View {
         GeometryReader { proxy in
@@ -720,7 +768,9 @@ private struct HomeView: View {
                             title: "GARDEN",
                             subtitle: "The original calm, endless game.",
                             detail: hasActiveGarden
-                                ? "Garden \(highestGarden) is saved exactly where you left it."
+                                ? (progressIsSaved
+                                    ? "Garden \(highestGarden) is saved exactly where you left it."
+                                    : "Garden \(highestGarden) is still open; progress needs saving.")
                                 : nil,
                             progress: nil,
                             actionTitle: hasActiveGarden
@@ -744,7 +794,7 @@ private struct HomeView: View {
                             locked: flowerShowQualified == false || isAccessChecking,
                             identifier: "flowerShowButton",
                             action: flowerShowQualified
-                                ? (flowerShowAccessState == .sample && flowerShowCompletedInFreeSampler >= 5
+                                ? (shouldOfferFullShowUnlock
                                     ? { openPurchase(.home) }
                                     : openFlowerShow)
                                 : {}
@@ -761,6 +811,11 @@ private struct HomeView: View {
                     }
                     .padding(.horizontal, 20)
 
+                    HomeFeedbackCard {
+                        showsFeedback = true
+                    }
+                    .padding(.horizontal, 20)
+
                     utilityLayout {
                         HomeUtilityButton(
                             title: "How to Play",
@@ -768,41 +823,11 @@ private struct HomeView: View {
                             identifier: "howToPlayButton",
                             action: showTutorial
                         )
-                        SettingButton(
-                            title: "Sound",
-                            enabled: audio.isSoundEnabled,
-                            enabledSymbol: "speaker.wave.2.fill",
-                            disabledSymbol: "speaker.slash.fill",
-                            identifier: "soundToggle",
-                            action: {
-                                let enabled = audio.toggleSound()
-                                analytics.capture(
-                                    "setting_changed",
-                                    properties: [
-                                        "enabled": enabled,
-                                        "setting": "sound",
-                                        "screen": "home",
-                                    ]
-                                )
-                            }
-                        )
-                        SettingButton(
-                            title: "Haptics",
-                            enabled: feedback.isHapticsEnabled,
-                            enabledSymbol: "waveform.path",
-                            disabledSymbol: "waveform.path.badge.minus",
-                            identifier: "hapticsToggle",
-                            action: {
-                                let enabled = feedback.toggleHaptics()
-                                analytics.capture(
-                                    "setting_changed",
-                                    properties: [
-                                        "enabled": enabled,
-                                        "setting": "haptics",
-                                        "screen": "home",
-                                    ]
-                                )
-                            }
+                        HomeUtilityButton(
+                            title: "Settings",
+                            symbol: "gearshape.fill",
+                            identifier: "settingsButton",
+                            action: { showsSettings = true }
                         )
                     }
                     .padding(.horizontal, 20)
@@ -821,13 +846,30 @@ private struct HomeView: View {
             }
             .scrollIndicators(.hidden)
         }
+        .sheet(isPresented: $showsFeedback) {
+            AppFeedbackSheet(source: .home)
+        }
+        .sheet(isPresented: $showsSettings, onDismiss: {
+            guard presentsTutorialAfterSettings else { return }
+            presentsTutorialAfterSettings = false
+            showTutorial()
+        }) {
+            RingbloomSettingsView {
+                presentsTutorialAfterSettings = true
+            }
+        }
     }
 
     private var flowerShowDetail: String {
         guard flowerShowQualified else { return "Win your first Garden to qualify." }
+        if hasPlayableSavedFlowerShow, let savedFlowerShowAttempt {
+            return progressIsSaved
+                ? "Class \(savedFlowerShowAttempt.classNumber) is saved exactly where you left it."
+                : "Class \(savedFlowerShowAttempt.classNumber) is still open; progress needs saving."
+        }
         if isEntitlementChecking { return "Checking your Flower Show access…" }
         let freeCompleted = min(5, flowerShowCompletedInFreeSampler)
-        if flowerShowAccessState == .sample, freeCompleted >= 5 {
+        if shouldOfferFullShowUnlock {
             return "Classes 1–5 complete. Unlock Class 6 and beyond."
         }
         if flowerShowAccessState == .sample {
@@ -854,7 +896,9 @@ private struct HomeView: View {
     }
 
     private var isAccessChecking: Bool {
-        isEntitlementChecking && flowerShowCompletedInFreeSampler >= 5
+        isEntitlementChecking
+            && flowerShowCompletedInFreeSampler >= 5
+            && hasPlayableSavedFlowerShow == false
     }
 
     private var isEntitlementChecking: Bool {
@@ -864,13 +908,7 @@ private struct HomeView: View {
 
     private var flowerShowActionTitle: String {
         guard flowerShowQualified else { return "LOCKED" }
-        if isAccessChecking { return "CHECKING…" }
-        if flowerShowAccessState == .sample,
-           flowerShowCompletedInFreeSampler >= 5
-        {
-            return "UNLOCK FULL SHOW"
-        }
-        if hasActiveFlowerShow, let savedFlowerShowAttempt {
+        if hasPlayableSavedFlowerShow, let savedFlowerShowAttempt {
             return switch savedFlowerShowAttempt.kind {
             case .campaign:
                 "RESUME CLASS \(savedFlowerShowAttempt.classNumber)"
@@ -880,19 +918,36 @@ private struct HomeView: View {
                 "RESUME CIRCUIT · CLASS \(savedFlowerShowAttempt.classNumber)"
             }
         }
+        if isAccessChecking { return "CHECKING…" }
+        if shouldOfferFullShowUnlock { return "UNLOCK FULL SHOW" }
         return flowerShowClass > FlowerShowClassDefinition.classCount ? "CONTINUE CIRCUIT" : "CONTINUE"
     }
 
     private var flowerShowActionSymbol: String {
         if flowerShowQualified == false || isAccessChecking { return "lock.fill" }
-        if flowerShowAccessState == .sample, flowerShowCompletedInFreeSampler >= 5 {
-            return "lock.open.fill"
-        }
-        return hasActiveFlowerShow ? "arrow.clockwise" : "medal.fill"
+        if hasPlayableSavedFlowerShow { return "arrow.clockwise" }
+        return shouldOfferFullShowUnlock ? "lock.open.fill" : "medal.fill"
+    }
+
+    private var hasPlayableSavedFlowerShow: Bool {
+        guard hasActiveFlowerShow, let savedFlowerShowAttempt else { return false }
+        return FlowerShowAccessPolicy.action(
+            highestGarden: highestGarden,
+            accessState: flowerShowAccessState,
+            classNumber: savedFlowerShowAttempt.classNumber,
+            progressionAllowed: true
+        ) == .play
+    }
+
+    private var shouldOfferFullShowUnlock: Bool {
+        flowerShowAccessState == .sample
+            && flowerShowCompletedInFreeSampler >= 5
+            && hasPlayableSavedFlowerShow == false
     }
 }
 
 private struct GameScreen: View {
+    let beginFlowerShow: () -> Void
     let showHome: () -> Void
     let showFlowerShowRules: () -> Void
     let showNextFlowerShowRules: () -> Void
@@ -903,10 +958,12 @@ private struct GameScreen: View {
     @EnvironmentObject private var flowerShowStore: FlowerShowStore
     @EnvironmentObject private var audio: AudioService
     @EnvironmentObject private var feedback: FeedbackService
+    @EnvironmentObject private var feedbackPrompts: FeedbackPromptCoordinator
     @EnvironmentObject private var analytics: ProductAnalytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.requestReview) private var requestReview
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("ringbloom.guidedFirstBloomSeen") private var guidedFirstBloomSeen = false
     @State private var bloomSpokes: [Int] = []
     @State private var bloomToken = 0
@@ -922,6 +979,9 @@ private struct GameScreen: View {
     @State private var resolutionTask: Task<Void, Never>?
     @State private var hintRequestTask: Task<Void, Never>?
     @State private var reviewRequestTask: Task<Void, Never>?
+    @State private var resultPrompt: FeedbackPromptCoordinator.Prompt?
+    @State private var showsFeedback = false
+    @State private var hidesFeedbackNudge = false
 
     var body: some View {
         GeometryReader { proxy in
@@ -943,6 +1003,7 @@ private struct GameScreen: View {
                                 garden: game.garden,
                                 mode: game.activeMode,
                                 flowerShowClass: game.flowerShowDefinition.number,
+                                progressIsSaved: game.progressSaveHealth == .saved,
                                 resume: resume,
                                 restart: restartFromPause,
                                 home: leaveForHome
@@ -978,7 +1039,11 @@ private struct GameScreen: View {
                                         retryAccessCheck: retryResultAccessCheck,
                                         continueProgression: nextExperience,
                                         openClassBook: openClassBookFromResult,
-                                        home: leaveOutcomeForHome
+                                        home: leaveOutcomeForHome,
+                                        achievementIsSaved: FlowerShowAchievementSharePolicy.isEligible(
+                                            progressSaveHealth: game.progressSaveHealth
+                                        ),
+                                        share: shareFlowerShowResult
                                     )
                                 } else {
                                     OutcomeCard(
@@ -993,17 +1058,42 @@ private struct GameScreen: View {
                                         canUndo: game.canUndo,
                                         undo: undo,
                                         retry: retry,
-                                        next: nextExperience,
+                                        next: {
+                                            game.dismissFirstFlowerShowOffer()
+                                            nextExperience()
+                                        },
+                                        showFlowerShowOffer: game.showsFirstFlowerShowOffer,
+                                        tryFlowerShow: {
+                                            game.dismissFirstFlowerShowOffer()
+                                            beginFlowerShow()
+                                        },
                                         home: leaveOutcomeForHome
                                     )
                                 }
                             }
                             .padding(.horizontal, 32)
                             .transition(reduceMotion ? .opacity : .scale(scale: 0.88).combined(with: .opacity))
+
+                            if game.phase == .won,
+                               resultPrompt == .feedback,
+                               !hidesFeedbackNudge
+                            {
+                                FeedbackNudgeCallout(
+                                    viewportHeight: proxy.size.height,
+                                    openFeedback: {
+                                        hidesFeedbackNudge = true
+                                        showsFeedback = true
+                                    },
+                                    dismiss: { hidesFeedbackNudge = true }
+                                )
+                                .padding(.horizontal, 32)
+                                .transition(.opacity)
+                            }
                         }
                         .frame(maxWidth: .infinity, minHeight: proxy.size.height)
                     }
                     .scrollIndicators(.hidden)
+                    .coordinateSpace(name: "gameResultScroll")
                 }
             }
             .animation(.easeInOut(duration: reduceMotion ? 0.15 : 0.3), value: game.phase)
@@ -1015,11 +1105,35 @@ private struct GameScreen: View {
             resolutionTask = nil
             hintRequestTask?.cancel()
             hintRequestTask = nil
-            reviewRequestTask?.cancel()
-            reviewRequestTask = nil
+            cancelReviewRequest(abandonOpportunity: true)
+            feedbackPrompts.abandonPendingPrompt()
         }
         .onChange(of: game.reviewRequestTrigger) { _, trigger in
-            scheduleReviewRequest(for: trigger)
+            if trigger != nil, game.phase == .won {
+                prepareResultPrompt()
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { cancelReviewRequest(abandonOpportunity: true) }
+        }
+        .onChange(of: feedbackPrompts.promptSessionGeneration) { _, _ in
+            prepareResultPrompt()
+        }
+        .onChange(of: isPaused) { _, paused in
+            if paused { cancelReviewRequest(abandonOpportunity: true) }
+        }
+        .onChange(of: game.phase) { _, phase in
+            if phase == .won {
+                prepareResultPrompt()
+            } else {
+                resultPrompt = nil
+                hidesFeedbackNudge = false
+                feedbackPrompts.abandonPendingPrompt()
+                cancelReviewRequest(abandonOpportunity: true)
+            }
+        }
+        .sheet(isPresented: $showsFeedback) {
+            AppFeedbackSheet(source: .afterSession)
         }
     }
 
@@ -1481,6 +1595,7 @@ private struct GameScreen: View {
     }
 
     private func retry() {
+        cancelReviewRequest(abandonOpportunity: true)
         analytics.capture("game_restarted", properties: gameplayAnalyticsProperties.merging(["source": "result"]) { _, sourceValue in sourceValue })
         if game.activeMode == .flowerShow,
            game.flowerShowAccessAction(for: game.currentFlowerShowClass) == .purchaseRequired
@@ -1500,6 +1615,7 @@ private struct GameScreen: View {
     }
 
     private func nextExperience() {
+        cancelReviewRequest(abandonOpportunity: true)
         analytics.buttonTapped("continue", screen: "result", properties: gameplayAnalyticsProperties)
         if game.activeMode == .garden {
             game.nextGarden()
@@ -1561,6 +1677,10 @@ private struct GameScreen: View {
             rotationDegrees = 0
             isResolvingTurn = false
             resolutionTask = nil
+
+            if !Task.isCancelled, game.phase == .won {
+                scheduleReviewRequest(for: game.reviewRequestTrigger)
+            }
 
             if Task.isCancelled {
                 displayBoard = game.board
@@ -1795,9 +1915,9 @@ private struct GameScreen: View {
 
     private func flowerShowStatus(
         _ result: TurnResult,
-        startingHarmonyRings: Set<Ring>,
-        startingInfectedSpokes: Set<Int>,
-        startingTwinBloomCompleted: Bool
+        startingHarmonyRings _: Set<Ring>,
+        startingInfectedSpokes _: Set<Int>,
+        startingTwinBloomCompleted _: Bool
     ) -> String? {
         guard game.activeMode == .flowerShow,
               let transition = game.lastFlowerShowTransition
@@ -1954,6 +2074,13 @@ private struct GameScreen: View {
         showClassBook()
     }
 
+    private func shareFlowerShowResult(_ summary: FlowerShowResultSummary) {
+        // An explicit share supersedes any queued discretionary review request.
+        // Dismissing the system share sheet deliberately does not restore it.
+        cancelReviewRequest(abandonOpportunity: true)
+        analytics.capture("flower_show_share_intent", properties: FlowerShowShareCardData(summary: summary).analyticsProperties)
+    }
+
     private func leaveOutcomeForHome() {
         analytics.capture("game_left_to_home", properties: gameplayAnalyticsProperties.merging(["source": "result"]) { _, sourceValue in sourceValue })
         showHome()
@@ -1963,6 +2090,9 @@ private struct GameScreen: View {
         var properties: [String: Any] = [
             "mode": game.activeMode.analyticsName,
             "moves_remaining": game.movesRemaining,
+            "attempt_id": game.analyticsAttemptID?.uuidString ?? "",
+            "attempt_kind": game.analyticsAttemptKind,
+            "access_state": flowerShowStore.accessState.analyticsName,
         ]
         switch game.activeMode {
         case .garden:
@@ -1976,7 +2106,9 @@ private struct GameScreen: View {
 
     private func prepareGameplay() {
         displayBoard = game.board
-        scheduleReviewRequest(for: game.reviewRequestTrigger)
+        if game.phase == .won {
+            prepareResultPrompt()
+        }
 
         if let result = game.lastTurn {
             statusText = turnStatus(result)
@@ -2000,6 +2132,10 @@ private struct GameScreen: View {
     }
 
     private func resetPresentation() {
+        cancelReviewRequest(abandonOpportunity: true)
+        feedbackPrompts.abandonPendingPrompt()
+        resultPrompt = nil
+        hidesFeedbackNudge = false
         resolutionTask?.cancel()
         resolutionTask = nil
         hintRequestTask?.cancel()
@@ -2038,24 +2174,59 @@ private struct GameScreen: View {
     }
 
     private func scheduleReviewRequest(for trigger: Int?) {
-        reviewRequestTask?.cancel()
-        guard trigger != nil, game.activeMode == .garden, game.phase == .won else { return }
+        cancelReviewRequest()
+        guard trigger != nil, canPresentReviewRequest else { return }
 
-        reviewRequestTask = Task { @MainActor in
-            do {
-                try await Task.sleep(for: .seconds(2))
-            } catch {
-                return
-            }
-            guard Task.isCancelled == false,
-                  game.activeMode == .garden,
-                  game.phase == .won,
-                  game.reviewRequestTrigger == trigger,
-                  let trigger,
-                  game.commitReviewRequestAttempt(trigger: trigger)
-            else { return }
-            requestReview()
-            reviewRequestTask = nil
+        reviewRequestTask = makeReviewRequestDelayTask(
+            wait: { try await Task.sleep(for: .seconds(2)) },
+            stillEligible: { canPresentReviewRequest && game.reviewRequestTrigger == trigger },
+            commit: {
+                guard let trigger else { return false }
+                guard game.commitReviewRequestAttempt(trigger: trigger) else { return false }
+                feedbackPrompts.recordReviewAttempt()
+                return true
+            },
+            request: { requestReview() }
+        )
+    }
+
+    private var canPresentReviewRequest: Bool {
+        guard scenePhase == .active,
+              !isPaused,
+              !isResolvingTurn,
+              game.phase == .won,
+              resultPrompt == .review,
+              feedbackPrompts.reviewReservationIsCurrent(runID: game.analyticsAttemptID)
+        else { return false }
+        if game.activeMode == .flowerShow {
+            guard let result = game.pendingFlowerShowResult,
+                  result.context.classNumber != 5,
+                  result.context.kind != .replay,
+                  !isResultAccessChecking
+            else { return false }
+        }
+        return true
+    }
+
+    private func cancelReviewRequest(abandonOpportunity: Bool = false) {
+        reviewRequestTask?.cancel()
+        reviewRequestTask = nil
+        if abandonOpportunity { game.abandonReviewRequestOpportunity() }
+    }
+
+    private func prepareResultPrompt() {
+        guard game.phase == .won else { return }
+        let prompt = feedbackPrompts.considerPromptAfterMeaningfulUse(
+            runID: game.analyticsAttemptID,
+            reviewMomentEarned: game.reviewRequestTrigger != nil
+        )
+        resultPrompt = prompt
+        hidesFeedbackNudge = false
+
+        if prompt == .review {
+            scheduleReviewRequest(for: game.reviewRequestTrigger)
+        } else {
+            cancelReviewRequest()
         }
     }
 }
@@ -2097,11 +2268,11 @@ private struct TutorialView: View {
                     }
 
                     VStack(spacing: 0) {
-                        TutorialStep(number: "1", title: "Choose a ring", detail: "Inner, middle, or outer.", symbol: "circle.circle")
+                        TutorialStep(number: "1", title: "Choose a ring", detail: "Select inner, middle, or outer before turning.", symbol: "circle.circle")
                         Divider().overlay(RingbloomTheme.ivory.opacity(0.12)).padding(.leading, 16)
-                        TutorialStep(number: "2", title: "Turn one notch", detail: "Swipe, or use the two arrows.", symbol: "arrow.clockwise")
+                        TutorialStep(number: "2", title: "Turn one notch", detail: "Left or right moves the selected ring one notch.", symbol: "arrow.clockwise")
                         Divider().overlay(RingbloomTheme.ivory.opacity(0.12)).padding(.leading, 16)
-                        TutorialStep(number: "3", title: "Bloom a spoke", detail: "Match all three. Chain the next.", symbol: "sparkles")
+                        TutorialStep(number: "3", title: "Line up a bloom", detail: "Match the same colour and symbol on all three rings, in a line from the centre outwards.", symbol: "sparkles")
                     }
                     .background(RingbloomTheme.inkLifted)
                     .clipShape(.rect(cornerRadius: 16))
@@ -2139,6 +2310,7 @@ private struct PauseCard: View {
     let garden: Int
     let mode: GameMode
     let flowerShowClass: Int
+    let progressIsSaved: Bool
     let resume: () -> Void
     let restart: () -> Void
     let home: () -> Void
@@ -2162,9 +2334,11 @@ private struct PauseCard: View {
                     .accessibilityFocused($titleFocused)
 
                 Text(
-                    mode == .garden
-                        ? "Garden \(garden) is saved exactly where you left it."
-                        : "Class \(flowerShowClass) is saved exactly where you left it."
+                    progressIsSaved
+                        ? (mode == .garden
+                            ? "Garden \(garden) is saved exactly where you left it."
+                            : "Class \(flowerShowClass) is saved exactly where you left it.")
+                        : "This progress has not been saved yet. Keep Ringbloom open."
                 )
                 .font(.system(.subheadline, design: .rounded))
                 .multilineTextAlignment(.center)
@@ -2225,6 +2399,8 @@ private struct OutcomeCard: View {
     let undo: () -> Void
     let retry: () -> Void
     let next: () -> Void
+    let showFlowerShowOffer: Bool
+    let tryFlowerShow: () -> Void
     let home: () -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -2312,14 +2488,24 @@ private struct OutcomeCard: View {
 
             VStack(spacing: 12) {
                 if phase == .won {
+                    if showFlowerShowOffer, mode == .garden {
+                        Button(action: tryFlowerShow) {
+                            Label("TRY FLOWER SHOW — 5 FREE CLASSES", systemImage: "sparkles")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(RingbloomButtonStyle(prominent: true))
+                        .accessibilityLabel("Try Flower Show, 5 free Classes")
+                        .accessibilityHint("Opens Class 1. Garden progress is kept.")
+                        .accessibilityIdentifier("tryFlowerShowButton")
+                    }
                     Button(action: next) {
                         Label(
-                            nextButtonTitle,
+                            showFlowerShowOffer && mode == .garden ? "CONTINUE GARDEN" : nextButtonTitle,
                             systemImage: "arrow.right"
                         )
                         .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(RingbloomButtonStyle(prominent: true))
+                    .buttonStyle(RingbloomButtonStyle(prominent: !(showFlowerShowOffer && mode == .garden)))
                     .accessibilityIdentifier("nextGardenButton")
                 } else {
                     if canUndo {
@@ -2471,28 +2657,6 @@ private struct GameStat: View {
     }
 }
 
-private struct SettingButton: View {
-    let title: String
-    let enabled: Bool
-    let enabledSymbol: String
-    let disabledSymbol: String
-    let identifier: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Label(title, systemImage: enabled ? enabledSymbol : disabledSymbol)
-                .font(.system(.footnote, design: .rounded, weight: .medium))
-                .foregroundStyle(enabled ? RingbloomTheme.ivory : RingbloomTheme.muted)
-                .frame(maxWidth: .infinity, minHeight: 44)
-                .background(RingbloomTheme.inkLifted)
-                .clipShape(.rect(cornerRadius: 12))
-        }
-        .accessibilityValue(enabled ? "On" : "Off")
-        .accessibilityIdentifier(identifier)
-    }
-}
-
 private struct HomeUtilityButton: View {
     let title: String
     let symbol: String
@@ -2591,7 +2755,7 @@ private extension GardenRating {
     }
 }
 
-private struct BloomMark: View {
+struct BloomMark: View {
     var body: some View {
         GeometryReader { proxy in
             let side = min(proxy.size.width, proxy.size.height)

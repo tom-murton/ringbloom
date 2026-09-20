@@ -23,6 +23,26 @@
       ]
     },
     {
+      "category": "OTHER_DIAGNOSTIC_DATA",
+      "purposes": [
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "dataProtections": [
+        "DATA_NOT_LINKED_TO_YOU"
+      ]
+    },
+    {
+      "category": "OTHER_USER_CONTENT",
+      "purposes": [
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "dataProtections": [
+        "DATA_NOT_LINKED_TO_YOU"
+      ]
+    },
+    {
       "category": "PERFORMANCE_DATA",
       "purposes": [
         "ANALYTICS",
@@ -36,6 +56,7 @@
       "category": "PRODUCT_INTERACTION",
       "purposes": [
         "ANALYTICS",
+        "APP_FUNCTIONALITY",
         "DEVELOPERS_ADVERTISING"
       ],
       "dataProtections": [

@@ -54,6 +54,13 @@ enum FlowerShowTransactionEnvironment: Equatable, Sendable {
     case production
     case sandbox
     case xcode
+    case unknown
+}
+
+enum FlowerShowPurchaseOwnership: Equatable, Sendable {
+    case purchased
+    case familyShared
+    case unknown
 }
 
 struct FlowerShowAppTransactionSnapshot: Equatable, Sendable {
@@ -73,6 +80,36 @@ struct FlowerShowPurchaseTransaction: Equatable, Sendable {
     let productID: String
     let isVerified: Bool
     let isRevoked: Bool
+    let price: Decimal?
+    let currencyCode: String?
+    let purchaseDate: Date?
+    let originalPurchaseDate: Date?
+    let environment: FlowerShowTransactionEnvironment
+    let ownership: FlowerShowPurchaseOwnership
+
+    init(
+        id: UInt64,
+        productID: String,
+        isVerified: Bool,
+        isRevoked: Bool,
+        price: Decimal? = nil,
+        currencyCode: String? = nil,
+        purchaseDate: Date? = nil,
+        originalPurchaseDate: Date? = nil,
+        environment: FlowerShowTransactionEnvironment = .unknown,
+        ownership: FlowerShowPurchaseOwnership = .purchased
+    ) {
+        self.id = id
+        self.productID = productID
+        self.isVerified = isVerified
+        self.isRevoked = isRevoked
+        self.price = price
+        self.currencyCode = currencyCode
+        self.purchaseDate = purchaseDate
+        self.originalPurchaseDate = originalPurchaseDate
+        self.environment = environment
+        self.ownership = ownership
+    }
 }
 
 struct FlowerShowEntitlementSnapshot: Equatable, Sendable {

@@ -1192,25 +1192,142 @@ private struct SeededRandom: Codable, Equatable, Sendable {
 
 struct ReviewRequestState: Codable, Equatable, Sendable {
     var successfulGardenCompletions: Int
+    var committedCampaignResults: Int
+    var completedClassFive: Bool
+    var committedCircuitResults: Int
+    /// At most two process IDs are needed to prove distinct, meaningful sessions.
+    var meaningfulSessionIDs: [String]
     var attemptedAppVersion: String?
     var attemptedDate: Date?
+    var attemptedVersions: Set<String>
+    var attemptedVersionDates: [String: Date]
 
     init(
         successfulGardenCompletions: Int = 0,
+        committedCampaignResults: Int = 0,
+        completedClassFive: Bool = false,
+        committedCircuitResults: Int = 0,
+        meaningfulSessionIDs: [String] = [],
         attemptedAppVersion: String? = nil,
-        attemptedDate: Date? = nil
+        attemptedDate: Date? = nil,
+        attemptedVersions: Set<String> = [],
+        attemptedVersionDates: [String: Date] = [:]
     ) {
         self.successfulGardenCompletions = max(0, successfulGardenCompletions)
+        self.committedCampaignResults = max(0, committedCampaignResults)
+        self.completedClassFive = completedClassFive
+        self.committedCircuitResults = max(0, committedCircuitResults)
+        self.meaningfulSessionIDs = Array(Set(meaningfulSessionIDs.filter(Self.validSessionID))).sorted().prefix(2).map { $0 }
         self.attemptedAppVersion = attemptedAppVersion
         self.attemptedDate = attemptedDate
+        self.attemptedVersions = attemptedVersions
+            .union(attemptedVersionDates.keys)
+            .union(attemptedAppVersion.map { [$0] } ?? [])
+        self.attemptedVersionDates = attemptedVersionDates
+        if let attemptedAppVersion, let attemptedDate {
+            self.attemptedVersionDates[attemptedAppVersion] = max(
+                self.attemptedVersionDates[attemptedAppVersion] ?? attemptedDate,
+                attemptedDate
+            )
+        }
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case successfulGardenCompletions, committedCampaignResults, completedClassFive
+        case committedCircuitResults, meaningfulSessionIDs, attemptedAppVersion, attemptedDate
+        case attemptedVersions, attemptedVersionDates
+    }
+
+    init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            successfulGardenCompletions: try values.decodeIfPresent(Int.self, forKey: .successfulGardenCompletions) ?? 0,
+            committedCampaignResults: try values.decodeIfPresent(Int.self, forKey: .committedCampaignResults) ?? 0,
+            completedClassFive: try values.decodeIfPresent(Bool.self, forKey: .completedClassFive) ?? false,
+            committedCircuitResults: try values.decodeIfPresent(Int.self, forKey: .committedCircuitResults) ?? 0,
+            meaningfulSessionIDs: try values.decodeIfPresent([String].self, forKey: .meaningfulSessionIDs) ?? [],
+            attemptedAppVersion: try values.decodeIfPresent(String.self, forKey: .attemptedAppVersion),
+            attemptedDate: try values.decodeIfPresent(Date.self, forKey: .attemptedDate),
+            attemptedVersions: try values.decodeIfPresent(Set<String>.self, forKey: .attemptedVersions) ?? [],
+            attemptedVersionDates: try values.decodeIfPresent([String: Date].self, forKey: .attemptedVersionDates) ?? [:]
+        )
+    }
+
+    private static func validSessionID(_ value: String) -> Bool {
+        UUID(uuidString: value.hasPrefix("test-") ? String(value.dropFirst(5)) : value) != nil
+    }
+
+    mutating func recordMeaningfulSession(_ id: String) {
+        guard Self.validSessionID(id), !meaningfulSessionIDs.contains(id), meaningfulSessionIDs.count < 2 else { return }
+        meaningfulSessionIDs.append(id)
+    }
+
+    mutating func mergeConservatively(_ other: Self) {
+        successfulGardenCompletions = max(successfulGardenCompletions, other.successfulGardenCompletions)
+        committedCampaignResults = max(committedCampaignResults, other.committedCampaignResults)
+        completedClassFive = completedClassFive || other.completedClassFive
+        committedCircuitResults = max(committedCircuitResults, other.committedCircuitResults)
+        meaningfulSessionIDs = Array(Set(meaningfulSessionIDs).union(other.meaningfulSessionIDs)).sorted().prefix(2).map { $0 }
+        attemptedVersions.formUnion(other.attemptedVersions)
+        if let version = other.attemptedAppVersion { attemptedVersions.insert(version) }
+        for (version, date) in other.attemptedVersionDates {
+            attemptedVersionDates[version] = max(attemptedVersionDates[version] ?? date, date)
+            attemptedVersions.insert(version)
+        }
+        if let date = other.attemptedDate,
+           date > (attemptedDate ?? .distantPast) {
+            attemptedDate = date
+            attemptedAppVersion = other.attemptedAppVersion
+        }
+    }
+}
+
+enum ReviewRequestReason: String, Sendable {
+    case gardenEstablishedUse = "garden_established_use"
+    case gardenToFlowerShow = "garden_to_flower_show"
+    case establishedCircuit = "established_circuit"
+}
+
+enum RatingLink {
+    static let destinationIdentifier = "app_store_review"
+    static let url = URL(string: "https://apps.apple.com/app/id6789952808?action=write-review")!
 }
 
 enum ReviewRequestPolicy {
     static let minimumDaysBetweenAttempts = 120
 
-    static func registerSuccessfulGarden(state: inout ReviewRequestState) {
+    static func registerSuccessfulGarden(state: inout ReviewRequestState, sessionID: String) {
         state.successfulGardenCompletions += 1
+        state.recordMeaningfulSession(sessionID)
+    }
+
+    static func registerCommittedCampaign(state: inout ReviewRequestState, classNumber: Int, sessionID: String) {
+        state.committedCampaignResults += 1
+        if classNumber == 5 { state.completedClassFive = true }
+        state.recordMeaningfulSession(sessionID)
+    }
+
+    static func registerAdvancedCircuit(state: inout ReviewRequestState, sessionID: String) {
+        state.committedCircuitResults += 1
+        state.recordMeaningfulSession(sessionID)
+    }
+
+    static func eligibleReason(state: ReviewRequestState, now: Date, appVersion: String) -> ReviewRequestReason? {
+        guard state.meaningfulSessionIDs.count >= 2 else { return nil }
+        guard appVersion.isEmpty == false else { return nil }
+        guard !state.attemptedVersions.contains(appVersion), state.attemptedAppVersion != appVersion else { return nil }
+        let latestAttempt = ([state.attemptedDate].compactMap { $0 } + Array(state.attemptedVersionDates.values))
+            .max()
+        if let latestAttempt {
+            let minimumInterval = TimeInterval(minimumDaysBetweenAttempts * 24 * 60 * 60)
+            guard now.timeIntervalSince(latestAttempt) >= minimumInterval else { return nil }
+        }
+        if state.committedCircuitResults > 0 { return .establishedCircuit }
+        if state.successfulGardenCompletions > 0 && state.committedCampaignResults > 0 {
+            return .gardenToFlowerShow
+        }
+        if state.successfulGardenCompletions >= 2 { return .gardenEstablishedUse }
+        return nil
     }
 
     static func isEligible(
@@ -1218,17 +1335,7 @@ enum ReviewRequestPolicy {
         now: Date,
         appVersion: String
     ) -> Bool {
-        guard state.successfulGardenCompletions >= 2 else { return false }
-        guard appVersion.isEmpty == false else { return false }
-        guard state.attemptedAppVersion != appVersion else { return false }
-
-        if let attemptedDate = state.attemptedDate {
-            let interval = now.timeIntervalSince(attemptedDate)
-            let minimumInterval = TimeInterval(minimumDaysBetweenAttempts * 24 * 60 * 60)
-            guard interval >= minimumInterval else { return false }
-        }
-
-        return true
+        eligibleReason(state: state, now: now, appVersion: appVersion) != nil
     }
 
     static func recordAttemptIfEligible(
@@ -1240,7 +1347,24 @@ enum ReviewRequestPolicy {
         // StoreKit does not report whether it showed anything, so this is recorded first.
         state.attemptedAppVersion = appVersion
         state.attemptedDate = now
+        state.attemptedVersions.insert(appVersion)
+        state.attemptedVersionDates[appVersion] = now
         return true
+    }
+}
+
+/// A cancellable natural-break gate. Persistence in `commit` must succeed before `request` runs.
+@MainActor
+func makeReviewRequestDelayTask(
+    wait: @escaping @MainActor () async throws -> Void,
+    stillEligible: @escaping @MainActor () -> Bool,
+    commit: @escaping @MainActor () -> Bool,
+    request: @escaping @MainActor () -> Void
+) -> Task<Void, Never> {
+    Task { @MainActor in
+        do { try await wait() } catch { return }
+        guard !Task.isCancelled, stillEligible(), commit() else { return }
+        request()
     }
 }
 
@@ -1328,13 +1452,34 @@ private struct LegacyFlowerShowProgressSnapshot: Decodable {
     }
 }
 
+enum AnalyticsProgressBasis: String, Codable, Equatable, Sendable {
+    case freshInstrumentedProgress
+    case existingProgress
+}
+
+struct AnalyticsProgressState: Codable, Equatable, Sendable {
+    static let schemaVersion = 2
+    var version = schemaVersion
+    var basis: AnalyticsProgressBasis
+    var firstEligibleStartRecorded = false
+    var firstBloomRecorded = false
+    var firstGardenWinRecorded = false
+    var sampleUnlockRecorded = false
+
+    static let fresh = Self(basis: .freshInstrumentedProgress)
+    static let existing = Self(basis: .existingProgress)
+}
+
 struct GameProgress: Codable, Equatable, Sendable {
+    var saveRevision: Int
     var bestScore: Int
     var highestGarden: Int
     var globalBestStreak: Int
     var radiantGardens: Set<Int>
     var activeGame: GameEngine?
     var activeGardenSeed: UInt64?
+    var activeGardenAttemptID: UUID?
+    var analyticsProgress: AnalyticsProgressState
     var flowerShowIntroduced: Bool
     var completedFlowerShowClasses: Set<Int>
     var currentFlowerShowClass: Int
@@ -1346,12 +1491,15 @@ struct GameProgress: Codable, Equatable, Sendable {
     var reviewRequestState: ReviewRequestState
 
     init(
+        saveRevision: Int = 0,
         bestScore: Int,
         highestGarden: Int,
         globalBestStreak: Int = 0,
         radiantGardens: Set<Int> = [],
         activeGame: GameEngine? = nil,
         activeGardenSeed: UInt64? = nil,
+        activeGardenAttemptID: UUID? = nil,
+        analyticsProgress: AnalyticsProgressState = .existing,
         flowerShowIntroduced: Bool = false,
         completedFlowerShowClasses: Set<Int> = [],
         currentFlowerShowClass: Int = 1,
@@ -1362,12 +1510,15 @@ struct GameProgress: Codable, Equatable, Sendable {
         flowerShowProgress: FlowerShowProgressV3? = nil,
         reviewRequestState: ReviewRequestState? = nil
     ) {
+        self.saveRevision = max(0, saveRevision)
         self.bestScore = bestScore
         self.highestGarden = highestGarden
         self.globalBestStreak = globalBestStreak
         self.radiantGardens = radiantGardens
         self.activeGame = activeGame
         self.activeGardenSeed = activeGardenSeed
+        self.activeGardenAttemptID = activeGardenAttemptID
+        self.analyticsProgress = analyticsProgress
         self.flowerShowIntroduced = flowerShowIntroduced
         self.completedFlowerShowClasses = completedFlowerShowClasses
         self.currentFlowerShowClass = currentFlowerShowClass
@@ -1392,12 +1543,15 @@ struct GameProgress: Codable, Equatable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
+        case saveRevision
         case bestScore
         case highestGarden
         case globalBestStreak
         case radiantGardens
         case activeGame
         case activeGardenSeed
+        case activeGardenAttemptID
+        case analyticsProgress
         case flowerShowIntroduced
         case completedFlowerShowClasses
         case currentFlowerShowClass
@@ -1415,6 +1569,7 @@ struct GameProgress: Codable, Equatable, Sendable {
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        saveRevision = max(0, try container.decodeIfPresent(Int.self, forKey: .saveRevision) ?? 0)
         let legacyFlowerShowProgress = try LegacyFlowerShowProgressSnapshot(from: decoder)
         let decodedCampaignVersion = try container.decodeIfPresent(
             Int.self,
@@ -1426,6 +1581,14 @@ struct GameProgress: Codable, Equatable, Sendable {
         radiantGardens = try container.decodeIfPresent(Set<Int>.self, forKey: .radiantGardens) ?? []
         activeGame = try container.decodeIfPresent(GameEngine.self, forKey: .activeGame)
         activeGardenSeed = try container.decodeIfPresent(UInt64.self, forKey: .activeGardenSeed)
+        activeGardenAttemptID = try? container.decodeIfPresent(UUID.self, forKey: .activeGardenAttemptID)
+        let decodedAnalytics = try? container.decodeIfPresent(AnalyticsProgressState.self, forKey: .analyticsProgress)
+        if let decodedAnalytics,
+           decodedAnalytics.version == AnalyticsProgressState.schemaVersion {
+            analyticsProgress = decodedAnalytics
+        } else {
+            analyticsProgress = .existing
+        }
         if decodedCampaignVersion < FlowerShowClassDefinition.campaignVersion {
             flowerShowProgress = legacyFlowerShowProgress.migratedProgress
             flowerShowIntroduced = flowerShowProgress.completedCampaignClasses.isEmpty == false
@@ -1460,12 +1623,15 @@ struct GameProgress: Codable, Equatable, Sendable {
 
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(saveRevision, forKey: .saveRevision)
         try container.encode(bestScore, forKey: .bestScore)
         try container.encode(highestGarden, forKey: .highestGarden)
         try container.encode(globalBestStreak, forKey: .globalBestStreak)
         try container.encode(radiantGardens, forKey: .radiantGardens)
         try container.encodeIfPresent(activeGame, forKey: .activeGame)
         try container.encodeIfPresent(activeGardenSeed, forKey: .activeGardenSeed)
+        try container.encodeIfPresent(activeGardenAttemptID, forKey: .activeGardenAttemptID)
+        try container.encode(analyticsProgress, forKey: .analyticsProgress)
         try container.encode(FlowerShowClassDefinition.campaignVersion, forKey: .flowerShowCampaignVersion)
         try container.encode(flowerShowProgress, forKey: .flowerShowProgress)
         try container.encode(reviewRequestState, forKey: .reviewRequestState)
@@ -1473,7 +1639,8 @@ struct GameProgress: Codable, Equatable, Sendable {
 
     static let fresh = GameProgress(
         bestScore: 0,
-        highestGarden: 1
+        highestGarden: 1,
+        analyticsProgress: .fresh
     )
 }
 
@@ -1482,6 +1649,15 @@ protocol GameProgressStoring: AnyObject {
     func load() -> GameProgress
     @discardableResult
     func save(_ progress: GameProgress) -> Bool
+    var saveRevision: Int { get }
+    var loadReasonCode: String { get }
+    var saveReasonCode: String { get }
+}
+
+extension GameProgressStoring {
+    var saveRevision: Int { 0 }
+    var loadReasonCode: String { "memory" }
+    var saveReasonCode: String { "write_failed" }
 }
 
 @MainActor
@@ -1506,10 +1682,95 @@ final class InMemoryGameProgressStore: GameProgressStoring {
 final class FileGameProgressStore: GameProgressStoring {
     private static let maximumSaveAttempts = 2
 
+    private struct RecoveryRecord: Codable {
+        let formatVersion: Int
+        let revision: Int
+        let payload: Data
+        let checksum: UInt64
+    }
+
+    private static func checksum(_ data: Data) -> UInt64 {
+        data.reduce(UInt64(0xcbf29ce484222325)) { value, byte in
+            (value ^ UInt64(byte)) &* 0x100000001b3
+        }
+    }
+
     private let fileURL: URL
     private(set) var lastLoadOutcome: GameProgressLoadOutcome = .fresh
     private(set) var lastSaveOutcome: GameProgressSaveOutcome = .notAttempted
     private(set) var persistenceEnabled = true
+    private(set) var saveRevision = 0
+    private(set) var loadReasonCode = "fresh"
+    private(set) var saveReasonCode = "none"
+
+    private func recoveryURL(for revision: Int) -> URL {
+        fileURL.appendingPathExtension("recovery-v1-\(revision % 2)")
+    }
+
+    private func latestRecovery() -> GameProgress? {
+        (0 ... 1).compactMap { slot -> GameProgress? in
+            let url = fileURL.appendingPathExtension("recovery-v1-\(slot)")
+            guard let data = try? Data(contentsOf: url),
+                  let record = try? JSONDecoder().decode(RecoveryRecord.self, from: data),
+                  record.formatVersion == 1,
+                  record.revision > 0,
+                  record.checksum == Self.checksum(record.payload),
+                  let progress = try? JSONDecoder().decode(GameProgress.self, from: record.payload),
+                  record.revision == progress.saveRevision
+            else { return nil }
+            return progress
+        }.max { $0.saveRevision < $1.saveRevision }
+    }
+
+    /// Never replace an earlier original. Identical originals may share a verified backup.
+    private func preserveOriginal(_ data: Data, suffix: String) throws -> URL {
+        for index in 1 ... 128 {
+            let name = index == 1 ? suffix : "\(suffix)-\(index)"
+            let url = fileURL.appendingPathExtension(name)
+            if FileManager.default.fileExists(atPath: url.path) {
+                if try Data(contentsOf: url) == data { return url }
+                continue
+            }
+            try data.write(to: url, options: .atomic)
+            guard try Data(contentsOf: url) == data else { throw CocoaError(.fileWriteUnknown) }
+            return url
+        }
+        throw CocoaError(.fileWriteFileExists)
+    }
+
+    private func mergeEarnedProgress(from other: GameProgress, into progress: inout GameProgress) {
+        progress.saveRevision = max(progress.saveRevision, other.saveRevision)
+        if other.analyticsProgress.basis == .existingProgress {
+            progress.analyticsProgress.basis = .existingProgress
+        }
+        progress.analyticsProgress.firstEligibleStartRecorded = progress.analyticsProgress.firstEligibleStartRecorded
+            || other.analyticsProgress.firstEligibleStartRecorded
+        progress.analyticsProgress.firstBloomRecorded = progress.analyticsProgress.firstBloomRecorded
+            || other.analyticsProgress.firstBloomRecorded
+        progress.analyticsProgress.firstGardenWinRecorded = progress.analyticsProgress.firstGardenWinRecorded
+            || other.analyticsProgress.firstGardenWinRecorded
+        progress.analyticsProgress.sampleUnlockRecorded = progress.analyticsProgress.sampleUnlockRecorded
+            || other.analyticsProgress.sampleUnlockRecorded
+        progress.bestScore = max(progress.bestScore, other.bestScore)
+        progress.highestGarden = max(progress.highestGarden, other.highestGarden)
+        progress.globalBestStreak = max(progress.globalBestStreak, other.globalBestStreak)
+        progress.radiantGardens.formUnion(other.radiantGardens)
+        progress.reviewRequestState.mergeConservatively(other.reviewRequestState)
+        for (number, rating) in other.flowerShowProgress.bestCampaignRatings {
+            if rating > (progress.flowerShowProgress.bestCampaignRatings[number] ?? .seedling) {
+                progress.flowerShowProgress.bestCampaignRatings[number] = rating
+            } else if progress.flowerShowProgress.bestCampaignRatings[number] == nil {
+                progress.flowerShowProgress.bestCampaignRatings[number] = rating
+            }
+        }
+        progress.flowerShowProgress.nextCircuitClass = max(
+            progress.flowerShowProgress.nextCircuitClass,
+            other.flowerShowProgress.nextCircuitClass
+        )
+        progress.flowerShowProgress.seenIntroductions.formUnion(other.flowerShowProgress.seenIntroductions)
+        progress.flowerShowProgress.committedAttemptIDs.formUnion(other.flowerShowProgress.committedAttemptIDs)
+        _ = progress.flowerShowProgress.sanitiseDecodedState()
+    }
 
     init(fileURL: URL? = nil) {
         if let fileURL {
@@ -1527,6 +1788,21 @@ final class FileGameProgressStore: GameProgressStoring {
 
     func load() -> GameProgress {
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            if let recovered = latestRecovery() {
+                saveRevision = recovered.saveRevision
+                if save(recovered) {
+                    var recovered = recovered
+                    recovered.saveRevision = saveRevision
+                    loadReasonCode = "recovery_missing_primary"
+                    lastLoadOutcome = .loaded(recovered)
+                    return recovered
+                } else {
+                    loadReasonCode = "recovery_write_failed"
+                    lastLoadOutcome = .failed(message: "Recovery record is valid but primary write failed.")
+                }
+                return recovered
+            }
+            loadReasonCode = "fresh"
             lastLoadOutcome = .fresh
             return .fresh
         }
@@ -1534,9 +1810,10 @@ final class FileGameProgressStore: GameProgressStoring {
         do {
             data = try Data(contentsOf: fileURL)
         } catch {
+            loadReasonCode = "primary_read_failed"
             persistenceEnabled = false
-            lastLoadOutcome = .failed(message: "Unable to read progress: \(error)")
-            return .fresh
+            lastLoadOutcome = .failed(message: "Unable to read progress; original preserved.")
+            return latestRecovery() ?? .fresh
         }
 
         struct VersionHeader: Decodable {
@@ -1544,6 +1821,17 @@ final class FileGameProgressStore: GameProgressStoring {
         }
         let versionHeader = try? JSONDecoder().decode(VersionHeader.self, from: data)
         let storedVersion = versionHeader?.flowerShowCampaignVersion ?? 1
+        if storedVersion > FlowerShowClassDefinition.campaignVersion {
+            // A newer build may know fields and rules this build cannot preserve. Never merge
+            // a recovery record or rewrite the original through the older encoder.
+            persistenceEnabled = false
+            loadReasonCode = "future_version"
+            lastLoadOutcome = .failed(message: "A newer save version was preserved without changes.")
+            var readable = (try? JSONDecoder().decode(GameProgress.self, from: data)) ?? .fresh
+            readable.flowerShowProgress.activeAttempt = nil
+            readable.flowerShowProgress.pendingResult = nil
+            return readable
+        }
         struct FlowerShowProgressEnvelope: Decodable {
             let flowerShowProgress: FlowerShowProgressV3?
         }
@@ -1554,19 +1842,57 @@ final class FileGameProgressStore: GameProgressStoring {
         do {
             progress = try JSONDecoder().decode(GameProgress.self, from: data)
         } catch {
-            persistenceEnabled = false
-            lastLoadOutcome = .failed(message: "Progress decode failed; original preserved: \(error)")
-            return .fresh
+            guard let recovered = latestRecovery() else {
+                persistenceEnabled = false
+                loadReasonCode = "primary_decode_failed"
+                lastLoadOutcome = .failed(message: "Progress decode failed; original preserved.")
+                return .fresh
+            }
+            do {
+                let backupURL = try preserveOriginal(data, suffix: "recovered-backup")
+                saveRevision = recovered.saveRevision
+                guard save(recovered) else {
+                    loadReasonCode = "recovery_write_failed"
+                    lastLoadOutcome = .failed(message: "Recovery record is valid but primary write failed.")
+                    return recovered
+                }
+                var recovered = recovered
+                recovered.saveRevision = saveRevision
+                loadReasonCode = "recovery_decode_failure"
+                lastLoadOutcome = .repaired(recovered, backupURL: backupURL)
+                return recovered
+            } catch {
+                persistenceEnabled = false
+                loadReasonCode = "recovery_backup_failed"
+                lastLoadOutcome = .failed(message: "Recovery original could not be preserved.")
+                return recovered
+            }
         }
+
+        let originalReviewRequestState = progress.reviewRequestState
+
+        let mainRevision = progress.saveRevision
+        if let recovered = latestRecovery() {
+            if recovered.saveRevision > progress.saveRevision {
+                var restored = recovered
+                mergeEarnedProgress(from: progress, into: &restored)
+                progress = restored
+            } else {
+                mergeEarnedProgress(from: recovered, into: &progress)
+            }
+        }
+        let recoveredNewer = progress.saveRevision > mainRevision
+        saveRevision = progress.saveRevision
 
         progress.bestScore = max(0, progress.bestScore)
         progress.highestGarden = max(1, progress.highestGarden)
         progress.globalBestStreak = max(0, progress.globalBestStreak)
         progress.radiantGardens = Set(progress.radiantGardens.filter { $0 > 0 })
         progress.flowerShowProgress.sanitiseDecodedState()
-        let flowerShowProgressWasRepaired = originallyDecodedFlowerShowProgress.map {
+        let flowerShowProgressWasRepaired = recoveredNewer || (originallyDecodedFlowerShowProgress.map {
             $0 != progress.flowerShowProgress
-        } ?? false
+        } ?? false)
+        let reviewRequestStateWasRepaired = originalReviewRequestState != progress.reviewRequestState
         let recoveredLegacyBackupURL = storedVersion == FlowerShowClassDefinition.campaignVersion
             ? recoverLegacyFlowerShowBackup(into: &progress.flowerShowProgress)
             : nil
@@ -1590,53 +1916,47 @@ final class FileGameProgressStore: GameProgressStoring {
 
         if storedVersion < FlowerShowClassDefinition.campaignVersion {
             do {
-                let backupURL = fileURL.appendingPathExtension(
-                    "flower-show-v\(storedVersion)-backup"
-                )
-                if FileManager.default.fileExists(atPath: backupURL.path) {
-                    let existingBackup = try Data(contentsOf: backupURL)
-                    guard existingBackup == data else {
-                        throw CocoaError(.fileWriteFileExists)
-                    }
-                } else {
-                    try data.write(to: backupURL, options: .atomic)
-                    let verified = try Data(contentsOf: backupURL)
-                    guard verified == data else {
-                        throw CocoaError(.fileWriteUnknown)
-                    }
+                let backupURL = try preserveOriginal(data, suffix: "flower-show-v\(storedVersion)-backup")
+                guard save(progress) else {
+                    loadReasonCode = "migration_write_failed"
+                    lastLoadOutcome = .failed(message: "Migration write failed; original preserved.")
+                    return progress
                 }
-                save(progress)
-                guard persistenceEnabled else { return progress }
+                progress.saveRevision = saveRevision
+                loadReasonCode = "migrated"
                 lastLoadOutcome = .migrated(progress, backupURL: backupURL)
             } catch {
                 persistenceEnabled = false
-                lastLoadOutcome = .failed(message: "Migration backup/write failed; original preserved: \(error)")
+                loadReasonCode = "migration_backup_failed"
+                lastLoadOutcome = .failed(message: "Migration backup failed; original preserved.")
             }
-        } else if flowerShowProgressWasRepaired {
+        } else if flowerShowProgressWasRepaired || reviewRequestStateWasRepaired {
             do {
-                let backupURL = fileURL.appendingPathExtension("repaired-backup")
-                if FileManager.default.fileExists(atPath: backupURL.path) {
-                    let existingBackup = try Data(contentsOf: backupURL)
-                    guard existingBackup == data else {
-                        throw CocoaError(.fileWriteFileExists)
-                    }
-                } else {
-                    try data.write(to: backupURL, options: .atomic)
-                    let verified = try Data(contentsOf: backupURL)
-                    guard verified == data else { throw CocoaError(.fileWriteUnknown) }
+                let backupURL = try preserveOriginal(data, suffix: "repaired-backup")
+                guard save(progress) else {
+                    loadReasonCode = "repair_write_failed"
+                    lastLoadOutcome = .failed(message: "Repair write failed; original preserved.")
+                    return progress
                 }
-                save(progress)
-                guard persistenceEnabled else { return progress }
+                progress.saveRevision = saveRevision
+                loadReasonCode = recoveredNewer ? "recovery_newer_revision" : "repaired_state"
                 lastLoadOutcome = .repaired(progress, backupURL: backupURL)
             } catch {
                 persistenceEnabled = false
-                lastLoadOutcome = .failed(message: "Repair backup/write failed; original preserved: \(error)")
+                loadReasonCode = "repair_backup_failed"
+                lastLoadOutcome = .failed(message: "Repair backup failed; original preserved.")
             }
         } else if let recoveredLegacyBackupURL {
-            save(progress)
-            guard persistenceEnabled else { return progress }
+            guard save(progress) else {
+                loadReasonCode = "legacy_recovery_write_failed"
+                lastLoadOutcome = .failed(message: "Legacy recovery write failed; original preserved.")
+                return progress
+            }
+            progress.saveRevision = saveRevision
+            loadReasonCode = "legacy_recovered"
             lastLoadOutcome = .migrated(progress, backupURL: recoveredLegacyBackupURL)
         } else {
+            loadReasonCode = "loaded"
             lastLoadOutcome = .loaded(progress)
         }
         return progress
@@ -1647,18 +1967,23 @@ final class FileGameProgressStore: GameProgressStoring {
     ) -> URL? {
         var recoveredBackupURL: URL?
         for version in (1 ..< FlowerShowClassDefinition.campaignVersion).reversed() {
-            let backupURL = fileURL.appendingPathExtension("flower-show-v\(version)-backup")
-            guard FileManager.default.fileExists(atPath: backupURL.path),
-                  let data = try? Data(contentsOf: backupURL),
-                  let snapshot = try? JSONDecoder().decode(
-                      LegacyFlowerShowProgressSnapshot.self,
-                      from: data
-                  ),
-                  snapshot.storedVersion == version
-            else { continue }
+            for index in 1 ... 128 {
+                let suffix = index == 1
+                    ? "flower-show-v\(version)-backup"
+                    : "flower-show-v\(version)-backup-\(index)"
+                let backupURL = fileURL.appendingPathExtension(suffix)
+                guard FileManager.default.fileExists(atPath: backupURL.path),
+                      let data = try? Data(contentsOf: backupURL),
+                      let snapshot = try? JSONDecoder().decode(
+                          LegacyFlowerShowProgressSnapshot.self,
+                          from: data
+                      ),
+                      snapshot.storedVersion == version
+                else { continue }
 
-            if snapshot.mergeMissingProgress(into: &progress), recoveredBackupURL == nil {
-                recoveredBackupURL = backupURL
+                if snapshot.mergeMissingProgress(into: &progress), recoveredBackupURL == nil {
+                    recoveredBackupURL = backupURL
+                }
             }
         }
         return recoveredBackupURL
@@ -1667,44 +1992,72 @@ final class FileGameProgressStore: GameProgressStoring {
     @discardableResult
     func save(_ progress: GameProgress) -> Bool {
         guard persistenceEnabled else {
+            saveReasonCode = "persistence_disabled"
             lastSaveOutcome = .failed(
                 message: "Persistence is disabled because the existing save could not be loaded safely."
             )
             return false
         }
 
+        var progress = progress
+        var validatedFlowerShow = progress.flowerShowProgress
+        guard validatedFlowerShow.sanitiseDecodedState() == false else {
+            saveReasonCode = "invalid_state"
+            lastSaveOutcome = .failed(message: "Progress state failed validation.")
+            return false
+        }
+        guard max(saveRevision, progress.saveRevision) < Int.max else {
+            saveReasonCode = "revision_exhausted"
+            lastSaveOutcome = .failed(message: "Save revision exhausted.")
+            return false
+        }
+        progress.saveRevision = max(saveRevision, progress.saveRevision) + 1
         let data: Data
+        let recoveryData: Data
         do {
-            data = try JSONEncoder().encode(progress)
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .sortedKeys
+            data = try encoder.encode(progress)
+            recoveryData = try JSONEncoder().encode(
+                RecoveryRecord(
+                    formatVersion: 1,
+                    revision: progress.saveRevision,
+                    payload: data,
+                    checksum: Self.checksum(data)
+                )
+            )
         } catch {
-            lastSaveOutcome = .failed(message: "Unable to encode Ringbloom progress: \(error)")
+            saveReasonCode = "encode_failed"
+            lastSaveOutcome = .failed(message: "Unable to encode Ringbloom progress.")
             return false
         }
 
-        var lastError: (any Error)?
         for _ in 0 ..< Self.maximumSaveAttempts {
             do {
                 try FileManager.default.createDirectory(
                     at: fileURL.deletingLastPathComponent(),
                     withIntermediateDirectories: true
                 )
+                let recoveryURL = recoveryURL(for: progress.saveRevision)
+                try recoveryData.write(to: recoveryURL, options: .atomic)
+                guard try Data(contentsOf: recoveryURL) == recoveryData else {
+                    throw CocoaError(.fileWriteUnknown)
+                }
                 try data.write(to: fileURL, options: .atomic)
                 let persistedData = try Data(contentsOf: fileURL)
                 guard persistedData == data else { throw CocoaError(.fileWriteUnknown) }
+                saveRevision = progress.saveRevision
+                saveReasonCode = "saved"
                 lastSaveOutcome = .saved
                 return true
-            } catch {
-                lastError = error
-            }
+            } catch { continue }
         }
 
         // A write can fail transiently while the app remains otherwise healthy. Keep the
         // previous atomic save intact and allow the next gameplay event to try again instead
         // of silently disabling persistence for the rest of the process.
-        let errorDescription = lastError.map { String(describing: $0) } ?? "Unknown error"
-        lastSaveOutcome = .failed(
-            message: "Unable to persist Ringbloom progress: \(errorDescription)"
-        )
+        saveReasonCode = "write_failed"
+        lastSaveOutcome = .failed(message: "Unable to persist Ringbloom progress.")
         return false
     }
 }

@@ -33,6 +33,101 @@ final class RingbloomUITests: XCTestCase {
         XCTAssertTrue(board.waitForExistence(timeout: 3))
     }
 
+    func testExplicitAnalyticsIngestionFreshGardenWin() throws {
+        try XCTSkipUnless(
+            ProcessInfo.processInfo.environment["RINGBLOOM_ANALYTICS_TEST_INGESTION"] == "1",
+            "Remote test ingestion requires explicit runner opt-in."
+        )
+        let app = launch(arguments: ["--screenshot-win", "--analytics-fresh-progress"])
+        XCTAssertTrue(app.otherElements["gameOutcome"].waitForExistence(timeout: 12))
+        XCTAssertTrue(app.staticTexts["GARDEN COMPLETE"].exists)
+        XCUIDevice.shared.press(.home)
+        Thread.sleep(forTimeInterval: 1)
+        app.activate()
+        XCTAssertTrue(app.otherElements["gameOutcome"].waitForExistence(timeout: 8))
+        Thread.sleep(forTimeInterval: 5)
+    }
+
+    func testFirstWinOfferUsesAccessibleLabelsAtLargeText() {
+        let app = launch(arguments: [
+            "--screenshot-win",
+            "-UIPreferredContentSizeCategoryName",
+            "UICTContentSizeCategoryAccessibilityXXXL",
+        ])
+        let offer = app.buttons["tryFlowerShowButton"]
+        XCTAssertTrue(offer.waitForExistence(timeout: 8))
+        XCTAssertEqual(offer.label, "Try Flower Show, 5 free Classes")
+        XCTAssertTrue(app.buttons["nextGardenButton"].label.contains("CONTINUE GARDEN"))
+        tap(offer, in: app)
+        let rules = app.staticTexts["flowerShowRulesTitle"]
+        XCTAssertTrue(rules.waitForExistence(timeout: 5))
+        XCTAssertEqual(rules.label, "NEW RULE · RING HARMONY")
+        XCTAssertFalse(app.otherElements["flowerShowPurchaseView"].exists)
+    }
+
+    func testCheckingKeepsClassOneRouteFreeOfThePaywall() {
+        let app = launch(arguments: [
+            "--flower-show-access=checking",
+            "--flower-show-class=1",
+        ])
+        tap(app.buttons["flowerShowButton"], in: app)
+        XCTAssertTrue(app.staticTexts["flowerShowRulesTitle"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.otherElements["flowerShowPurchaseView"].exists)
+    }
+
+    func testCompletedSamplerResumesSavedFreeReplayInsteadOfOpeningPaywall() {
+        let app = launch(arguments: [
+            "--flower-show-access=sample",
+            "--flower-show-class=6",
+            "--flower-show-saved-class=1",
+        ])
+
+        let flowerShow = app.buttons["flowerShowButton"]
+        XCTAssertTrue(flowerShow.waitForExistence(timeout: 5))
+        XCTAssertEqual(flowerShow.label, "RESUME REPLAY · CLASS 1")
+        tap(flowerShow, in: app)
+        XCTAssertTrue(app.staticTexts["gameBoard"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.otherElements["flowerShowPurchaseView"].exists)
+    }
+
+    func testExplicitAnalyticsIngestionSampleClassFiveAndSyntheticPurchase() throws {
+        try XCTSkipUnless(
+            ProcessInfo.processInfo.environment["RINGBLOOM_ANALYTICS_TEST_INGESTION"] == "1",
+            "Remote test ingestion requires explicit runner opt-in."
+        )
+        let app = launch(arguments: [
+            "--flower-show-access=sample", "--flower-show-class=5",
+            "--screenshot-flower-show-rules", "--flower-show-display-price=Test purchase",
+            "--analytics-purchase-fixture",
+        ])
+        tap(app.buttons["flowerShowBeginButton"], in: app)
+        let result = app.otherElements["flowerShowResult"]
+        // The exact solver route for campaign-05, digest
+        // 4168748ddcbc2d5541f59a9a7f92c38a9f45269550c4addb0a44738ea4743ca7.
+        let route: [(ring: String, rotation: String)] = [
+            ("ringOuter", "rotateCounterClockwise"),
+            ("ringOuter", "rotateClockwise"),
+            ("ringInner", "rotateCounterClockwise"),
+            ("ringInner", "rotateCounterClockwise"),
+            ("ringMiddle", "rotateClockwise"),
+        ]
+        for move in route {
+            tap(app.buttons[move.ring], in: app)
+            tap(app.buttons[move.rotation], in: app)
+            Thread.sleep(forTimeInterval: 1.55)
+        }
+        XCTAssertTrue(result.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["flowerShowResultTitle"].label.contains("CLASS 5 COMPLETE"))
+        tap(app.buttons["nextGardenButton"], in: app)
+        XCTAssertTrue(app.otherElements["flowerShowPurchaseView"].waitForExistence(timeout: 5))
+        tap(app.buttons["flowerShowPurchaseButton"], in: app)
+        XCTAssertTrue(app.staticTexts["FLOWER SHOW UNLOCKED"].waitForExistence(timeout: 5))
+        XCUIDevice.shared.press(.home)
+        Thread.sleep(forTimeInterval: 1)
+        app.activate()
+        Thread.sleep(forTimeInterval: 5)
+    }
+
     func testFreshHomeShowsQualificationProgressDuringProductionEquivalentChecking() {
         let app = launch(arguments: ["--flower-show-access=checking"])
 
@@ -70,11 +165,43 @@ final class RingbloomUITests: XCTestCase {
         let flowerShow = app.buttons["flowerShowButton"]
         XCTAssertTrue(garden.waitForExistence(timeout: 3))
         XCTAssertTrue(flowerShow.waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["settingsButton"].exists)
+        XCTAssertTrue(app.buttons["home.feedback"].exists)
         XCTAssertLessThanOrEqual(
             flowerShow.frame.maxY,
             app.frame.maxY,
             "The complete Flower Show action should be visible without scrolling."
         )
+    }
+
+    func testHomeAndSettingsKeepFeedbackAvailable() {
+        let app = launch(arguments: ["--feedback-offline"])
+
+        tap(app.buttons["home.feedback"], in: app)
+        XCTAssertTrue(app.navigationBars["Send feedback"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["What would make Ringbloom better for you?"].exists)
+        tap(app.navigationBars["Send feedback"].buttons["Close"], in: app)
+        app.terminate()
+
+        let settingsApp = launch(arguments: ["--feedback-offline"])
+        tap(settingsApp.buttons["settingsButton"], in: settingsApp)
+        XCTAssertTrue(settingsApp.navigationBars["Settings"].waitForExistence(timeout: 5))
+        XCTAssertTrue(settingsApp.switches["feedbackRemindersToggle"].exists)
+        tap(settingsApp.buttons["settings.feedback"], in: settingsApp)
+        XCTAssertTrue(settingsApp.navigationBars["Send feedback"].waitForExistence(timeout: 5))
+        XCTAssertTrue(settingsApp.staticTexts["What would make Ringbloom better for you?"].exists)
+    }
+
+    func testEligibleResultShowsNonInterruptiveFeedbackNudge() {
+        let app = launch(arguments: ["--screenshot-win", "--feedback-nudge-due"])
+
+        XCTAssertTrue(app.otherElements["gameOutcome"].waitForExistence(timeout: 12))
+        XCTAssertTrue(app.otherElements["feedbackNudge"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["nextGardenButton"].isHittable)
+        tap(app.buttons["feedbackNudge.notNow"], in: app)
+        XCTAssertTrue(app.otherElements["feedbackNudge"].waitForNonExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["nextGardenButton"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["nextGardenButton"].isHittable)
     }
 
     func testQualifiedPlayerSeesFreeSamplerAndClassBook() {
@@ -105,6 +232,121 @@ final class RingbloomUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["NEXT · CLASS 6"].exists)
     }
 
+    func testFlowerShowResultOpensAndCancelsTheOptionalNativeShareSheet() {
+        let app = launch(arguments: [
+            "--flower-show-access=full-purchase",
+            "--flower-show-class=6",
+            "--screenshot-flower-show-win",
+        ])
+
+        let result = app.otherElements["flowerShowResult"]
+        XCTAssertTrue(result.waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["nextGardenButton"].isHittable)
+        let share = app.buttons["flowerShowShareButton"]
+        XCTAssertTrue(share.isHittable)
+        tap(share, in: app)
+        let nativeSheet = app.navigationBars["UIActivityContentView"]
+        XCTAssertTrue(nativeSheet.waitForExistence(timeout: 4))
+        let close = app.buttons["header.closeButton"]
+        XCTAssertTrue(close.isHittable)
+        close.tap()
+        XCTAssertTrue(close.waitForNonExistence(timeout: 3))
+        XCTAssertTrue(result.waitForExistence(timeout: 4))
+        XCTAssertTrue(app.buttons["nextGardenButton"].isHittable)
+    }
+
+    func testFlowerShowShareActionRemainsReachableAtLargeText() {
+        let app = launch(arguments: [
+            "--flower-show-access=full-purchase",
+            "--flower-show-class=6",
+            "--screenshot-flower-show-win",
+            "-UIPreferredContentSizeCategoryName",
+            "UICTContentSizeCategoryAccessibilityXXXL",
+        ])
+
+        XCTAssertTrue(app.otherElements["flowerShowResult"].waitForExistence(timeout: 8))
+        reveal(app.buttons["nextGardenButton"], in: app)
+        XCTAssertTrue(app.buttons["nextGardenButton"].isHittable)
+        reveal(app.buttons["flowerShowShareButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowShareButton"].isHittable)
+        XCTAssertEqual(app.buttons["flowerShowShareButton"].label, "Share Flower Show achievement")
+    }
+
+    func testClassSixPurchasePreviewKeepsControlsReachableAtLargeTextOnASmallPhone() {
+        let app = launch(arguments: [
+            "--flower-show-access=sample",
+            "--flower-show-display-price=CHF 1’234.50 (FAMILY PRICE)",
+            "--flower-show-class=6",
+            "-UIPreferredContentSizeCategoryName",
+            "UICTContentSizeCategoryAccessibilityXXXL",
+        ])
+
+        tap(app.buttons["flowerShowButton"], in: app)
+        let preview = app.otherElements["flowerShowClass6Preview"]
+        XCTAssertTrue(preview.waitForExistence(timeout: 4))
+        XCTAssertTrue(app.otherElements["flowerShowClass6PreviewAnimated"].exists)
+        reveal(app.buttons["flowerShowClass6PreviewPauseButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowClass6PreviewPauseButton"].isHittable)
+        XCTAssertEqual(app.buttons["flowerShowClass6PreviewPauseButton"].label, "Play Class 6 demonstration")
+        XCTAssertTrue(app.buttons["flowerShowClass6PreviewReplayButton"].isHittable)
+        reveal(app.buttons["flowerShowPurchaseButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowPurchaseButton"].label.contains("CHF 1’234.50 (FAMILY PRICE)"))
+        reveal(app.buttons["flowerShowKeepPlayingButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowKeepPlayingButton"].isHittable)
+        reveal(app.buttons["flowerShowRestoreButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowRestoreButton"].isHittable)
+        reveal(app.buttons["flowerShowPurchaseCloseButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowPurchaseCloseButton"].isHittable)
+    }
+
+    func testReducedMotionPurchasePreviewShowsStaticBeforeAndAfterBoards() {
+        let app = launch(arguments: [
+            "--flower-show-access=sample",
+            "--flower-show-display-price=£2.99",
+            "--flower-show-class=8",
+            "--screenshot-flower-show-class-book",
+            // This is Ringbloom's DEBUG-only override. It proves the static
+            // preview branch without claiming that an XCTest launch argument
+            // changed the simulator's native Reduce Motion setting.
+            "--ui-test-reduce-motion",
+        ])
+
+        let classEight = app.buttons["classBookClass8"]
+        revealLazy(classEight, in: app)
+        tap(classEight, in: app)
+        XCTAssertTrue(app.otherElements["flowerShowClass6PreviewStatic"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["CLASS 6 RULE EXAMPLE"].exists)
+        XCTAssertTrue(app.staticTexts["TARGET · CLASS 8 · UNBROKEN HEATS"].exists)
+        let summary = app.staticTexts["flowerShowClass6StaticSummary"]
+        XCTAssertTrue(summary.label.contains("two scoring turns in a row"))
+        XCTAssertTrue(summary.label.contains("middle ring clockwise, then the inner ring counter-clockwise"))
+        XCTAssertFalse(app.buttons["flowerShowClass6PreviewPauseButton"].exists)
+        reveal(app.buttons["flowerShowPurchaseButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowPurchaseButton"].isHittable)
+        reveal(app.buttons["flowerShowRestoreButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowRestoreButton"].isHittable)
+    }
+
+    func testClassSixPreviewStartsPausedAndReplayRestoresTheStableOpeningState() {
+        let app = launch(arguments: [
+            "--flower-show-access=sample",
+            "--flower-show-display-price=£2.99",
+            "--flower-show-class=6",
+        ])
+
+        tap(app.buttons["flowerShowButton"], in: app)
+        let play = app.buttons["flowerShowClass6PreviewPauseButton"]
+        XCTAssertTrue(play.waitForExistence(timeout: 3))
+        XCTAssertEqual(play.label, "Play Class 6 demonstration")
+        tap(play, in: app)
+        pauseForCapture(3.4)
+        let replay = app.buttons["flowerShowClass6PreviewReplayButton"]
+        XCTAssertTrue(replay.isHittable)
+        tap(replay, in: app)
+        XCTAssertTrue(play.waitForExistence(timeout: 2))
+        XCTAssertEqual(play.label, "Play Class 6 demonstration")
+    }
+
     func testPremiumClassBookTileOpensPurchaseWithoutStartingGame() {
         let app = launch(arguments: [
             "--flower-show-access=sample",
@@ -117,7 +359,7 @@ final class RingbloomUITests: XCTestCase {
         revealLazy(class8, in: app)
         XCTAssertTrue(class8.label.contains("Full Flower Show required"))
         tap(class8, in: app)
-        XCTAssertTrue(app.staticTexts["CONTINUE THE SHOW"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["CONTINUE THE SHOW"].waitForExistence(timeout: 8))
         XCTAssertFalse(app.otherElements["flowerShowObjectives"].exists)
     }
 
@@ -132,7 +374,7 @@ final class RingbloomUITests: XCTestCase {
         let class8 = app.buttons["classBookClass8"]
         revealLazy(class8, in: app)
         tap(class8, in: app)
-        XCTAssertTrue(app.staticTexts["CONTINUE THE SHOW"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["CONTINUE THE SHOW"].waitForExistence(timeout: 8))
         tap(app.buttons["flowerShowPurchaseCloseButton"], in: app)
         XCTAssertTrue(app.descendants(matching: .any)["flowerShowClassBook"].waitForExistence(timeout: 3))
         XCTAssertFalse(app.otherElements["flowerShowPurchaseView"].exists)
@@ -368,7 +610,7 @@ final class RingbloomUITests: XCTestCase {
         ])
 
         tap(app.buttons["flowerShowButton"], in: app)
-        XCTAssertTrue(app.staticTexts["Unlock Classes 6–30 and the Champion Circuit."].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["Unlock 25 additional Classes and the Champion Circuit."].waitForExistence(timeout: 3))
         let purchase = app.buttons["flowerShowPurchaseButton"]
         XCTAssertEqual(purchase.label, "UNLOCK FOR \(longPrice.uppercased())")
         XCTAssertTrue(app.buttons["flowerShowKeepPlayingButton"].isEnabled)
@@ -391,7 +633,7 @@ final class RingbloomUITests: XCTestCase {
             if testCase.heading != "FLOWER SHOW UNAVAILABLE" {
                 tap(app.buttons["flowerShowPurchaseButton"], in: app)
             }
-            XCTAssertTrue(app.staticTexts[testCase.heading].waitForExistence(timeout: 3))
+            XCTAssertTrue(app.staticTexts[testCase.heading].waitForExistence(timeout: 8))
             XCTAssertTrue(app.staticTexts[testCase.body].exists)
             app.terminate()
         }
@@ -565,9 +807,9 @@ final class RingbloomUITests: XCTestCase {
             ])
 
             tap(app.buttons["flowerShowButton"], in: app)
-            XCTAssertTrue(app.staticTexts["flowerShowRulesTitle"].waitForExistence(timeout: 3))
+            XCTAssertTrue(app.staticTexts["flowerShowRulesTitle"].waitForExistence(timeout: 8))
             XCTAssertTrue(
-                app.staticTexts[ruleTitle].waitForExistence(timeout: 2),
+                app.staticTexts[ruleTitle].waitForExistence(timeout: 5),
                 "Expected \(ruleTitle) introduction at Class \(classNumber)"
             )
             app.terminate()
@@ -833,12 +1075,30 @@ final class RingbloomUITests: XCTestCase {
         tutorialSeen: Bool = true
     ) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = [
+        var launchArguments = [
             "--ui-testing",
             "--seed=424242",
             "-ringbloom.tutorialSeen",
             tutorialSeen ? "YES" : "NO",
         ] + arguments
+        // UI accessibility preferences persist in the simulator.  Set the
+        // standard values per launch unless this test deliberately overrides
+        // one, so large-text and Reduce Motion coverage cannot affect a later
+        // normal-layout assertion.
+        if arguments.contains("-UIPreferredContentSizeCategoryName") == false {
+            launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryL"]
+        }
+        if arguments.contains("-UIAccessibilityReduceMotionEnabled") == false {
+            launchArguments += ["-UIAccessibilityReduceMotionEnabled", "NO"]
+        }
+        if arguments.contains("-UIAccessibilityDarkerSystemColorsEnabled") == false {
+            launchArguments += ["-UIAccessibilityDarkerSystemColorsEnabled", "NO"]
+        }
+        app.launchArguments = launchArguments
+        if ProcessInfo.processInfo.environment["RINGBLOOM_ANALYTICS_TEST_INGESTION"] == "1" {
+            app.launchEnvironment["RINGBLOOM_ANALYTICS_TEST_INGESTION"] = "1"
+            NSLog("RINGBLOOM_ANALYTICS_TEST_OPT_IN_FORWARDED")
+        }
         app.launch()
         // The physical iPhone SE takes materially longer than the simulator to
         // settle after a cold launch.  Waiting here keeps subsequent element
@@ -889,7 +1149,7 @@ final class RingbloomUITests: XCTestCase {
         // hierarchies), so keep the query type-agnostic.
         let classBook = app.descendants(matching: .any)["flowerShowClassBook"]
         _ = classBook.waitForExistence(timeout: 8)
-        for _ in 0 ..< 12 where element.exists == false {
+        for _ in 0 ..< 20 where element.exists == false {
             if classBook.exists {
                 let start = classBook.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.82))
                 let end = classBook.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.24))

@@ -4,6 +4,15 @@ Ringbloom is a touch puzzle game about arranging petals into blooms. It serves p
 looking for calm play in Garden and deliberate scoring challenges in Flower Show.
 Preserve the distinction between those modes, readable feedback and fair progression.
 
+## Feedback invitation
+
+Keep the anonymous FeedbackKit form visibly available from Home and permanently available
+from Settings. Proactive post-result invitations are optional reminders: retain the persisted
+eligibility and cooldown policy, never let it hide either manual entry point, and do not send
+feedback text, categories, submission IDs or raw errors to product analytics. The shared
+service has no reply channel, so copy must not promise an individual response or that a
+suggestion will be built.
+
 ## Canonical context
 
 This repository is the product source. The Ringbloom folder in `Gaming Benchmark/` is a

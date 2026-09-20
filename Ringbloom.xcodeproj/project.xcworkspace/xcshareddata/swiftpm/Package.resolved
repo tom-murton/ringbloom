@@ -1,6 +1,15 @@
 {
-  "originHash" : "99a2934e5d8e763e561508cc43258a029a9dfd0d504201f86d05a5aed267aec0",
+  "originHash" : "40e584096cb65ba730201fe0b88cda1c8e6dffc91f669acbee6a7ace2d916064",
   "pins" : [
+    {
+      "identity" : "app-services",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tom-murton/app-services.git",
+      "state" : {
+        "revision" : "dc00eabfc884fb158d6e832ffb31c41e060d76a3",
+        "version" : "0.2.4"
+      }
+    },
     {
       "identity" : "appsflyerframework-strict",
       "kind" : "remoteSourceControl",

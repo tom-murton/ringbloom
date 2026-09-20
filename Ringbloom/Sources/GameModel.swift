@@ -1,6 +1,12 @@
 import Combine
 import Foundation
 
+enum ProgressSaveHealth: Equatable {
+    case saved
+    case pending
+    case blocked
+}
+
 @MainActor
 final class GameModel: ObservableObject {
     @Published private var gardenEngine = GameEngine(seed: 1)
@@ -27,12 +33,27 @@ final class GameModel: ObservableObject {
     @Published private(set) var flowerShowHintStatus: FlowerShowHintResult?
     @Published private(set) var reviewRequestState: ReviewRequestState
     @Published private(set) var reviewRequestTrigger: Int?
+    @Published private(set) var reviewRequestReason: ReviewRequestReason?
+    @Published private(set) var progressSaveHealth: ProgressSaveHealth = .saved
+    @Published private(set) var showsFirstFlowerShowOffer = false
+    private(set) var progressLoadReasonCode = "memory"
 
     let launchMode: GameLaunchMode
 
     private let progressStore: any GameProgressStoring
+    private let analytics: ProductAnalytics
+    var progressRevision: Int { progressStore.saveRevision }
     private let baseSeed: UInt64
     private var currentGardenSeed: UInt64 = 1
+    private var gardenAttemptID: UUID?
+    private var gardenAttemptIDOrigin = "new"
+    private var analyticsProgress: AnalyticsProgressState
+    private var loadedAttemptIDs: Set<UUID> = []
+    private var resumedAttemptIDs: Set<UUID> = []
+    private var finishedAttemptIDs: Set<UUID> = []
+    private var pendingLifecycleEvents: [(AnalyticsLifecycleEvent, [String: Any])] = []
+    private var didEmitSessionStarted = false
+    private var launchKind = "existing_progress"
     private let currentDate: () -> Date
     private let appVersion: String
     private let hintSolver: any FlowerShowHintSolving
@@ -274,6 +295,9 @@ final class GameModel: ObservableObject {
 
     static func previewProgress(arguments: [String]) -> GameProgress {
         let normalizedArguments = arguments.map { $0.lowercased() }
+        if normalizedArguments.contains("--analytics-fresh-progress") {
+            return .fresh
+        }
         let hasExplicitPreviewClass = normalizedArguments.contains {
             $0.hasPrefix("--flower-show-class=")
         }
@@ -299,7 +323,10 @@ final class GameModel: ObservableObject {
             previewProgress = GameProgress(
                 bestScore: 0,
                 highestGarden: 2,
-                reviewRequestState: ReviewRequestState(successfulGardenCompletions: 1)
+                reviewRequestState: ReviewRequestState(
+                    successfulGardenCompletions: 1,
+                    meaningfulSessionIDs: ["00000000-0000-0000-0000-000000000575"]
+                )
             )
         } else {
             let completedThrough = min(30, max(0, previewClass - 1))
@@ -364,10 +391,12 @@ final class GameModel: ObservableObject {
         currentDate: @escaping () -> Date = Date.init,
         appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0",
         hintSolver: any FlowerShowHintSolving = ExactFlowerShowHintSolver(),
-        flowerShowAccess: any FlowerShowAccessProviding = SampleOnlyFlowerShowAccessProvider()
+        flowerShowAccess: any FlowerShowAccessProviding = SampleOnlyFlowerShowAccessProvider(),
+        analytics: ProductAnalytics = .shared
     ) {
         self.launchMode = launchMode
         self.progressStore = progressStore
+        self.analytics = analytics
         self.currentDate = currentDate
         self.appVersion = appVersion
         self.hintSolver = hintSolver
@@ -377,6 +406,12 @@ final class GameModel: ObservableObject {
         baseSeed = resolvedBaseSeed
 
         let persisted = progressStore.load()
+        analyticsProgress = persisted.analyticsProgress
+        progressLoadReasonCode = progressStore.loadReasonCode
+        if let fileStore = progressStore as? FileGameProgressStore,
+           case .failed = fileStore.lastLoadOutcome {
+            progressSaveHealth = fileStore.persistenceEnabled ? .pending : .blocked
+        }
         bestScore = max(0, persisted.bestScore)
         highestGarden = max(1, persisted.highestGarden)
         globalBestStreak = max(0, persisted.globalBestStreak)
@@ -398,7 +433,19 @@ final class GameModel: ObservableObject {
         pendingFlowerShowResult = loadedFlowerShowProgress.pendingResult
         pendingFlowerShowNoticeVersion = loadedFlowerShowProgress.pendingNoticeVersion
         reviewRequestState = persisted.reviewRequestState
+        launchKind = if progressStore.loadReasonCode.contains("recover")
+            || progressStore.loadReasonCode.contains("repair")
+            || progressStore.loadReasonCode.contains("migrat") {
+            "recovered_or_repaired_progress"
+        } else if persisted.activeGame != nil || persisted.flowerShowProgress.activeAttempt != nil {
+            "existing_active_attempt"
+        } else if persisted.saveRevision == 0 && analyticsProgress.basis == .freshInstrumentedProgress {
+            "fresh_progress"
+        } else {
+            "existing_progress"
+        }
         reviewRequestTrigger = nil
+        reviewRequestReason = nil
         flowerShowHintMove = nil
         flowerShowHintStatus = nil
         activeMode = .garden
@@ -411,6 +458,10 @@ final class GameModel: ObservableObject {
             currentGardenSeed = activeGardenSeed
             gardenEngine = activeGame
             hasActiveGarden = true
+            gardenAttemptID = persisted.activeGardenAttemptID ?? UUID()
+            gardenAttemptIDOrigin = persisted.activeGardenAttemptID == nil
+                ? "migrated_active_save" : "persisted"
+            if let gardenAttemptID { loadedAttemptIDs.insert(gardenAttemptID) }
             bestScore = max(bestScore, activeGame.score)
             highestGarden = max(highestGarden, activeGame.garden)
             globalBestStreak = max(globalBestStreak, activeGame.bestStreak)
@@ -418,9 +469,11 @@ final class GameModel: ObservableObject {
             currentGardenSeed = Self.seed(baseSeed: resolvedBaseSeed, garden: highestGarden)
             gardenEngine = GameEngine(seed: currentGardenSeed, garden: highestGarden)
             hasActiveGarden = false
+            gardenAttemptID = nil
         }
 
         if let activeAttempt = flowerShowProgress.activeAttempt {
+            loadedAttemptIDs.insert(activeAttempt.engine.attemptID)
             flowerShowAttemptContext = activeAttempt.context
             flowerShowEngine = activeAttempt.engine
             currentFlowerShowClass = activeAttempt.context.classNumber
@@ -506,23 +559,63 @@ final class GameModel: ObservableObject {
         switch activeMode {
         case .garden:
             guard let result = gardenEngine.rotate(direction) else { return nil }
+            let wasQualified = flowerShowQualified
             bestScore = max(bestScore, gardenEngine.score)
             globalBestStreak = max(globalBestStreak, gardenEngine.bestStreak)
             if gardenEngine.phase == .won {
                 highestGarden = max(highestGarden, gardenEngine.garden + 1)
+                showsFirstFlowerShowOffer = !wasQualified && flowerShowQualified && !hasActiveFlowerShow
                 if gardenEngine.gardenRating == .radiant {
                     radiantGardens.insert(gardenEngine.garden)
                 }
-                ReviewRequestPolicy.registerSuccessfulGarden(state: &reviewRequestState)
-                if ReviewRequestPolicy.isEligible(
+                ReviewRequestPolicy.registerSuccessfulGarden(
+                    state: &reviewRequestState, sessionID: analytics.processSessionID
+                )
+                if let reason = ReviewRequestPolicy.eligibleReason(
                     state: reviewRequestState,
                     now: currentDate(),
                     appVersion: appVersion
                 ) {
                     reviewRequestTrigger = (reviewRequestTrigger ?? 0) + 1
+                    reviewRequestReason = reason
+                    queueReviewRequestEligibility(reason)
                 }
             }
             hasActiveGarden = gardenEngine.phase == .playing
+            if result.bloomCount > 0,
+               analyticsProgress.basis == .freshInstrumentedProgress,
+               !analyticsProgress.firstBloomRecorded {
+                analyticsProgress.firstBloomRecorded = true
+                queueLifecycle(.firstBloomAchieved, properties: [
+                    "bloom_count_after_turn": gardenEngine.blooms,
+                    "milestone_basis": "fresh_instrumented_progress",
+                    "event_id": "first-bloom-\(gardenAttemptID?.uuidString ?? "")",
+                ])
+            }
+            if gardenEngine.phase == .won {
+                if gardenEngine.garden == 1,
+                   analyticsProgress.basis == .freshInstrumentedProgress,
+                   !analyticsProgress.firstGardenWinRecorded {
+                    analyticsProgress.firstGardenWinRecorded = true
+                    queueLifecycle(.firstGardenWinAchieved, properties: [
+                        "milestone_basis": "fresh_instrumented_progress",
+                        "event_id": "first-garden-win-\(gardenAttemptID?.uuidString ?? "")",
+                    ])
+                }
+                if !wasQualified && flowerShowQualified
+                    && flowerShowAccess.accessState == .sample
+                    && !analyticsProgress.sampleUnlockRecorded {
+                    analyticsProgress.sampleUnlockRecorded = true
+                    queueLifecycle(.sampleAccessUnlocked, properties: [
+                        "access_state": "sample",
+                        "unlock_reason": "qualifying_garden_win",
+                        "event_id": "sample-unlocked-\(gardenAttemptID?.uuidString ?? "")",
+                    ])
+                }
+                queueAttemptFinished(result)
+            } else if gardenEngine.phase == .lost {
+                queueAttemptFinished(result)
+            }
             persistProgress()
             return result
 
@@ -535,17 +628,26 @@ final class GameModel: ObservableObject {
             }
             flowerShowHintMove = nil
             flowerShowHintStatus = nil
+            var committedSummary: FlowerShowResultSummary?
+            var gainedReviewMilestone = false
             if flowerShowEngine.state.phase == .won {
+                let wasCommitted = flowerShowProgress.committedAttemptIDs.contains(flowerShowEngine.attemptID)
+                let campaignWasComplete = flowerShowProgress.bestCampaignRatings[flowerShowAttemptContext.classNumber] != nil
+                let priorCircuitCursor = flowerShowProgress.nextCircuitClass
                 commitFlowerShowWin(scenario: scenario)
+                if !wasCommitted, let summary = pendingFlowerShowResult {
+                    committedSummary = summary
+                    gainedReviewMilestone = switch summary.context.kind {
+                    case .campaign: !campaignWasComplete
+                    case .circuit: flowerShowProgress.nextCircuitClass > priorCircuitCursor
+                    case .replay: false
+                    }
+                }
             } else {
                 hasActiveFlowerShow = flowerShowEngine.state.phase == .playing
                     || (flowerShowEngine.state.phase == .lost && flowerShowEngine.canUndo)
             }
-            persistProgress()
-            if flowerShowEngine.state.phase == .playing {
-                scheduleFlowerShowHintPrewarm()
-            }
-            return TurnResult(
+            let result = TurnResult(
                 turnNumber: transition.stateAfter.turnNumber,
                 ring: transition.ring,
                 direction: transition.direction,
@@ -557,15 +659,58 @@ final class GameModel: ObservableObject {
                 phase: transition.phase,
                 didReshuffle: transition.didReshuffle
             )
+            if transition.phase == .won || (transition.phase == .lost && !flowerShowEngine.canUndo) {
+                queueAttemptFinished(result)
+            }
+            if let committedSummary {
+                queueFlowerShowMilestones(committedSummary)
+                if gainedReviewMilestone {
+                    switch committedSummary.context.kind {
+                    case .campaign:
+                        ReviewRequestPolicy.registerCommittedCampaign(
+                            state: &reviewRequestState,
+                            classNumber: committedSummary.context.classNumber,
+                            sessionID: analytics.processSessionID
+                        )
+                    case .circuit:
+                        ReviewRequestPolicy.registerAdvancedCircuit(
+                            state: &reviewRequestState, sessionID: analytics.processSessionID
+                        )
+                    case .replay:
+                        break
+                    }
+                }
+                if gainedReviewMilestone,
+                   committedSummary.context.classNumber != 5,
+                   let reason = ReviewRequestPolicy.eligibleReason(
+                       state: reviewRequestState, now: currentDate(), appVersion: appVersion
+                   ) {
+                    reviewRequestTrigger = (reviewRequestTrigger ?? 0) + 1
+                    reviewRequestReason = reason
+                    queueReviewRequestEligibility(reason)
+                }
+            }
+            persistProgress()
+            if flowerShowEngine.state.phase == .playing {
+                scheduleFlowerShowHintPrewarm()
+            }
+            return result
         }
     }
 
+    func dismissFirstFlowerShowOffer() { showsFirstFlowerShowOffer = false }
+
     @discardableResult
     func retry() -> FlowerShowStartResult {
+        invalidateReviewRequestTrigger()
         switch activeMode {
         case .garden:
+            if gardenEngine.phase == .playing { queueAttemptAbandoned(reason: "restart") }
             gardenEngine = GameEngine(seed: currentGardenSeed, garden: gardenEngine.garden)
             hasActiveGarden = true
+            gardenAttemptID = UUID()
+            gardenAttemptIDOrigin = "new"
+            queueAttemptStarted()
             persistProgress()
             return .started
         case .flowerShow:
@@ -576,9 +721,13 @@ final class GameModel: ObservableObject {
                 progressionAllowed: true
             )
             guard action == .play else { return FlowerShowStartResult(action: action) }
+            if hasActiveFlowerShow { queueAttemptAbandoned(reason: "restart") }
             cancelHintWork()
+            flowerShowProgress.pendingResult = nil
+            pendingFlowerShowResult = nil
             flowerShowEngine = FlowerShowEngine(scenario: flowerShowResolvedClass.scenario)
             hasActiveFlowerShow = true
+            queueAttemptStarted()
         }
         persistProgress()
         if activeMode == .flowerShow { scheduleFlowerShowHintPrewarm() }
@@ -670,17 +819,139 @@ final class GameModel: ObservableObject {
     }
 
     func startGarden(_ garden: Int? = nil) {
+        invalidateReviewRequestTrigger()
+        if hasActiveGarden && gardenEngine.phase == .playing {
+            activeMode = .garden
+            queueAttemptAbandoned(reason: "replaced")
+        }
         activeMode = .garden
         let requestedGarden = max(1, garden ?? gardenEngine.garden)
         currentGardenSeed = Self.seed(baseSeed: baseSeed, garden: requestedGarden)
         gardenEngine = GameEngine(seed: currentGardenSeed, garden: requestedGarden)
         hasActiveGarden = true
+        gardenAttemptID = UUID()
+        gardenAttemptIDOrigin = "new"
         highestGarden = max(highestGarden, requestedGarden)
+        queueAttemptStarted()
         persistProgress()
     }
 
+    var analyticsAttemptID: UUID? {
+        activeMode == .garden ? gardenAttemptID : flowerShowEngine.attemptID
+    }
+
+    var analyticsAttemptKind: String { activeMode == .garden ? "garden" : flowerShowAttemptContext.kind.rawValue }
+
+    func emitSessionStartedIfNeeded() {
+        guard !didEmitSessionStarted else { return }
+        didEmitSessionStarted = true
+        analytics.captureLifecycle(.appSessionStarted, properties: [
+            "launch_kind": launchKind,
+            "progress_load_reason_code": progressLoadReasonCode,
+        ])
+    }
+
+    private var analyticsAttemptProperties: [String: Any] {
+        guard let id = analyticsAttemptID else { return [:] }
+        var properties: [String: Any] = [
+            "attempt_id": id.uuidString,
+            "mode": activeMode.analyticsName,
+            "attempt_kind": analyticsAttemptKind,
+            "access_state": flowerShowAccess.accessState.analyticsName,
+            "milestone_basis": analyticsProgress.basis == .freshInstrumentedProgress
+                ? "fresh_instrumented_progress" : "existing_progress",
+        ]
+        if activeMode == .garden {
+            properties["garden"] = gardenEngine.garden
+        } else {
+            properties["class_number"] = flowerShowAttemptContext.classNumber
+        }
+        return properties
+    }
+
+    private func queueLifecycle(_ event: AnalyticsLifecycleEvent, properties: [String: Any] = [:]) {
+        pendingLifecycleEvents.append((
+            event,
+            analyticsAttemptProperties.merging(properties) { _, value in value }
+        ))
+    }
+
+    private func queueAttemptStarted() {
+        let firstEligibleStart = activeMode == .garden
+            && analyticsProgress.basis == .freshInstrumentedProgress
+            && !analyticsProgress.firstEligibleStartRecorded
+        if firstEligibleStart { analyticsProgress.firstEligibleStartRecorded = true }
+        queueLifecycle(.attemptStarted, properties: [
+            "attempt_id_origin": "new",
+            "milestone_basis": analyticsProgress.basis == .freshInstrumentedProgress
+                ? "fresh_instrumented_progress" : "existing_progress",
+            "first_eligible_start": firstEligibleStart,
+            "event_id": "\(analyticsAttemptID?.uuidString ?? "")-started",
+        ])
+    }
+
+    private func queueAttemptResumed(source: String) {
+        guard let id = analyticsAttemptID,
+              resumedAttemptIDs.insert(id).inserted else { return }
+        let actualSource = loadedAttemptIDs.contains(id) ? "relaunch" : source
+        queueLifecycle(.attemptResumed, properties: [
+            "attempt_id_origin": activeMode == .garden ? gardenAttemptIDOrigin : "persisted",
+            "resume_source": actualSource,
+            "event_id": "\(id.uuidString)-resumed-\(analytics.sessionID)",
+        ])
+    }
+
+    private func queueAttemptAbandoned(reason: String) {
+        guard let id = analyticsAttemptID else { return }
+        queueLifecycle(.attemptAbandoned, properties: [
+            "abandon_reason": reason,
+            "event_id": "\(id.uuidString)-abandoned",
+        ])
+    }
+
+    private func queueAttemptFinished(_ result: TurnResult) {
+        guard let id = analyticsAttemptID,
+              finishedAttemptIDs.insert(id).inserted else { return }
+        var properties: [String: Any] = [
+            "outcome": result.phase == .won ? "won" : "lost",
+            "turns": result.turnNumber,
+            "blooms": blooms,
+            "score": score,
+            "moves_remaining": movesRemaining,
+            "did_use_hint": hintsUsed > 0,
+            "did_use_undo": didUseUndo,
+            "event_id": "\(id.uuidString)-finished",
+        ]
+        if activeMode == .flowerShow {
+            properties["rating"] = flowerShowRating.displayName.lowercased()
+        }
+        queueLifecycle(.attemptFinished, properties: properties)
+    }
+
+    private func queueFlowerShowMilestones(_ summary: FlowerShowResultSummary) {
+        let names: [String]
+        switch summary.context.kind {
+        case .circuit: names = ["circuit_class_completed"]
+        case .campaign:
+            names = ["class_completed"]
+                + (summary.context.classNumber == 5 ? ["class_5_completed"] : [])
+                + (summary.context.classNumber == 30 ? ["grand_champion"] : [])
+        case .replay: names = ["class_completed"]
+        }
+        for name in names {
+            queueLifecycle(.flowerShowMilestone, properties: [
+                "milestone": name,
+                "rating": summary.rating.displayName.lowercased(),
+                "event_id": "\(summary.attemptID.uuidString)-\(name)",
+            ])
+        }
+    }
+
     func resumeGarden() {
+        guard hasActiveGarden else { return }
         activeMode = .garden
+        queueAttemptResumed(source: "home")
+        persistProgress()
     }
 
     func introduceFlowerShow() {
@@ -731,7 +1002,7 @@ final class GameModel: ObservableObject {
     }
 
     @discardableResult
-    func resumeFlowerShow() -> FlowerShowStartResult {
+    func resumeFlowerShow(source: String = "home") -> FlowerShowStartResult {
         guard flowerShowQualified, hasActiveFlowerShow else { return .progressionLocked }
         let action = FlowerShowAccessPolicy.action(
             highestGarden: highestGarden,
@@ -741,6 +1012,8 @@ final class GameModel: ObservableObject {
         )
         guard action == .play else { return FlowerShowStartResult(action: action) }
         activeMode = .flowerShow
+        queueAttemptResumed(source: source)
+        persistProgress()
         scheduleFlowerShowHintPrewarm()
         return .started
     }
@@ -793,9 +1066,16 @@ final class GameModel: ObservableObject {
     }
 
     func commitReviewRequestAttempt(trigger: Int) -> Bool {
+        let previousState = reviewRequestState
         guard reviewRequestTrigger == trigger,
-              activeMode == .garden,
+              let reason = reviewRequestReason,
               phase == .won,
+              reviewRequestIsAtQualifiedResult,
+              ReviewRequestPolicy.eligibleReason(
+                  state: reviewRequestState,
+                  now: currentDate(),
+                  appVersion: appVersion
+              ) == reason,
               ReviewRequestPolicy.recordAttemptIfEligible(
                   state: &reviewRequestState,
                   now: currentDate(),
@@ -803,8 +1083,25 @@ final class GameModel: ObservableObject {
               )
         else { return false }
         reviewRequestTrigger = nil
-        persistProgress()
+        reviewRequestReason = nil
+        guard persistProgress() else {
+            reviewRequestState = previousState
+            reviewRequestTrigger = trigger
+            reviewRequestReason = reason
+            return false
+        }
+        analytics.captureLifecycle(.reviewRequestAttempted, properties:
+            analyticsAttemptProperties.merging([
+                "successful_garden_completions": reviewRequestState.successfulGardenCompletions,
+                "request_reason": reason.rawValue,
+                "meaningful_session_count": reviewRequestState.meaningfulSessionIDs.count,
+                "event_id": "review-request-\(analyticsAttemptID?.uuidString ?? "")",
+            ]) { _, value in value })
         return true
+    }
+
+    func abandonReviewRequestOpportunity() {
+        invalidateReviewRequestTrigger()
     }
 
     @discardableResult
@@ -816,7 +1113,21 @@ final class GameModel: ObservableObject {
             progressionAllowed: true
         )
         guard action == .play else { return FlowerShowStartResult(action: action) }
+        invalidateReviewRequestTrigger()
+        if hasActiveFlowerShow {
+            pendingLifecycleEvents.append((.attemptAbandoned, [
+                "attempt_id": flowerShowEngine.attemptID.uuidString,
+                "mode": "flower_show",
+                "attempt_kind": flowerShowAttemptContext.kind.rawValue,
+                "class_number": flowerShowAttemptContext.classNumber,
+                "access_state": flowerShowAccess.accessState.analyticsName,
+                "abandon_reason": "replaced",
+                "event_id": "\(flowerShowEngine.attemptID.uuidString)-abandoned",
+            ]))
+        }
         cancelHintWork()
+        flowerShowProgress.pendingResult = nil
+        pendingFlowerShowResult = nil
         let resolved = FlowerShowContent.resolve(classNumber: classNumber)
         activeMode = .flowerShow
         flowerShowAttemptContext = FlowerShowAttemptContext(kind: kind, classNumber: classNumber)
@@ -830,6 +1141,7 @@ final class GameModel: ObservableObject {
         flowerShowHintMove = nil
         flowerShowHintStatus = nil
         hasActiveFlowerShow = true
+        queueAttemptStarted()
         persistProgress()
         scheduleFlowerShowHintPrewarm()
         return .started
@@ -903,6 +1215,30 @@ final class GameModel: ObservableObject {
         flowerShowHintStatus = nil
     }
 
+    private func invalidateReviewRequestTrigger() {
+        reviewRequestTrigger = nil
+        reviewRequestReason = nil
+    }
+
+    private func queueReviewRequestEligibility(_ reason: ReviewRequestReason) {
+        queueLifecycle(.reviewRequestEligible, properties: [
+            "request_reason": reason.rawValue,
+            "successful_garden_completions": reviewRequestState.successfulGardenCompletions,
+            "meaningful_session_count": reviewRequestState.meaningfulSessionIDs.count,
+            "event_id": "review-eligible-\(analyticsAttemptID?.uuidString ?? "")",
+        ])
+    }
+
+    private var reviewRequestIsAtQualifiedResult: Bool {
+        if activeMode == .garden { return true }
+        guard let result = pendingFlowerShowResult,
+              result.attemptID == flowerShowEngine.attemptID,
+              result.context.classNumber != 5,
+              result.context.kind != .replay
+        else { return false }
+        return true
+    }
+
     private func scheduleFlowerShowHintPrewarm() {
         cancelHintWork()
         guard activeMode == .flowerShow,
@@ -923,7 +1259,8 @@ final class GameModel: ObservableObject {
         }
     }
 
-    private func persistProgress() {
+    @discardableResult
+    private func persistProgress() -> Bool {
         if hasActiveFlowerShow,
            flowerShowEngine.state.phase == .playing
             || (flowerShowEngine.state.phase == .lost && flowerShowEngine.canUndo)
@@ -943,7 +1280,8 @@ final class GameModel: ObservableObject {
         grandChampionAchieved = flowerShowProgress.isGrandChampion
         seenFlowerShowIntroductionIDs = Set(flowerShowProgress.seenIntroductions.map(\.rawValue))
 
-        progressStore.save(
+        let wasUnhealthy = progressSaveHealth != .saved
+        let saved = progressStore.save(
             GameProgress(
                 bestScore: bestScore,
                 highestGarden: highestGarden,
@@ -953,10 +1291,46 @@ final class GameModel: ObservableObject {
                 activeGardenSeed: hasActiveGarden && gardenEngine.phase == .playing
                     ? currentGardenSeed
                     : nil,
+                activeGardenAttemptID: hasActiveGarden && gardenEngine.phase == .playing
+                    ? gardenAttemptID
+                    : nil,
+                analyticsProgress: analyticsProgress,
                 flowerShowProgress: flowerShowProgress,
                 reviewRequestState: reviewRequestState
             )
         )
+        if saved {
+            progressSaveHealth = .saved
+            let readyEvents = pendingLifecycleEvents
+            pendingLifecycleEvents.removeAll()
+            for (event, properties) in readyEvents {
+                analytics.captureLifecycle(event, properties: properties)
+            }
+            if wasUnhealthy {
+                analytics.capture("progress_save_recovered", properties: [
+                    "reason_code": "write_succeeded",
+                    "circuit_cursor": nextCircuitClass,
+                    "save_revision": progressStore.saveRevision,
+                    "save_health": "saved",
+                ])
+            }
+        } else {
+            let reason = progressStore.saveReasonCode
+            progressSaveHealth = (progressStore as? FileGameProgressStore)?.persistenceEnabled == false
+                ? .blocked : .pending
+            analytics.capture("progress_save_failed", properties: [
+                "reason_code": reason,
+                "circuit_cursor": nextCircuitClass,
+                "save_revision": progressStore.saveRevision,
+                "save_health": progressSaveHealth == .blocked ? "blocked" : "pending",
+            ])
+        }
+        return saved
+    }
+
+    func retryPendingProgress() {
+        guard progressSaveHealth == .pending else { return }
+        persistProgress()
     }
 
     private static func seed(baseSeed: UInt64, garden: Int) -> UInt64 {
