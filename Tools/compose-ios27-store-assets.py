@@ -2,9 +2,10 @@
 
 """Build the October 2026 (iOS 27) App Store creative set for Ringbloom.
 
-Inputs are first-party simulator captures (iPhone 17 Pro, iOS 27, en_GB, 09:41) kept under
-store-assets/2026-10-ios27/source/. Nothing here fabricates UI: every screen is an untouched
-capture (or a still from an untouched recording) placed inside brand-coloured panels.
+Inputs are first-party simulator captures (iPhone 17 Pro Max, iOS 27, en_GB, 09:41, native
+1320x2868) kept under store-assets/2026-10-ios27/source/. Nothing here fabricates UI: every
+screen is an untouched capture (a frame of an untouched Simulator recording, which keeps the
+Dynamic Island that plain simctl screenshots often omit) placed inside brand-coloured panels.
 
 Outputs (all opaque RGB PNG):
   screenshots/APP_IPHONE_67-1320x2868/en-GB/NN-name.png
@@ -19,7 +20,6 @@ Run from anywhere:  python3 Tools/compose-ios27-store-assets.py
 from __future__ import annotations
 
 import math
-import subprocess
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
@@ -27,8 +27,6 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "store-assets" / "2026-10-ios27"
 SRC = OUT / "source"
-CAPTURES = Path("/Users/tommurton/GitHub/Marketing-tool/apps/ringbloom/inputs/captures-2026-10")
-GAMEPLAY = CAPTURES / "ringbloom-garden1-gameplay-19s.mp4"
 ICON = ROOT / "Art" / "ringbloom-icon-master.png"
 
 FONT_ROUNDED = "/System/Library/Fonts/SFNSRounded.ttf"
@@ -61,16 +59,21 @@ def regular_font(size: int, weight: str = "Medium") -> ImageFont.FreeTypeFont:
 # Sources
 # --------------------------------------------------------------------------------------
 
-STILLS = {
-    # name: (video time in seconds)
-    "garden1-combo-bloom": 15.5,   # two blooms from one turn, "A bloom combo is opening"
-    "garden1-single-bloom": 7.5,   # one bloom opening, chain 1
-    "garden1-hint": 4.9,           # hint highlights the Middle ring
-}
+SOURCE_NAMES = (
+    "garden1-combo-bloom",   # two blooms from one turn, "A bloom combo is opening"
+    "garden1-single-bloom",  # one bloom opening, chain 0
+    "garden1-hint",          # hint highlights the Inner ring, 2 hints left
+    "champion-circuit",      # Champion Circuit, Class 31, as a player who owns the full Show
+    "class1-card",           # Class 1 rules card (Ring Harmony)
+    "class-book",            # Class Book, fresh player
+)
+
+# The ring board inside a native 1320x2868 Garden capture (square), used for header/search.
+BOARD_BOX = (0, 636, 1320, 1974)   # board centre is y=1300; stops above the progress bar and status line
 
 
 def flatten(path: Path) -> Image.Image:
-    """Return the capture flattened onto opaque navy (captures carry an all-opaque alpha)."""
+    """Return the capture flattened onto opaque navy (some captures carry an all-opaque alpha)."""
     image = Image.open(path)
     if image.mode == "RGBA":
         base = Image.new("RGB", image.size, NAVY)
@@ -80,24 +83,9 @@ def flatten(path: Path) -> Image.Image:
 
 
 def prepare_sources() -> dict[str, Image.Image]:
-    SRC.mkdir(parents=True, exist_ok=True)
     sources: dict[str, Image.Image] = {}
-    for name, seconds in STILLS.items():
-        target = SRC / f"{name}.png"
-        if not target.exists():
-            subprocess.run(
-                ["ffmpeg", "-v", "error", "-y", "-ss", str(seconds), "-i", str(GAMEPLAY), "-frames:v", "1", str(target)],
-                check=True,
-            )
-        sources[name] = flatten(target)
-    for name, filename in (
-        ("class1-card", "ringbloom-flower-show-class1-card.png"),
-        ("class-book", "ringbloom-flower-show-class-book.png"),
-    ):
-        target = SRC / f"{name}.png"
-        if not target.exists():
-            flatten(CAPTURES / filename).save(target, "PNG", optimize=True)
-        sources[name] = flatten(target)
+    for name in SOURCE_NAMES:
+        sources[name] = flatten(SRC / f"{name}.png")
     return sources
 
 
@@ -267,6 +255,17 @@ SLIDES = (
         "bottom": (62, 52, 30),
         "accent": SAFFRON,
     },
+    {
+        "file": "06-the-champion-circuit",
+        "layout": "single",
+        "source": "champion-circuit",
+        "eyebrow": "FLOWER SHOW",
+        "title": "THE CHAMPION\nCIRCUIT",
+        "subtitle": "Keep going beyond Class 30.",
+        "top": (19, 26, 52),
+        "bottom": (46, 36, 78),
+        "accent": SKY,
+    },
 )
 
 
@@ -358,14 +357,14 @@ def compose_screenshots(sources: dict[str, Image.Image]) -> dict[str, list[Path]
 # Header (21:9) and search (3:2)
 # --------------------------------------------------------------------------------------
 
-def board_crop(source: Image.Image, scale: float, feather: float = 0.07) -> Image.Image:
+def board_crop(source: Image.Image, scale: float, feather: float = 0.035) -> Image.Image:
     """The ring board from a gameplay capture, edge-faded so it melts into the panel."""
-    crop = source.crop((0, 665, 1206, 1871))
+    crop = source.crop(BOARD_BOX)
     width, height = round(crop.width * scale), round(crop.height * scale)
     crop = crop.resize((width, height), Image.Resampling.LANCZOS).convert("RGBA")
     mask = Image.new("L", crop.size, 0)
     fade = int(min(width, height) * feather)
-    ImageDraw.Draw(mask).ellipse((fade, fade, width - fade, height - fade), fill=255)
+    ImageDraw.Draw(mask).ellipse((fade, fade // 4, width - fade, height - fade // 4), fill=255)
     mask = mask.filter(ImageFilter.GaussianBlur(fade * 0.55))
     crop.putalpha(mask)
     return crop
@@ -396,7 +395,7 @@ def compose_header(sources: dict[str, Image.Image]) -> Image.Image:
     focus = (2500.0, 823.0)
     canvas = creative_background(size, focus)
 
-    board = board_crop(sources["garden1-combo-bloom"], 1.0)
+    board = board_crop(sources["garden1-combo-bloom"], 1206 / 1320)
     canvas.alpha_composite(board, (int(focus[0] - board.width / 2), int(focus[1] - board.height / 2)))
 
     draw = ImageDraw.Draw(canvas)
@@ -448,7 +447,7 @@ def contact_sheet(shots: list[Path], header: Path, search: Path, poster: Path | 
     thumb_w = 330
     thumb_h = round(2868 * thumb_w / 1320)
     margin, gap = 36, 24
-    columns = max(len(shots), 6)
+    columns = len(shots) + 1
     row1_w = margin * 2 + columns * thumb_w + (columns - 1) * gap
     creative_w = (row1_w - margin * 2 - gap) // 2
     header_img = Image.open(header).convert("RGB")
