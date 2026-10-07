@@ -1,6 +1,6 @@
 # Ringbloom — iOS 27 App Store creative set (October 2026)
 
-Prepared on branch `claude/ios27-store-assets` from `origin/main` (`5c67543`). Nothing was uploaded and nothing in App Store Connect was changed. Regenerate with `python3 Tools/compose-ios27-store-assets.py` and `python3 Tools/build-ios27-app-preview.py`.
+Prepared on branch `claude/ios27-store-assets` from `origin/main` (`5c67543`), then recaptured on `claude/ios27-store-recapture` (7 Oct 2026, native iPhone 17 Pro Max captures, slot 6 added). Nothing was uploaded and nothing in App Store Connect was changed. Regenerate with `python3 Tools/compose-ios27-store-assets.py` and `python3 Tools/build-ios27-app-preview.py`.
 
 ASC app `6789952808`, live version 1.6 (build 12), `en-GB` only. No version after 1.6 exists yet, so the upload needs a new version (see "Next version").
 
@@ -15,17 +15,18 @@ ASC app `6789952808`, live version 1.6 (build 12), `en-GB` only. No version afte
 | Dimmed modal at position 7 | Show the real app in use | Dropped. |
 | Stale 1.3-era app preview | Use current UI | New preview cut from the 2 Oct 2026 iOS 27 recording (see Preview). |
 
-## Screenshots (upload-ready, 5 per set)
+## Screenshots (upload-ready, 6 per set)
 
-Source for every screen: first-party simulator captures in `captures-2026-10/` (iPhone 17 Pro, iOS 27.0, en_GB, 09:41, Ringbloom 1.6 build 12, fresh install). The captures have an alpha channel (fully opaque); they were flattened onto navy and the final PNGs are RGB. Provenance and licence: first-party app captures and the first-party app icon (`ASSET_LICENSES.md`); fonts are Apple's SF Rounded and SF, as in the V3 set, used for App Store promotion of an Apple-platform app. Copies of the five source stills are in `source/`.
+Source for every screen: first-party captures from one session on a dedicated iPhone 17 Pro Max simulator (iOS 27.0, en_GB, 09:41 override, full battery, Ringbloom 1.6 build 12 Debug build from `main`, native 1320x2868, no scaling). Garden screens are real Garden 1 play (`--ui-testing --seed=424242`, driven with the in-game hint and taps); the Class 1 card, Class Book and Champion Circuit screens use the app's own `--screenshot-*` launch states. Each still is a frame of an untouched Simulator recording (plain `simctl screenshot` frequently omits the Dynamic Island; recording frames always include it). The final PNGs are RGB. Provenance and licence: first-party app captures and the first-party app icon (`ASSET_LICENSES.md`); fonts are Apple's SF Rounded and SF, as in the V3 set, used for App Store promotion of an Apple-platform app. The six source stills are in `source/`.
 
 | # | File | Source | Caption | Purpose |
 |---|---|---|---|---|
-| 1 | `01-turn-a-ring-bloom-the-garden.png` | Garden 1 recording at 15.5 s (`ringbloom-garden1-gameplay-19s.mp4`) | TURN A RING. BLOOM THE GARDEN. / One thumb. Three rings. | The hook: two blooms from one turn, real HUD. Works alone in search. |
-| 2 | `02-two-ways-to-play.png` | Garden 1 at 7.5 s + `ringbloom-flower-show-class1-card.png` | TWO WAYS TO PLAY / Settle in, or take on a Class. Labels: GARDEN "Endless and calm", FLOWER SHOW "Judged Classes". | Garden vs Flower Show. Wording follows the in-app mode descriptions. |
-| 3 | `03-a-new-rule-to-master.png` | `ringbloom-flower-show-class1-card.png` | A NEW RULE TO MASTER / Special rules. Fresh objectives. | Special rules (Ring Harmony). |
-| 4 | `04-thirty-classes-to-master.png` | `ringbloom-flower-show-class-book.png` | THIRTY CLASSES TO MASTER / Replay to improve your rating. | Class Book. The "Full Show required" rows state no price. |
-| 5 | `05-stuck-take-a-hint.png` | Garden 1 at 4.9 s | STUCK? TAKE A HINT / Hints show which ring to turn. | Garden support feature, shown in the real hint state. |
+| 1 | `01-turn-a-ring-bloom-the-garden.png` | `source/garden1-combo-bloom.png`: Garden 1, third hinted move, double bloom mid-glow | TURN A RING. BLOOM THE GARDEN. / One thumb. Three rings. | The hook: two blooms from one turn, real HUD. Works alone in search. |
+| 2 | `02-two-ways-to-play.png` | `source/garden1-single-bloom.png` (first bloom opening) + `source/class1-card.png` | TWO WAYS TO PLAY / Settle in, or take on a Class. Labels: GARDEN "Endless and calm", FLOWER SHOW "Judged Classes". | Garden vs Flower Show. Wording follows the in-app mode descriptions. |
+| 3 | `03-a-new-rule-to-master.png` | `source/class1-card.png` | A NEW RULE TO MASTER / Special rules. Fresh objectives. | Special rules (Ring Harmony). |
+| 4 | `04-thirty-classes-to-master.png` | `source/class-book.png` | THIRTY CLASSES TO MASTER / Replay to improve your rating. | Class Book. The "Full Show required" rows state no price. |
+| 5 | `05-stuck-take-a-hint.png` | `source/garden1-hint.png`: fresh Garden 1, hint on the Inner ring | STUCK? TAKE A HINT / Hints show which ring to turn. | Garden support feature, shown in the real hint state. |
+| 6 | `06-the-champion-circuit.png` | `source/champion-circuit.png`: Circuit Class 31, fresh | THE CHAMPION CIRCUIT / Keep going beyond Class 30. | Champion Circuit, as a player who owns the full Show. |
 
 Upload targets (`en-GB`, ascending order = filename order):
 - `screenshots/APP_IPHONE_67-1320x2868/en-GB/` — 6.7" / 6.9" slot (1320x2868). ASC may label this set `APP_IPHONE_67` or 6.9" in the new UI; 1320x2868 is the accepted size.
@@ -34,8 +35,11 @@ Upload targets (`en-GB`, ascending order = filename order):
 
 Both sets replace the whole live set (7 each).
 
-### Slot 6: Champion Circuit — NOT included, needs a recapture
-No fresh iOS 27 capture of the Champion Circuit exists. The only ones are the live 1.1-era shots (home with "BEST 0 / GARDEN 11", and the dimmed modal), which are the problems above. I did not recycle them. See "Recaptures needed".
+
+### Slot 6: Champion Circuit, and how it stays honest about access
+The Circuit sits behind the permanent purchase, so the screen is captured as a player who has it: launch states `--screenshot-flower-show-game --flower-show-access=full-purchase --flower-show-class=31` (the app's own full-access test override; no StoreKit sandbox was needed and nothing was bought). The on-screen state is Circuit Class 31, a fresh attempt: "0/8 blooms · 10 moves left · Radiant possible", Ring Harmony, Twin Bloom, Prize Bouquet and the board. No price, "free" or "unlock" text appears on the screen or the caption, and the caption does not claim access is free. The caption states what the app does: the Circuit continues after Class 30.
+
+A home-screen shot was not made: the app's preview launch states always show "BEST 0" next to "GARDEN 11" (the same inconsistency this set was meant to remove), and a fresh install shows Flower Show as "LOCKED", so no honest and attractive home state was available without changing app code.
 
 ## Header and search (creative assets)
 
@@ -43,7 +47,7 @@ Both use the same single idea, **"Turn a ring. Bloom the garden."**, real board 
 
 | File | Size | Notes |
 |---|---|---|
-| `creative/header-21x9.png` | 3840x1646 | 21:9 header. Icon, headline and board all sit inside the central ~60% (x 768–3072). The real board is the focal point at the right of centre, edge-faded into a medallion; no phone chrome, so nothing else competes. |
+| `creative/header-21x9.png` | 3840x1646 | 21:9 header, rebuilt from the native Pro Max frame (early glow, so the bloom stays inside the medallion). Icon, headline and board all sit inside the central ~60% (x 768–3072). The real board is the focal point at the right of centre, edge-faded into a medallion; no phone chrome, so nothing else competes. |
 | `creative/search-3x2.png` | 3840x2560 | 3:2 search / Apple Games app. Real gameplay screen is large and prominent; text is the 6-word line "Turn a ring. Bloom the garden." plus the icon. |
 | universal 16:9 (5244x2950) | not made | The 21:9 and 3:2 compositions differ too much for one frame to serve both. |
 
@@ -66,16 +70,24 @@ Upload to the Asset Library (App Store Connect product-page creative assets) for
 - Looked at every output image (contact sheet and individual full-size views of the hero screenshot, two-ways screenshot, header, search, poster, and a 7-frame strip of the preview).
 - Text scan: no prices, "free", "unlock", "no subscription", URLs, © symbols, awards, or other-platform logos in any caption. The only in-capture words that could read as purchase wording are the Class Book's "Full Show required" row labels, which are real UI and state no price.
 - 4+ suitable: puzzle, no violence.
-- Status bar reads 09:41 on every capture. Battery glyph is not charging on class 1 and the Class Book captures but is charging in the Garden 1 recording (simulator artefact). If you want it uniform, recapture all in one session with the override (below).
+- Status bar reads 09:41 on every capture, with the same charging battery, 4 cellular bars and 3 Wi-Fi bars (one session, one simulator, override applied).
+- UI tests run on the iPhone 17 Pro Max simulator (iOS 27.0), 6 executed, 0 failures: `testGrandChampionContinuesIntoChampionCircuit`, `testClassBookShowsStagesRatingsAndReplayableTiles`, `testEveryNewRuleAppearsAtItsIntroductionClass`, `testAppPreviewGardenCapture`, `testReducedMotionAndIncreasedContrastKeepLateClassControlsReachable`, `testHomeAndSettingsKeepFeedbackAvailable`. The full UI suite was not run; no app or test code changed.
+- The last Garden stills (slides 1, 2, 5) and the header/search board are now native-size; no slide upscales a capture.
 
-## Recaptures needed (simulator, one session, one at a time)
+## Recapture notes (7 Oct 2026) and layout bug found
 
-Use iPhone 17 Pro Max (6.9", 1320x2868 native) rather than the 17 Pro so the screenshots are native-size, with `xcrun simctl status_bar booted override --time 09:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3`, en_GB, fresh install.
+Done: Champion Circuit slot 6; native Garden stills (double bloom, single bloom, hint); native Class 1 card and Class Book; header and search rebuilt. Not done: home screen (see slot 6 note).
 
-1. **Champion Circuit** (needed for slot 6): a Champion Circuit class in progress or the Circuit class card, with a believable state and no price or "free" text on screen.
-2. **Clean Garden 1 stills** at native size: a bloom mid-glow (ideally a double bloom) and a hint state, instead of video frames.
-3. **Home screen** with consistent state (for example Best 150, Garden 2, no stale values) if you want a home-screen shot.
-4. **Class 30 board at normal width**: in `class30-radiant-take3.mp4` the bottom row (Turn Left / Turn Right) is clipped by the screen edge on an iPhone 17 Pro. That looks like a real layout issue with three objective rows plus the board, not just a capture problem. I did not use it and did not touch app source. Worth checking on device.
+### Layout bug: Turn Left / Turn Right clipped on iPhone 17 Pro (app code not touched)
+Reproduced. Evidence in `work/bug/` (`class30-pro-vs-promax.png` is the side-by-side; raw captures alongside).
+
+- iPhone 17 Pro (402x874 pt), Class 30 (Ring Harmony row, Bindweed row, Prize Bouquet): the Turn Left / Turn Right buttons are laid out at y 855 to 904, below the 874 pt screen edge. Only their top 19 of 49 pt show. A tap in the visible strip still plays a move (verified: "10 moves left" became "9").
+- The gameplay view is a `ScrollView` (`ContentView.swift`, `gameplayContent`), so dragging on the header scrolls the buttons into view (verified; the hint and Pause then scroll off the top). Dragging on the board does not scroll. So the controls are reachable but the first view of the screen shows them cut off, and the primary controls are not visible without scrolling.
+- Cause, from code reading only: the board is sized `min(width - 32, height * 0.49)` (370 pt on the Pro), independent of how many objective rows sit above it, so Classes with three rows overflow the screen on a 874 pt tall device.
+- Pro Max (440x956 pt): Class 30 fits, but the buttons end at 942 pt, inside the 34 pt home-indicator zone, so it is tight rather than clean.
+- Classes sampled on the Pro (turn buttons' bottom edge in pt; screen is 874). Clipped: 20 (883), 25 (904), 27 (883), 28 (884), 29 (883), 30 (904), 31 (904), 32 (884), 35 (883), 40 (884). Fit: 1, 6, 11, 16, 24 (779 or less) and 26 (831). Other Classes were not sampled.
+- The existing UI test `testReducedMotionAndIncreasedContrastKeepLateClassControlsReachable` passes because it scrolls to the control (`reveal`), so it does not catch this.
+- Suggested follow-up: size the board from the remaining height after the objective rows, or pin the control row below the scroll content.
 
 ## Subtitle proposal (Tom decides; needs a new version)
 
@@ -86,17 +98,13 @@ Live subtitle is "Rotate Rings. Match 3 Petals", which contradicts BRAND.md (nev
 
 The subtitle can only change with a new version. Suggested description opening to match: "Turn a ring. Bloom the garden." (replace the first line only).
 
-## Promotional text (draft only; can be changed any time without a version)
+## Promotional text
 
-Live text: "Rotate. Match. Bloom. Play endless Garden and five Flower Show Classes free. No ads. Unlock 25 more Classes and the Champion Circuit with one permanent purchase."
-
-Issues: "Match" conflicts with BRAND.md; "free" and "Unlock" are fine in text but are the purchase wording the creative assets avoid.
-
-Draft (162/170): "Turn a ring. Bloom the garden. Endless Garden and five Flower Show Classes to start, no ads. One permanent purchase adds 25 more Classes and the Champion Circuit."
+Now live: "Turn a ring. Bloom the garden. Relax in the endless Garden or take on judged Flower Show Classes. No ads." (105/170). `metadata/version/1.6/en-GB.json` now matches it (it still held the old "Rotate. Match. Bloom." text).
 
 ## Repo metadata drift
 
-Compared the live 1.6 `en-GB` version and app-info localisations against `metadata/version/1.6/en-GB.json` and `metadata/app-info/en-GB.json`: identical, no drift. Fixed instead: `ASSET_LICENSES.md` did not record any of the current store artwork (it only listed 2026-07/08 screenshot paths that no longer exist in the repo); entries for this set are added.
+Compared the live 1.6 `en-GB` version and app-info localisations against `metadata/version/1.6/en-GB.json` and `metadata/app-info/en-GB.json`: identical at the time (before the promotional text was changed live; the repo copy is updated in the recapture PR). Fixed instead: `ASSET_LICENSES.md` did not record any of the current store artwork (it only listed 2026-07/08 screenshot paths that no longer exist in the repo); entries for this set are added.
 
 ## Optional ChatGPT image prompt (header background)
 
