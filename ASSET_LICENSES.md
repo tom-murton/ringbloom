@@ -21,5 +21,10 @@
 | `screenshots/store/en-GB-r2-65/03-chain-blooms.png` | App Store screenshot | First-party iPhone 14 Plus simulator capture from the final Round 2 source | Original project output | 1284×2778 chain-2 scoring state for the 6.5-inch slot. |
 | `screenshots/store/en-GB-r2-65/04-beat-budget.png` | App Store screenshot | First-party iPhone 14 Plus simulator capture from the final Round 2 source | Original project output | 1284×2778 Radiant result for the 6.5-inch slot. |
 | `screenshots/store/en-GB-r2-65/05-pay-once.png` | App Store screenshot | First-party iPhone 14 Plus simulator capture from the final Round 2 source | Original project output | 1284×2778 premium/offline home screen for the 6.5-inch slot. |
+| `store-assets/2026-10-ios27/source/*.png` | Source captures | First-party iPhone 17 Pro simulator captures, iOS 27.0, Ringbloom 1.6 (12), 2 Oct 2026 (stills from the Garden 1 recording and two Flower Show screens) | Original project output | Flattened to RGB. Originals live in Marketing-tool `apps/ringbloom/inputs/captures-2026-10/`. |
+| `store-assets/2026-10-ios27/screenshots/**` | App Store screenshots | Composed by `Tools/compose-ios27-store-assets.py` around the captures above | Original project output | 1320x2868 and 1242x2688, en-GB, five per set. Apple SF fonts used for App Store promotion. |
+| `store-assets/2026-10-ios27/creative/*.png` | Header (21:9) and search (3:2) creative | Same script; real board capture plus `Art/ringbloom-icon-master.png` | Original project output | No generated imagery. |
+| `store-assets/2026-10-ios27/preview/*` | App preview and poster | `Tools/build-ios27-app-preview.py` from the Garden 1 recording | Original project output | 886x1920, silent AAC track. |
+
 
 Source key: `gen-image` · `gen-audio` · `asset-library/<path>` · `download:<url>`
