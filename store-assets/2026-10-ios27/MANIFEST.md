@@ -71,6 +71,7 @@ Upload to the Asset Library (App Store Connect product-page creative assets) for
 - Text scan: no prices, "free", "unlock", "no subscription", URLs, © symbols, awards, or other-platform logos in any caption. The only in-capture words that could read as purchase wording are the Class Book's "Full Show required" row labels, which are real UI and state no price.
 - 4+ suitable: puzzle, no violence.
 - Status bar reads 09:41 on every capture, with the same charging battery, 4 cellular bars and 3 Wi-Fi bars (one session, one simulator, override applied).
+- UI tests run on the iPhone 17 Pro Max simulator (iOS 27.0), 6 executed, 0 failures: `testGrandChampionContinuesIntoChampionCircuit`, `testClassBookShowsStagesRatingsAndReplayableTiles`, `testEveryNewRuleAppearsAtItsIntroductionClass`, `testAppPreviewGardenCapture`, `testReducedMotionAndIncreasedContrastKeepLateClassControlsReachable`, `testHomeAndSettingsKeepFeedbackAvailable`. The full UI suite was not run; no app or test code changed.
 - The last Garden stills (slides 1, 2, 5) and the header/search board are now native-size; no slide upscales a capture.
 
 ## Recapture notes (7 Oct 2026) and layout bug found
