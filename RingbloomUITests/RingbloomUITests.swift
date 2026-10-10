@@ -1070,6 +1070,68 @@ final class RingbloomUITests: XCTestCase {
         pauseForCapture(1.2)
     }
 
+    // TOM-715: tall objective stacks used to push the Turn buttons off screen.
+    // These run on whichever device the suite targets, so run them on both a
+    // small phone and a large one.
+    func testTurnControlsStayInsideSafeAreaForTallFlowerShowClasses() {
+        for classNumber in [20, 30, 40] {
+            let app = launch(arguments: [
+                "--flower-show-access=full-purchase",
+                "--flower-show-class=\(classNumber)",
+                "--screenshot-flower-show-game",
+            ])
+            assertGameplayControlsFitSafeArea(in: app, context: "Class \(classNumber)")
+            app.terminate()
+        }
+    }
+
+    /// The largest non-accessibility Dynamic Type size keeps the horizontal
+    /// layouts; accessibility sizes stack controls and scroll, which the
+    /// large-text reachability tests above already cover.
+    func testTurnControlsStayInsideSafeAreaAtLargestStandardTextSize() {
+        let app = launch(arguments: [
+            "--flower-show-access=full-purchase",
+            "--flower-show-class=30",
+            "--screenshot-flower-show-game",
+            "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryXXXL",
+        ])
+        assertGameplayControlsFitSafeArea(in: app, context: "Class 30 at XXXL")
+    }
+
+    func testTurnControlsStayInsideSafeAreaInGarden() {
+        let app = launch(arguments: ["--screenshot-game"])
+        assertGameplayControlsFitSafeArea(in: app, context: "Garden 1")
+    }
+
+    private func assertGameplayControlsFitSafeArea(
+        in app: XCUIApplication,
+        context: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let safeArea = app.descendants(matching: .any)["gameplaySafeArea"]
+        XCTAssertTrue(safeArea.waitForExistence(timeout: 10), "\(context): safe area probe", file: file, line: line)
+        let board = app.staticTexts["gameBoard"].firstMatch
+        XCTAssertTrue(board.waitForExistence(timeout: 8), "\(context): board", file: file, line: line)
+
+        let area = safeArea.frame
+        for identifier in ["rotateCounterClockwise", "rotateClockwise", "ringInner", "ringMiddle", "ringOuter"] {
+            let control = app.buttons[identifier]
+            XCTAssertTrue(control.waitForExistence(timeout: 5), "\(context): \(identifier) exists", file: file, line: line)
+            let frame = control.frame
+            XCTAssertGreaterThanOrEqual(frame.minX, area.minX - 0.5, "\(context): \(identifier) left edge", file: file, line: line)
+            XCTAssertLessThanOrEqual(frame.maxX, area.maxX + 0.5, "\(context): \(identifier) right edge", file: file, line: line)
+            XCTAssertGreaterThanOrEqual(frame.minY, area.minY - 0.5, "\(context): \(identifier) top edge", file: file, line: line)
+            XCTAssertLessThanOrEqual(
+                frame.maxY, area.maxY + 0.5,
+                "\(context): \(identifier) bottom \(frame.maxY) beyond safe area \(area.maxY)",
+                file: file, line: line
+            )
+            XCTAssertGreaterThanOrEqual(frame.height, 44, "\(context): \(identifier) keeps a 44 pt target", file: file, line: line)
+            XCTAssertTrue(control.isHittable, "\(context): \(identifier) is hittable", file: file, line: line)
+        }
+    }
+
     private func launch(
         arguments: [String] = [],
         tutorialSeen: Bool = true

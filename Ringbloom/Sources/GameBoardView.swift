@@ -437,3 +437,91 @@ private struct BloomBurst: View {
         }
     }
 }
+
+// MARK: - Gameplay layout
+
+/// How tightly the Flower Show objective rows are drawn.
+enum ObjectiveDensity {
+    case regular
+    case compact
+}
+
+private struct ObjectiveDensityKey: EnvironmentKey {
+    static let defaultValue = ObjectiveDensity.regular
+}
+
+extension EnvironmentValues {
+    var objectiveDensity: ObjectiveDensity {
+        get { self[ObjectiveDensityKey.self] }
+        set { self[ObjectiveDensityKey.self] = newValue }
+    }
+}
+
+/// Stacks three children: the header block, the square board and the controls
+/// block. The header and controls take their natural height and the board
+/// takes the remaining viewport height, never more than the available width.
+/// If the board cannot reach `minBoardSide` the content is taller than the
+/// viewport and the enclosing scroll view takes over.
+struct GameplayBoardLayout: Layout {
+    /// Visible height of the scroll view that hosts this layout.
+    var availableHeight: CGFloat
+    var spacing: CGFloat = 12
+    /// Breathing room kept above and below the board.
+    var boardInset: CGFloat = 4
+    var minBoardSide: CGFloat = 200
+
+    /// Phones shorter than this draw the objective rows in their compact form.
+    static let compactObjectiveViewportHeight: CGFloat = 820
+
+    static func usesCompactObjectives(viewportHeight: CGFloat) -> Bool {
+        viewportHeight < compactObjectiveViewportHeight
+    }
+
+    struct Metrics {
+        var top: CGFloat
+        var footer: CGFloat
+        var board: CGFloat
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard subviews.count == 3 else { return .zero }
+        let width = proposal.width ?? 390
+        let metrics = metrics(width: width, subviews: subviews)
+        let height = metrics.top + metrics.board + metrics.footer + 2 * boardInset + 2 * spacing
+        return CGSize(width: width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 3 else { return }
+        let metrics = metrics(width: bounds.width, subviews: subviews)
+        var y = bounds.minY
+        subviews[0].place(
+            at: CGPoint(x: bounds.minX, y: y),
+            anchor: .topLeading,
+            proposal: ProposedViewSize(width: bounds.width, height: metrics.top)
+        )
+        y += metrics.top + spacing + boardInset
+        subviews[1].place(
+            at: CGPoint(x: bounds.midX, y: y),
+            anchor: .top,
+            proposal: ProposedViewSize(width: metrics.board, height: metrics.board)
+        )
+        y += metrics.board + boardInset + spacing
+        subviews[2].place(
+            at: CGPoint(x: bounds.minX, y: y),
+            anchor: .topLeading,
+            proposal: ProposedViewSize(width: bounds.width, height: metrics.footer)
+        )
+    }
+
+    private func metrics(width: CGFloat, subviews: Subviews) -> Metrics {
+        let measure = ProposedViewSize(width: width, height: nil)
+        let top = subviews[0].sizeThatFits(measure).height
+        let footer = subviews[2].sizeThatFits(measure).height
+        let room = availableHeight - top - footer - 2 * boardInset - 2 * spacing
+        // When even the minimum board cannot fit (very large text), the page
+        // scrolls, so the board keeps the generous size it has always had.
+        let preferred = room >= minBoardSide ? room : max(availableHeight * 0.49, minBoardSide)
+        return Metrics(top: top, footer: footer, board: min(preferred, max(width, 0)))
+    }
+}
