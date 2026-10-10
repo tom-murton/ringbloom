@@ -985,10 +985,8 @@ private struct GameScreen: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let boardSide = max(0, min(proxy.size.width - 32, proxy.size.height * 0.49))
-
             ZStack {
-                gameplayContent(boardSide: boardSide, minHeight: proxy.size.height)
+                gameplayContent(viewportHeight: proxy.size.height)
                     .accessibilityHidden(game.phase != .playing || isPaused)
                     .allowsHitTesting(game.phase == .playing && !isPaused)
 
@@ -1137,38 +1135,50 @@ private struct GameScreen: View {
         }
     }
 
-    private func gameplayContent(boardSide: CGFloat, minHeight: CGFloat) -> some View {
+    /// Gameplay is laid out as header, board and controls. The board receives
+    /// whatever height the header and controls leave in the viewport (never
+    /// more than the width allows), so the ring selector and Turn buttons stay
+    /// on screen for every class, device and text size that can fit them.
+    private func gameplayContent(viewportHeight: CGFloat) -> some View {
         ScrollView {
-            VStack(spacing: 12) {
-                gameToolbar
-                if game.activeMode == .flowerShow {
-                    flowerShowCompactHeader
-                    if let attention = flowerShowAttention ?? FlowerShowAttentionMessage.current(
-                        definition: game.flowerShowDefinition,
-                        blooms: game.blooms,
-                        infectedSpokes: game.infectedSpokes,
-                        bindweedSpreadCountdown: game.bindweedSpreadCountdown,
-                        turnNumber: game.lastTurn?.turnNumber ?? 0
-                    ) {
-                        FlowerShowAttentionBanner(message: attention)
-                            .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
-                    }
+            GameplayBoardLayout(availableHeight: viewportHeight) {
+                VStack(spacing: 12) {
+                    gameToolbar
+                    if game.activeMode == .flowerShow {
+                        flowerShowCompactHeader
+                        if let attention = flowerShowAttention ?? FlowerShowAttentionMessage.current(
+                            definition: game.flowerShowDefinition,
+                            blooms: game.blooms,
+                            infectedSpokes: game.infectedSpokes,
+                            bindweedSpreadCountdown: game.bindweedSpreadCountdown,
+                            turnNumber: game.lastTurn?.turnNumber ?? 0
+                        ) {
+                            FlowerShowAttentionBanner(message: attention)
+                                .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+                        }
 
-                    FlowerShowObjectiveProgress(
-                        definition: game.flowerShowDefinition,
-                        harmonyRings: game.harmonyRings,
-                        streak: game.streak,
-                        bestStreak: game.bestStreak,
-                        harmonyCredits: game.harmonyCredits,
-                        infectedSpokes: game.infectedSpokes,
-                        bindweedSpreadCountdown: game.bindweedSpreadCountdown,
-                        twinBloomTurns: game.twinBloomTurns,
-                        bouquetKinds: game.bouquetKinds,
-                        judgesOrderIndex: game.judgesOrderIndex
-                    )
-                } else {
-                    stats
-                    bloomProgress
+                        FlowerShowObjectiveProgress(
+                            definition: game.flowerShowDefinition,
+                            harmonyRings: game.harmonyRings,
+                            streak: game.streak,
+                            bestStreak: game.bestStreak,
+                            harmonyCredits: game.harmonyCredits,
+                            infectedSpokes: game.infectedSpokes,
+                            bindweedSpreadCountdown: game.bindweedSpreadCountdown,
+                            twinBloomTurns: game.twinBloomTurns,
+                            bouquetKinds: game.bouquetKinds,
+                            judgesOrderIndex: game.judgesOrderIndex
+                        )
+                        .environment(
+                            \.objectiveDensity,
+                            GameplayBoardLayout.usesCompactObjectives(viewportHeight: viewportHeight)
+                                ? .compact
+                                : .regular
+                        )
+                    } else {
+                        stats
+                        bloomProgress
+                    }
                 }
 
                 GameBoardView(
@@ -1185,25 +1195,36 @@ private struct GameScreen: View {
                     onSelect: select,
                     onRotate: rotate
                 )
-                .frame(width: boardSide, height: boardSide)
-                .padding(.vertical, 4)
 
-                Text(statusText)
-                    .font(.system(.footnote, design: .rounded, weight: .medium))
-                    .foregroundStyle(RingbloomTheme.muted)
-                    .multilineTextAlignment(.center)
-                    .frame(minHeight: 20)
-                    .accessibilityIdentifier("statusLabel")
+                VStack(spacing: 12) {
+                    Text(statusText)
+                        .font(.system(.footnote, design: .rounded, weight: .medium))
+                        .foregroundStyle(RingbloomTheme.muted)
+                        .multilineTextAlignment(.center)
+                        .frame(minHeight: 20)
+                        .accessibilityIdentifier("statusLabel")
 
-                ringSelector
-                rotationControls
-                    .padding(.bottom, 8)
+                    ringSelector
+                    rotationControls
+                        .padding(.bottom, 8)
+                }
             }
             .padding(.horizontal, 16)
             .frame(maxWidth: 620)
-            .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .top)
+            .frame(maxWidth: .infinity, minHeight: viewportHeight, alignment: .top)
         }
         .scrollIndicators(.hidden)
+        .background {
+            if ProcessInfo.processInfo.arguments.contains("--ui-testing") {
+                // UI tests compare control frames with the usable screen area.
+                // It sits behind the content so it never intercepts a tap.
+                Color.clear
+                    .allowsHitTesting(false)
+                    .accessibilityElement()
+                    .accessibilityLabel("Gameplay safe area")
+                    .accessibilityIdentifier("gameplaySafeArea")
+            }
+        }
     }
 
     private var gameToolbar: some View {
@@ -1251,6 +1272,8 @@ private struct GameScreen: View {
                 .font(.system(.caption2, design: .rounded, weight: .semibold))
                 .tracking(1.5)
                 .foregroundStyle(RingbloomTheme.muted)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
             Text(
                 game.activeMode == .garden
                     ? game.garden.formatted(.number.grouping(.never))
@@ -1258,6 +1281,8 @@ private struct GameScreen: View {
             )
             .font(.system(.title3, design: .rounded, weight: .semibold))
             .foregroundStyle(RingbloomTheme.ivory)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .accessibilityElement(children: .combine)

@@ -626,6 +626,7 @@ struct FlowerShowObjectiveProgress: View {
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.objectiveDensity) private var density
     @State private var showsGoals = false
     @AccessibilityFocusState private var goalsFocused: Bool
 
@@ -676,9 +677,23 @@ struct FlowerShowObjectiveProgress: View {
         .accessibilityIdentifier("flowerShowObjectives")
     }
 
+    private var isCompact: Bool { density == .compact }
+    private var rowMinHeight: CGFloat { isCompact ? 36 : 44 }
+
+    /// Section captions sit above the harmony, bouquet and order rows. The
+    /// compact density drops them from view; VoiceOver still reads them.
+    private func sectionCaption(_ title: String) -> some View {
+        Text(title)
+            .font(.system(.caption2, design: .rounded, weight: .semibold))
+            .tracking(1.2)
+            .foregroundStyle(RingbloomTheme.muted)
+            .frame(height: isCompact ? 0 : nil)
+            .opacity(isCompact ? 0 : 1)
+    }
+
     @ViewBuilder
     private var objectiveRows: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: isCompact ? 6 : 8) {
             if definition.objectives.requiresHarmony { harmonyProgress }
             if let requiredChain = definition.objectives.requiredUnbrokenChain {
                 objectiveRow(
@@ -752,7 +767,7 @@ struct FlowerShowObjectiveProgress: View {
         .tracking(0.9)
         .foregroundStyle(complete ? RingbloomTheme.mint : RingbloomTheme.ivory)
         .padding(.horizontal, 12)
-        .frame(minHeight: 44)
+        .frame(minHeight: rowMinHeight)
         .background(RingbloomTheme.inkLifted.opacity(0.94), in: RoundedRectangle(cornerRadius: 12))
         .overlay {
             RoundedRectangle(cornerRadius: 12)
@@ -774,11 +789,8 @@ struct FlowerShowObjectiveProgress: View {
             ? AnyLayout(VStackLayout(spacing: 6))
             : AnyLayout(HStackLayout(spacing: 6))
 
-        return VStack(alignment: .leading, spacing: 6) {
-            Text("RING HARMONY")
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
-                .tracking(1.2)
-                .foregroundStyle(RingbloomTheme.muted)
+        return VStack(alignment: .leading, spacing: isCompact ? 0 : 6) {
+            sectionCaption("RING HARMONY")
 
             layout {
                 ForEach(Ring.allCases) { ring in
@@ -788,7 +800,7 @@ struct FlowerShowObjectiveProgress: View {
                     Label("\(ring.shortName) \(credit)/\(required)", systemImage: complete ? "checkmark.circle.fill" : "circle")
                         .font(.system(.caption2, design: .rounded, weight: .semibold))
                         .foregroundStyle(complete ? RingbloomTheme.mint : RingbloomTheme.ivory)
-                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .frame(maxWidth: .infinity, minHeight: rowMinHeight)
                         .background(RingbloomTheme.inkLifted.opacity(0.94), in: RoundedRectangle(cornerRadius: 10))
                         .overlay {
                             RoundedRectangle(cornerRadius: 10)
@@ -809,22 +821,23 @@ struct FlowerShowObjectiveProgress: View {
     }
 
     private var bouquetProgress: some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Text("PRIZE BOUQUET")
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
-                .tracking(1.2)
-                .foregroundStyle(RingbloomTheme.muted)
+        let chipLayout = isCompact
+            ? AnyLayout(HStackLayout(spacing: 5))
+            : AnyLayout(VStackLayout(spacing: 3))
+
+        return VStack(alignment: .leading, spacing: isCompact ? 0 : 7) {
+            sectionCaption("PRIZE BOUQUET")
             HStack(spacing: 6) {
                 ForEach(PetalKind.allCases) { kind in
                     let collected = bouquetKinds.contains(PetalKindMask(kind))
-                    VStack(spacing: 3) {
+                    chipLayout {
                         Text(kind.glyph)
                             .font(.headline)
                         Text(kind.displayName.uppercased())
                             .font(.system(size: 8, weight: .bold, design: .rounded))
                     }
                     .foregroundStyle(collected ? RingbloomTheme.mint : RingbloomTheme.ivory)
-                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .frame(maxWidth: .infinity, minHeight: rowMinHeight)
                     .background(RingbloomTheme.inkLifted, in: RoundedRectangle(cornerRadius: 10))
                     .overlay {
                         RoundedRectangle(cornerRadius: 10)
@@ -841,11 +854,8 @@ struct FlowerShowObjectiveProgress: View {
 
     private var judgesOrderProgress: some View {
         let order = definition.objectives.judgesOrder
-        return VStack(alignment: .leading, spacing: 7) {
-            Text("JUDGES' ORDER")
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
-                .tracking(1.2)
-                .foregroundStyle(RingbloomTheme.muted)
+        return VStack(alignment: .leading, spacing: isCompact ? 0 : 7) {
+            sectionCaption("JUDGES' ORDER")
             HStack(spacing: 6) {
                 ForEach(Array(order.enumerated()), id: \.offset) { index, ring in
                     let complete = index < judgesOrderIndex
@@ -856,7 +866,7 @@ struct FlowerShowObjectiveProgress: View {
                     }
                     .font(.system(.caption2, design: .rounded, weight: .bold))
                     .foregroundStyle(complete ? RingbloomTheme.mint : (next ? RingbloomTheme.saffron : RingbloomTheme.ivory))
-                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .frame(maxWidth: .infinity, minHeight: rowMinHeight)
                     .background(RingbloomTheme.inkLifted, in: RoundedRectangle(cornerRadius: 10))
                     .overlay {
                         RoundedRectangle(cornerRadius: 10)
