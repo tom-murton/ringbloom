@@ -699,6 +699,7 @@ private struct StoreScreenshotCaption: View {
 }
 
 private struct HomeView: View {
+    @EnvironmentObject private var analytics: ProductAnalytics
     let bestScore: Int
     let highestGarden: Int
     let bestStreak: Int
@@ -846,10 +847,13 @@ private struct HomeView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .sheet(isPresented: $showsFeedback) {
+        .sheet(isPresented: $showsFeedback, onDismiss: {
+            analytics.screenViewed("home")
+        }) {
             AppFeedbackSheet(source: .home)
         }
         .sheet(isPresented: $showsSettings, onDismiss: {
+            analytics.screenViewed("home")
             guard presentsTutorialAfterSettings else { return }
             presentsTutorialAfterSettings = false
             showTutorial()
@@ -1130,7 +1134,9 @@ private struct GameScreen: View {
                 cancelReviewRequest(abandonOpportunity: true)
             }
         }
-        .sheet(isPresented: $showsFeedback) {
+        .sheet(isPresented: $showsFeedback, onDismiss: {
+            analytics.screenViewed("game", properties: gameplayAnalyticsProperties)
+        }) {
             AppFeedbackSheet(source: .afterSession)
         }
     }

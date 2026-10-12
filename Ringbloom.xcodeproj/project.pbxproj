@@ -345,6 +345,7 @@
 				40A510FE16B96242BC014530 /* Sources */,
 				2E5176D72AB51A7A7645A208 /* Resources */,
 				1C4B79A17D178FECFBFADCFC /* Frameworks */,
+				AE6BC7546B97D0E6E1974143 /* Upload PostHog debug symbols */,
 			);
 			buildRules = (
 			);
@@ -442,6 +443,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AE6BC7546B97D0E6E1974143 /* Upload PostHog debug symbols */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(DWARF_DSYM_FOLDER_PATH)/$(DWARF_DSYM_FILE_NAME)/Contents/Resources/DWARF/$(EXECUTABLE_NAME)",
+			);
+			name = "Upload PostHog debug symbols";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "/bin/bash \"$SRCROOT/Tools/upload-posthog-symbols.sh\"";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		40A510FE16B96242BC014530 /* Sources */ = {
@@ -792,6 +816,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Ringbloom/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Ringbloom;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
@@ -875,7 +901,7 @@
 			repositoryURL = "https://github.com/PostHog/posthog-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 3.59.3;
+				version = 3.85.0;
 			};
 		};
 		DEA7BCD54EE9393E24A8AB37 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Strict" */ = {

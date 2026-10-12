@@ -2,12 +2,83 @@ import Combine
 import Foundation
 import PostHog
 import StoreKit
+import SwiftUI
 
 @MainActor
 protocol PurchaseBoundaryAnalyticsTracking: AnyObject {
     func purchaseVerifiedNew(source: String, environment: String, moneyStatus: String)
 }
-import SwiftUI
+
+/// The SDK calls beforeSend synchronously on the capturing thread, which need not be main.
+/// Keep automatic events in the same environment and named screens as explicit events.
+final class AnalyticsSDKContext: @unchecked Sendable {
+    private let lock = NSLock()
+    private let commonProperties: [String: Any]
+    private var screen: String?
+
+    init(commonProperties: [String: Any]) {
+        self.commonProperties = commonProperties
+    }
+
+    func setScreen(_ screen: String) {
+        lock.withLock { self.screen = screen }
+    }
+
+    func prepare(_ event: String, properties: [String: Any]) -> [String: Any]? {
+        let screen = lock.withLock { self.screen }
+        var properties = properties
+        if event == "$autocapture" || event == "$rageclick" {
+            // FeedbackKit's text, category and error UI must never enter product analytics.
+            // Check captured element IDs too, covering callbacks after sheet dismissal.
+            let chain = (properties["$elements_chain"] as? String ?? "").lowercased()
+            guard screen != "feedback",
+                  !chain.contains("feedback-"), !chain.contains("ph-no-capture") else { return nil }
+            if let screen { properties["$screen_name"] = screen }
+        }
+        if event == "$exception", properties["$exception_level"] as? String == "fatal" {
+            // Native crashes are sent on the next launch. Keep the SDK's persisted
+            // crash-time release, route and session, even after an app update.
+            properties["product"] = "ringbloom"
+            properties["platform"] = "ios"
+            if properties["analytics_data_tier"] == nil {
+                properties["analytics_data_tier"] = AnalyticsDataTier.unknown.rawValue
+            }
+        } else {
+            properties.merge(commonProperties) { _, common in common }
+        }
+        if event == "$exception" {
+            Self.removeExceptionMessages(from: &properties)
+            if var images = properties["$debug_images"] as? [[String: Any]] {
+                for index in images.indices {
+                    if let path = images[index]["code_file"] as? String {
+                        images[index]["code_file"] = (path as NSString).lastPathComponent
+                    }
+                }
+                properties["$debug_images"] = images
+            }
+        }
+        properties["$geoip_disable"] = true
+        return properties
+    }
+
+    private static func removeExceptionMessages(from properties: inout [String: Any]) {
+        // Native exception reasons can interpolate file paths or private text.
+        // Keep the exception type, mechanism and frames needed for symbolication.
+        guard var exceptions = properties["$exception_list"] as? [[String: Any]] else { return }
+        for index in exceptions.indices {
+            exceptions[index]["value"] = "Exception message omitted"
+            if var mechanism = exceptions[index]["mechanism"] as? [String: Any],
+               var metadata = mechanism["meta"] as? [String: Any],
+               var signal = metadata["signal"] as? [String: Any] {
+                signal.removeValue(forKey: "crash_info_message")
+                metadata["signal"] = signal
+                mechanism["meta"] = metadata
+                exceptions[index]["mechanism"] = mechanism
+            }
+        }
+        properties["$exception_list"] = exceptions
+    }
+}
 
 enum AnalyticsDistributionEnvironment: String, Equatable, Sendable {
     case production, sandbox, xcode, unknown
@@ -92,6 +163,7 @@ enum AnalyticsCommerceOutcome {
 @MainActor
 final class ProductAnalytics: ObservableObject, PurchaseBoundaryAnalyticsTracking {
     typealias CaptureHandler = (_ event: String, _ properties: [String: Any]) -> Void
+    typealias ProgressionHandler = (_ event: String, _ properties: [AnyHashable: Any]) -> Void
 
     static let shared = ProductAnalytics()
     static let schemaVersion = 2
@@ -114,6 +186,7 @@ final class ProductAnalytics: ObservableObject, PurchaseBoundaryAnalyticsTrackin
     }
 
     private var captureHandler: CaptureHandler?
+    private let progressionHandler: ProgressionHandler
     private var usesPostHogSDK = false
     private var hasObservedActiveScene = false
     private var hasBackgroundedSinceActive = false
@@ -127,12 +200,24 @@ final class ProductAnalytics: ObservableObject, PurchaseBoundaryAnalyticsTrackin
     private(set) var sessionID: String
     var processSessionID: String { sessionUUID.uuidString }
 
-    init(
+    convenience init(
         captureHandler: CaptureHandler? = nil,
         route: AnalyticsRoute = .init(distribution: .xcode, tier: .test),
         sessionUUID: UUID = UUID()
     ) {
+        self.init(progressionHandler: { event, properties in
+            AppsFlyerAttribution.shared.trackProgression(event, properties: properties)
+        }, captureHandler: captureHandler, route: route, sessionUUID: sessionUUID)
+    }
+
+    init(
+        progressionHandler: @escaping ProgressionHandler,
+        captureHandler: CaptureHandler?,
+        route: AnalyticsRoute = .init(distribution: .xcode, tier: .test),
+        sessionUUID: UUID = UUID()
+    ) {
         self.captureHandler = captureHandler
+        self.progressionHandler = progressionHandler
         self.route = route
         self.sessionUUID = sessionUUID
         sessionID = route.tier == .test ? "test-\(sessionUUID.uuidString)" : sessionUUID.uuidString
@@ -203,29 +288,48 @@ final class ProductAnalytics: ObservableObject, PurchaseBoundaryAnalyticsTrackin
             return
         }
 
-        let config = PostHogConfig(projectToken: projectToken, host: host)
-        config.captureApplicationLifecycleEvents = true
-        config.captureScreenViews = false
-        config.captureElementInteractions = false
-        config.sessionReplay = false
-        config.surveys = false
-        config.setDefaultPersonProperties = false
-        config.setBeforeSend { event in
-            event.properties["$geoip_disable"] = true
-            return event
-        }
-        #if DEBUG
-            config.debug = true
-        #endif
+        let context = AnalyticsSDKContext(commonProperties: baseProperties)
+        let config = Self.sdkConfiguration(projectToken: projectToken, host: host, context: context)
         PostHogSDK.shared.setup(config)
+        // SDK super properties are included in its persisted native crash context.
+        PostHogSDK.shared.register(baseProperties)
         usesPostHogSDK = true
         captureHandler = { event, properties in
-            PostHogSDK.shared.capture(event, properties: properties)
+            if event == "$screen", let screen = properties["$screen_name"] as? String {
+                context.setScreen(screen)
+                PostHogSDK.shared.screen(screen, properties: properties)
+                PostHogSDK.shared.addExceptionStep("Screen viewed", properties: ["screen": screen])
+            } else {
+                PostHogSDK.shared.capture(event, properties: properties)
+            }
         }
         isConfigured = true
         let buffered = pendingEvents
         pendingEvents.removeAll()
         for (event, properties) in buffered { capture(event, properties: properties) }
+    }
+
+    static func sdkConfiguration(projectToken: String, host: String, context: AnalyticsSDKContext) -> PostHogConfig {
+        let config = PostHogConfig(projectToken: projectToken, host: host)
+        config.captureApplicationLifecycleEvents = true
+        // PostHog recommends named screen() / postHogScreenView() calls for SwiftUI.
+        config.captureScreenViews = false
+        config.captureElementInteractions = true
+        config.captureSwiftUIElementInteractions = true
+        // Keep element identifiers, without reading control text or selected values.
+        config.captureAutocaptureElementText = false
+        config.errorTrackingConfig.autoCapture = true
+        config.sessionReplay = false
+        config.surveys = false
+        config.setBeforeSend { event in
+            guard let properties = context.prepare(event.event, properties: event.properties) else { return nil }
+            event.properties = properties
+            return event
+        }
+        #if DEBUG
+            config.debug = true
+        #endif
+        return config
     }
 
     func capture(_ event: String, properties: [String: Any] = [:]) {
@@ -249,7 +353,23 @@ final class ProductAnalytics: ObservableObject, PurchaseBoundaryAnalyticsTrackin
     }
 
     func captureLifecycle(_ event: AnalyticsLifecycleEvent, properties: [String: Any]) {
-        capture(event.rawValue, properties: properties.filter { Self.lifecycleKeys.contains($0.key) })
+        let bounded = properties.filter { Self.lifecycleKeys.contains($0.key) }
+        capture(event.rawValue, properties: bounded)
+        // Only genuine game milestones reach acquisition reporting. The AppsFlyer
+        // adapter owns its independent build/test policy, including TestFlight.
+        if event == .firstGardenWinAchieved,
+           bounded["milestone_basis"] as? String == "fresh_instrumented_progress" {
+            progressionHandler("af_achievement_unlocked", ["af_description": "first_garden_win"])
+        } else if event == .attemptFinished,
+                  bounded["mode"] as? String == "flower_show",
+                  bounded["attempt_kind"] as? String == "campaign",
+                  bounded["outcome"] as? String == "won",
+                  let level = bounded["class_number"] as? Int,
+                  (1...FlowerShowContent.campaignClassCount).contains(level) {
+            progressionHandler("af_level_achieved", [
+                "af_level": level, "af_content_type": "flower_show",
+            ])
+        }
     }
 
     func purchaseVerifiedNew(source: String, environment: String, moneyStatus: String) {
@@ -289,6 +409,8 @@ final class ProductAnalytics: ObservableObject, PurchaseBoundaryAnalyticsTrackin
     }
 
     func screenViewed(_ screen: String, properties: [String: Any] = [:]) {
+        capture("$screen", properties: properties.merging(["$screen_name": screen]) { _, screenValue in screenValue })
+        // Preserve the existing dashboard contract while adopting the SDK's standard event.
         capture("screen_viewed", properties: properties.merging(["screen": screen]) { _, screenValue in screenValue })
     }
 

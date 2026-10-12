@@ -6,6 +6,129 @@ import Testing
 
 @MainActor
 struct AppsFlyerAttributionTests {
+    @Test func releaseAndTestFlightSessionsAreEnabledWithoutAPromptGate() {
+        let policy = AppsFlyerEmissionPolicy.resolve(isDebug: false, environment: [:], arguments: ["app"])
+        #expect(policy.allowsSDK)
+        #expect(policy.allowsPurchase(.production))
+        #expect(!policy.allowsPurchase(.sandbox))
+        #expect(!policy.allowsPurchase(.xcode))
+        #expect(!policy.allowsPurchase(.unknown))
+    }
+
+    @Test func developmentIngestionRequiresExplicitOptInAndHostedUnitsNeverSend() {
+        for (debug, arguments) in [(true, ["app"]), (false, ["app", "--ui-testing"])] {
+            #expect(!AppsFlyerEmissionPolicy.resolve(isDebug: debug, environment: [:], arguments: arguments).allowsSDK)
+            let optedIn = AppsFlyerEmissionPolicy.resolve(
+                isDebug: debug, environment: ["RINGBLOOM_APPSFLYER_TEST_INGESTION": "1"], arguments: arguments
+            )
+            #expect(optedIn.allowsSDK)
+            #expect(optedIn.allowsPurchase(.sandbox))
+            #expect(optedIn.allowsPurchase(.xcode))
+            #expect(!optedIn.allowsPurchase(.unknown))
+        }
+        for key in ["XCInjectBundle", "XCTestBundlePath"] {
+            let hosted = AppsFlyerEmissionPolicy.resolve(isDebug: false, environment: [
+                key: "/tmp/RingbloomTests.xctest", "RINGBLOOM_APPSFLYER_TEST_INGESTION": "1",
+            ], arguments: ["app"])
+            #expect(!hosted.allowsSDK)
+            #expect(!hosted.allowsPurchase(.production))
+        }
+    }
+
+    @Test func adapterQueuesOnlyVerifiedProductionRevenueByDefault() throws {
+        let suite = "AppsFlyerAdapter.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        var calls = 0
+        let adapter = AppsFlyerAttribution(defaults: defaults, environment: [:], arguments: ["app"], isDebug: false) { _, _ in
+            calls += 1
+        }
+        for (id, environment, verified, revoked, ownership) in [
+            (UInt64(90), FlowerShowTransactionEnvironment.production, true, false, FlowerShowPurchaseOwnership.purchased),
+            (91, .sandbox, true, false, .purchased), (92, .xcode, true, false, .purchased),
+            (93, .unknown, true, false, .purchased), (94, .production, false, false, .purchased),
+            (95, .production, true, true, .purchased), (96, .production, true, false, .familyShared),
+        ] {
+            adapter.trackVerifiedNewPurchase(FlowerShowPurchaseTransaction(
+                id: id, productID: FlowerShowAccessPolicy.productID, isVerified: verified, isRevoked: revoked,
+                price: 2.99, currencyCode: "GBP", environment: environment, ownership: ownership
+            ))
+        }
+        let pending = try #require(defaults.dictionary(forKey: "AppsFlyerPendingVerifiedPurchasesV2"))
+        #expect(Set(pending.keys) == ["90"])
+        #expect(calls == 0) // No SDK initialisation/network traffic in this unit test.
+    }
+
+    @Test func debugAdapterDoesNotQueueSyntheticRevenueWithoutOptIn() throws {
+        let suite = "AppsFlyerDebugAdapter.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let adapter = AppsFlyerAttribution(defaults: defaults, environment: [:], arguments: ["app"], isDebug: true) { _, _ in
+            Issue.record("Disabled debug adapter emitted an event")
+        }
+        adapter.trackVerifiedNewPurchase(FlowerShowPurchaseTransaction(
+            id: 97, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+            price: 2.99, currencyCode: "GBP", environment: .production, ownership: .purchased
+        ))
+        #expect(defaults.dictionary(forKey: "AppsFlyerPendingVerifiedPurchasesV2") == nil)
+        adapter.trackProgression("af_level_achieved", properties: ["af_level": 1])
+    }
+
+    @Test func explicitIntegrationOptInQueuesSandboxMoneyWithoutCallingTheSDK() throws {
+        let suite = "AppsFlyerOptedInAdapter.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let adapter = AppsFlyerAttribution(defaults: defaults,
+            environment: ["RINGBLOOM_APPSFLYER_TEST_INGESTION": "1"], arguments: ["app", "--ui-testing"], isDebug: true
+        ) { _, _ in Issue.record("Uninitialised test adapter emitted an event") }
+        adapter.trackVerifiedNewPurchase(FlowerShowPurchaseTransaction(
+            id: 98, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+            price: 2.99, currencyCode: "GBP", environment: .sandbox, ownership: .purchased
+        ))
+        #expect(defaults.dictionary(forKey: "AppsFlyerPendingVerifiedPurchasesV2")?["98"] != nil)
+    }
+
+    @Test func legacyQueueWithoutEnvironmentIsNeverInventedAsProductionRevenue() throws {
+        let suite = "AppsFlyerLegacyQueue.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let legacy = ["101": ["productID": FlowerShowAccessPolicy.productID, "price": "2.99", "currencyCode": "GBP"]]
+        defaults.set(legacy, forKey: "AppsFlyerPendingVerifiedPurchasesV1")
+        let reporter = IdempotentAppsFlyerPurchaseReporter(defaults: defaults, allowsEnvironment: { $0 == .production }) { _, _ in
+            Issue.record("Legacy queue emitted revenue without provenance")
+        }
+        reporter.flush()
+        let retained = try #require(defaults.dictionary(forKey: "AppsFlyerPendingVerifiedPurchasesV1") as? [String: [String: String]])
+        #expect(retained == legacy)
+        #expect(defaults.stringArray(forKey: "AppsFlyerReportedPurchaseTransactionIDs") == nil)
+    }
+
+    @Test func persistedTestQueueCannotReplayAsRevenueOnAnOrdinaryProductionLaunch() throws {
+        let suite = "AppsFlyerQueueProvenance.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let testWriter = IdempotentAppsFlyerPurchaseReporter(defaults: defaults) { _, _ in
+            Issue.record("Queue writer unexpectedly flushed")
+        }
+        for (id, environment) in [(UInt64(102), FlowerShowTransactionEnvironment.production), (103, .sandbox), (104, .xcode)] {
+            testWriter.enqueue(.init(FlowerShowPurchaseTransaction(
+                id: id, productID: FlowerShowAccessPolicy.productID, isVerified: true, isRevoked: false,
+                price: 2.99, currencyCode: "GBP", environment: environment, ownership: .purchased
+            )))
+        }
+        var received: [String] = []
+        let productionReader = IdempotentAppsFlyerPurchaseReporter(defaults: defaults, allowsEnvironment: { $0 == .production }) { _, properties in
+            if let id = properties["af_order_id"] as? String { received.append(id) }
+        }
+        productionReader.flush()
+        productionReader.flush()
+        #expect(received == ["102"])
+        #expect(defaults.stringArray(forKey: "AppsFlyerReportedPurchaseTransactionIDs") == ["102"])
+        let remaining = try #require(defaults.dictionary(forKey: "AppsFlyerPendingVerifiedPurchasesV2"))
+        #expect(Set(remaining.keys) == ["103", "104"])
+        #expect((remaining["103"] as? [String: String])?["environment"] == "sandbox")
+    }
+
     @Test(
         .enabled(if: ProcessInfo.processInfo.environment["RINGBLOOM_LOCAL_STOREKIT_INTEGRATION"] == "1",
                  "Requires an explicitly configured local StoreKit test service; never a normal purchase."),
