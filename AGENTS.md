@@ -15,10 +15,10 @@ suggestion will be built.
 
 ## Canonical context
 
-This repository is the only place to work on Ringbloom. `Gaming Benchmark/GPT5.6 Sol Ultra -
-Ringbloom/` is a frozen, unversioned snapshot: never work there or copy it over this
-repository. Its run record and later private product evidence (handovers, partner
-readbacks) are in the private `Gaming Benchmark` repository under
+This repository is the only place to work on Ringbloom. The old unversioned copy in
+`Gaming Benchmark/` was removed on 12 October 2026; never recreate or work from a copy
+outside this repository. The benchmark run record and later private product evidence
+(handovers, partner readbacks) are in the private `Gaming Benchmark` repository under
 `runs/20260711-gpt5.6-sol-ultra-ringbloom/`; this repository is public, so keep such
 material out of it. `project.yml` and current App Store Connect evidence determine
 versions and release state.
