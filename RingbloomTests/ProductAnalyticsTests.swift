@@ -4,6 +4,84 @@ import Testing
 
 @MainActor
 struct ProductAnalyticsTests {
+    @Test func onlyGenuineMilestonesForwardBoundedAcquisitionEvents() {
+        var events: [(String, [AnyHashable: Any])] = []
+        let analytics = ProductAnalytics(progressionHandler: { events.append(($0, $1)) }, captureHandler: { _, _ in })
+        analytics.captureLifecycle(.firstGardenWinAchieved, properties: [
+            "milestone_basis": "fresh_instrumented_progress", "feedback_text": "private", "attempt_id": "private-id",
+        ])
+        analytics.captureLifecycle(.attemptFinished, properties: [
+            "mode": "flower_show", "attempt_kind": "campaign", "outcome": "won", "class_number": 3, "score": 100,
+            "feedback_text": "private", "attempt_id": "private-id",
+        ])
+        #expect(events.map(\.0) == ["af_achievement_unlocked", "af_level_achieved"])
+        #expect(events[0].1["af_description"] as? String == "first_garden_win")
+        #expect(Set(events[0].1.keys) == [AnyHashable("af_description")])
+        #expect(events[1].1["af_level"] as? Int == 3)
+        #expect(events[1].1["af_content_type"] as? String == "flower_show")
+        #expect(Set(events[1].1.keys) == [AnyHashable("af_level"), AnyHashable("af_content_type")])
+    }
+
+    @Test func failureOtherModesAndOrdinaryAnalyticsNeverForwardToAds() {
+        var count = 0
+        let analytics = ProductAnalytics(progressionHandler: { _, _ in count += 1 }, captureHandler: { _, _ in })
+        analytics.captureLifecycle(.firstGardenWinAchieved, properties: ["milestone_basis": "existing_progress"])
+        let cases: [[String: Any]] = [
+            ["mode": "flower_show", "attempt_kind": "campaign", "outcome": "lost", "class_number": 1],
+            ["mode": "garden", "attempt_kind": "campaign", "outcome": "won", "class_number": 1],
+            ["mode": "flower_show", "attempt_kind": "campaign", "outcome": "won", "class_number": 0],
+            ["mode": "flower_show", "attempt_kind": "campaign", "outcome": "won", "class_number": "1"],
+            ["mode": "flower_show", "attempt_kind": "campaign", "outcome": "won", "class_number": 31],
+            ["mode": "flower_show", "attempt_kind": "replay", "outcome": "won", "class_number": 1],
+            ["mode": "flower_show", "attempt_kind": "circuit", "outcome": "won", "class_number": 31],
+            ["mode": "flower_show", "outcome": "won", "class_number": 1],
+            ["mode": "flower_show", "attempt_kind": "unknown", "outcome": "won", "class_number": 1],
+        ]
+        for properties in cases { analytics.captureLifecycle(.attemptFinished, properties: properties) }
+        analytics.captureLifecycle(.firstBloomAchieved, properties: [:])
+        analytics.capture("$autocapture", properties: ["private": "text"])
+        analytics.capture("feedback_sent", properties: [:])
+        analytics.screenViewed("home")
+        #expect(count == 0)
+    }
+
+    @Test func progressionDoesNotDependOnPostHogTestFlightEligibility() {
+        var events: [(String, [AnyHashable: Any])] = []
+        let analytics = ProductAnalytics(progressionHandler: { events.append(($0, $1)) }, captureHandler: nil,
+                                         route: .init(distribution: .sandbox, tier: .disabled))
+        analytics.captureLifecycle(.attemptFinished, properties: [
+            "mode": "flower_show", "attempt_kind": "campaign", "outcome": "won", "class_number": 30,
+        ])
+        #expect(events.count == 1)
+        #expect(events.first?.1["af_level"] as? Int == 30)
+    }
+
+    @Test func completedCampaignClassReplayWinsDoNotRepeatAcquisitionProgression() throws {
+        var acquisition: [(String, [AnyHashable: Any])] = []
+        let capture = CaptureBox()
+        let analytics = ProductAnalytics(progressionHandler: { acquisition.append(($0, $1)) },
+                                         captureHandler: { capture.events.append(($0, $1)) })
+        let store = InMemoryGameProgressStore(progress: GameProgress(bestScore: 0, highestGarden: 11))
+        let model = GameModel(launchMode: .uiTest(seed: 81), progressStore: store,
+                              flowerShowAccess: FullAccess(), analytics: analytics)
+        // Complete class 1 once, then win two separate replays of that completed class.
+        for _ in 0..<3 {
+            #expect(model.startFlowerShowClass(1) == .started)
+            while model.phase == .playing {
+                let move = try #require(model.suggestedMove)
+                model.select(move.ring)
+                _ = try #require(model.rotate(move.direction))
+            }
+            #expect(model.phase == .won)
+            model.dismissPendingFlowerShowResult()
+        }
+        #expect(capture.records("attempt_finished").compactMap { $0["attempt_kind"] as? String }
+                == ["campaign", "replay", "replay"])
+        let levels = acquisition.filter { $0.0 == "af_level_achieved" }
+        #expect(levels.count == 1)
+        #expect(levels.first?.1["af_level"] as? Int == 1)
+    }
+
     private final class CaptureBox {
         var event: String?
         var properties: [String: Any] = [:]
@@ -65,6 +143,113 @@ struct ProductAnalyticsTests {
         #expect(capture.properties["product"] as? String == "ringbloom")
         #expect(capture.properties["analytics_data_tier"] as? String == "test")
         #expect(capture.properties["distribution_environment"] as? String == "xcode")
+    }
+
+    @Test
+    func screenViewsUseStandardSDKEventAndKeepExistingDashboardEvent() {
+        let (analytics, box) = captureHarness()
+        analytics.screenViewed("settings", properties: ["$screen_name": "wrong", "screen": "wrong"])
+
+        #expect(box.events.map(\.0) == ["$screen", "screen_viewed"])
+        #expect(box.records("$screen").first?["$screen_name"] as? String == "settings")
+        #expect(box.records("screen_viewed").first?["screen"] as? String == "settings")
+        #expect(box.events.allSatisfy { $0.1["analytics_data_tier"] as? String == "test" })
+    }
+
+    @Test
+    func automaticEventsKeepSDKIdentityAndReceiveTrustedEnvironmentProperties() throws {
+        let context = AnalyticsSDKContext(commonProperties: [
+            "analytics_schema_version": 2, "analytics_data_tier": "test",
+            "distribution_environment": "xcode", "session_id": "test-process",
+        ])
+        context.setScreen("home")
+        for event in ["Application Opened", "$autocapture", "$rageclick", "$screen"] {
+            let properties = try #require(context.prepare(event, properties: [
+                "analytics_data_tier": "production", "$session_id": "sdk-session",
+                "$lib": "posthog-ios", "$elements_chain": "<Button id=\"playButton\"></Button>",
+            ]))
+            #expect(properties["analytics_data_tier"] as? String == "test")
+            #expect(properties["analytics_schema_version"] as? Int == 2)
+            #expect(properties["session_id"] as? String == "test-process")
+            #expect(properties["$session_id"] as? String == "sdk-session")
+            #expect(properties["$lib"] as? String == "posthog-ios")
+            #expect(properties["$geoip_disable"] as? Bool == true)
+        }
+    }
+
+    @Test
+    func feedbackContentIsExcludedWhileVisibleAndFromDelayedElementCallbacks() throws {
+        let context = AnalyticsSDKContext(commonProperties: [:])
+        context.setScreen("feedback")
+        for event in ["$autocapture", "$rageclick"] {
+            #expect(context.prepare(event, properties: ["$elements_chain": "private content"]) == nil)
+        }
+        #expect(context.prepare("feedback_send_failed", properties: ["source": "home"]) != nil)
+        context.setScreen("settings")
+        for id in ["feedback-message", "feedback-category", "feedback-error", "ph-no-capture"] {
+            #expect(context.prepare("$autocapture", properties: ["$elements_chain": id]) == nil)
+            #expect(context.prepare("$rageclick", properties: ["$elements_chain": id]) == nil)
+        }
+        let properties = try #require(context.prepare("$autocapture", properties: [
+            "$screen_name": "UIHostingController", "$elements_chain": "feedbackRemindersToggle",
+        ]))
+        #expect(properties["$screen_name"] as? String == "settings")
+    }
+
+    @Test
+    func nativeCrashKeepsPreviousLaunchContextAndSymbolicationWithoutPrivateMessages() throws {
+        let context = AnalyticsSDKContext(commonProperties: [
+            "analytics_data_tier": "production", "distribution_environment": "production",
+            "session_id": "new-session", "app_version": "2.0", "build_number": "20",
+        ])
+        let privateText = "Private feedback in /private/var/mobile/customer.txt"
+        let properties = try #require(context.prepare("$exception", properties: [
+            "$exception_level": "fatal", "analytics_data_tier": "test",
+            "distribution_environment": "xcode", "session_id": "test-crashed-session",
+            "app_version": "1.6", "build_number": "11", "$session_id": "crashed-sdk-session",
+            "$exception_list": [[
+                "type": "FatalError", "value": privateText,
+                "mechanism": ["type": "signal", "handled": false, "meta": [
+                    "signal": ["name": "SIGTRAP", "code": "TRAP_BRKPT", "crash_info_message": privateText],
+                ]],
+                "stacktrace": ["type": "raw", "frames": [["instruction_addr": "0x123", "in_app": true]]],
+            ]],
+            "$debug_images": [["code_file": "/private/var/containers/UUID/Ringbloom.app/Ringbloom", "debug_id": "symbol-uuid"]],
+        ]))
+
+        #expect(properties["analytics_data_tier"] as? String == "test")
+        #expect(properties["distribution_environment"] as? String == "xcode")
+        #expect(properties["session_id"] as? String == "test-crashed-session")
+        #expect(properties["app_version"] as? String == "1.6")
+        #expect(properties["build_number"] as? String == "11")
+        #expect(properties["$session_id"] as? String == "crashed-sdk-session")
+        #expect(properties["$geoip_disable"] as? Bool == true)
+        let exceptions = try #require(properties["$exception_list"] as? [[String: Any]])
+        #expect(exceptions.first?["type"] as? String == "FatalError")
+        let stack = try #require(exceptions.first?["stacktrace"] as? [String: Any])
+        #expect((stack["frames"] as? [[String: Any]])?.first?["instruction_addr"] as? String == "0x123")
+        let images = try #require(properties["$debug_images"] as? [[String: Any]])
+        #expect(images.first?["code_file"] as? String == "Ringbloom")
+        #expect(images.first?["debug_id"] as? String == "symbol-uuid")
+        let encoded = try JSONSerialization.data(withJSONObject: properties)
+        let json = String(decoding: encoded, as: UTF8.self)
+        #expect(!json.contains("Private feedback"))
+        #expect(!json.contains("customer.txt"))
+        #expect(!json.contains("crash_info_message"))
+    }
+
+    @Test
+    func nativeCrashWithoutSavedRouteIsNeverAttributedToTheCurrentProductionSession() throws {
+        let context = AnalyticsSDKContext(commonProperties: [
+            "analytics_data_tier": "production", "session_id": "new-production-session",
+            "app_version": "2.0", "build_number": "20",
+        ])
+        let properties = try #require(context.prepare("$exception", properties: ["$exception_level": "fatal"]))
+        #expect(properties["analytics_data_tier"] as? String == "unknown")
+        #expect(properties["session_id"] == nil)
+        #expect(properties["app_version"] == nil)
+        #expect(properties["build_number"] == nil)
+        #expect(properties["product"] as? String == "ringbloom")
     }
 
     @Test

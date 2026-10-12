@@ -8,6 +8,8 @@
 	<string>$(APPSFLYER_DEV_KEY)</string>
 	<key>PostHogHost</key>
 	<string>$(POSTHOG_HOST)</string>
+	<key>NSAdvertisingAttributionReportEndpoint</key>
+	<string>https://appsflyer-skadnetwork.com/</string>
 	<key>PostHogProjectToken</key>
 	<string>$(POSTHOG_PROJECT_TOKEN)</string>
 	<key>CFBundleDevelopmentRegion</key>

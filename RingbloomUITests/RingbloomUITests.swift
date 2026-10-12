@@ -48,6 +48,32 @@ final class RingbloomUITests: XCTestCase {
         Thread.sleep(forTimeInterval: 5)
     }
 
+    func testExplicitAnalyticsAutocaptureAndPrivateFeedback() throws {
+        try XCTSkipUnless(
+            ProcessInfo.processInfo.environment["RINGBLOOM_ANALYTICS_TEST_INGESTION"] == "1",
+            "Remote test ingestion requires explicit runner opt-in."
+        )
+        let app = launch(arguments: ["--feedback-offline"])
+        tap(app.buttons["settingsButton"], in: app)
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+        let reminders = app.switches["feedbackRemindersToggle"]
+        XCTAssertTrue(reminders.waitForExistence(timeout: 5))
+        reminders.tap()
+        reminders.tap()
+        tap(app.buttons["settings.feedback"], in: app)
+        XCTAssertTrue(app.navigationBars["Send feedback"].waitForExistence(timeout: 5))
+        let message = app.textViews["feedback-message"]
+        XCTAssertTrue(message.waitForExistence(timeout: 5))
+        message.tap()
+        message.typeText("RINGBLOOM_POSTHOG_PRIVATE_FEEDBACK_20260927")
+        tap(app.navigationBars["Send feedback"].buttons["Close"], in: app)
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+        tap(app.buttons["settingsDoneButton"], in: app)
+        XCTAssertTrue(app.buttons["playButton"].waitForExistence(timeout: 5))
+        XCUIDevice.shared.press(.home)
+        Thread.sleep(forTimeInterval: 5)
+    }
+
     func testFirstWinOfferUsesAccessibleLabelsAtLargeText() {
         let app = launch(arguments: [
             "--screenshot-win",

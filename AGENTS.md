@@ -15,9 +15,13 @@ suggestion will be built.
 
 ## Canonical context
 
-This repository is the product source. The Ringbloom folder in `Gaming Benchmark/` is a
-historical run snapshot; do not work from it or automatically copy it over this repository.
-`project.yml` and current App Store Connect evidence determine versions and release state.
+This repository is the only place to work on Ringbloom. `Gaming Benchmark/GPT5.6 Sol Ultra -
+Ringbloom/` is a frozen, unversioned snapshot: never work there or copy it over this
+repository. Its run record and later private product evidence (handovers, partner
+readbacks) are in the private `Gaming Benchmark` repository under
+`runs/20260711-gpt5.6-sol-ultra-ringbloom/`; this repository is public, so keep such
+material out of it. `project.yml` and current App Store Connect evidence determine
+versions and release state.
 
 - `GAME_DESIGN.md` explains the original mechanics.
 - `FLOWER_SHOW_FINAL_PLAN.md` and `FREEMIUM_FLOWER_SHOW_IMPLEMENTATION_PLAN.md` explain the

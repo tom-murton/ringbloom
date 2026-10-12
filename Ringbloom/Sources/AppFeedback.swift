@@ -1,4 +1,5 @@
 import FeedbackKit
+import PostHog
 import SwiftUI
 
 enum AppFeedbackConfiguration {
@@ -43,11 +44,14 @@ struct AppFeedbackSheet: View {
             },
             onSubmitted: { _ in prompts.recordFeedbackSubmitted() }
         )
+        .postHogMask()
+        .accessibilityIdentifier("ringbloom.feedback ph-no-capture")
         .tint(RingbloomTheme.saffron)
         .onAppear {
             guard !recordedOpen else { return }
             recordedOpen = true
             prompts.recordFeedbackOpened()
+            analytics.screenViewed("feedback", properties: ["source": source.rawValue])
             analytics.capture("feedback_opened", properties: ["source": source.rawValue])
         }
     }
@@ -327,10 +331,13 @@ struct RingbloomSettingsView: View {
                         .accessibilityIdentifier("settingsDoneButton")
                 }
             }
-            .sheet(isPresented: $showsFeedback) {
+            .sheet(isPresented: $showsFeedback, onDismiss: {
+                analytics.screenViewed("settings")
+            }) {
                 AppFeedbackSheet(source: .settings)
             }
         }
+        .onAppear { analytics.screenViewed("settings") }
     }
 
     private var version: String {
