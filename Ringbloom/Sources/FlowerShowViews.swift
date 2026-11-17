@@ -97,7 +97,7 @@ struct ModeCard: View {
                         Text("\(progress.value) / \(progress.total)")
                             .contentTransition(.numericText())
                     }
-                    .font(.system(.caption2, design: .rounded, weight: .semibold))
+                    .font(.system(.caption, design: .rounded, weight: .semibold))
                     .tracking(1.5)
                     .foregroundStyle(RingbloomTheme.muted)
 

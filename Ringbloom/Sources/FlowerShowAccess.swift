@@ -190,19 +190,23 @@ struct FlowerShowLaunchOverrides: Equatable, Sendable {
     let purchase: FlowerShowLaunchPurchaseOverride?
     let restore: FlowerShowLaunchRestoreOverride?
     let displayPrice: String?
+    /// Deterministic stand-in for a store that never answers a product request.
+    let productLoadStalls: Bool
 
     init(
         access: FlowerShowLaunchAccessOverride?,
         productUnavailable: Bool,
         purchase: FlowerShowLaunchPurchaseOverride?,
         restore: FlowerShowLaunchRestoreOverride? = nil,
-        displayPrice: String? = nil
+        displayPrice: String? = nil,
+        productLoadStalls: Bool = false
     ) {
         self.access = access
         self.productUnavailable = productUnavailable
         self.purchase = purchase
         self.restore = restore
         self.displayPrice = displayPrice
+        self.productLoadStalls = productLoadStalls
     }
 
     static func resolve(arguments: [String], launchMode: GameLaunchMode) -> Self {
@@ -260,7 +264,8 @@ struct FlowerShowLaunchOverrides: Equatable, Sendable {
             productUnavailable: normalized.contains("--flower-show-product-unavailable"),
             purchase: purchase,
             restore: restore,
-            displayPrice: displayPrice
+            displayPrice: displayPrice,
+            productLoadStalls: normalized.contains("--flower-show-product-stalled")
         )
     }
 }

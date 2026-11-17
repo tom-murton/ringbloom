@@ -310,19 +310,88 @@ final class RingbloomUITests: XCTestCase {
         tap(app.buttons["flowerShowButton"], in: app)
         let preview = app.otherElements["flowerShowClass6Preview"]
         XCTAssertTrue(preview.waitForExistence(timeout: 4))
+        // Close is pinned: tappable on arrival, before any scrolling.
+        let close = app.buttons["flowerShowPurchaseCloseButton"]
+        XCTAssertTrue(close.waitForExistence(timeout: 4))
+        XCTAssertTrue(close.isHittable)
         XCTAssertTrue(app.otherElements["flowerShowClass6PreviewAnimated"].exists)
         reveal(app.buttons["flowerShowClass6PreviewPauseButton"], in: app)
         XCTAssertTrue(app.buttons["flowerShowClass6PreviewPauseButton"].isHittable)
         XCTAssertEqual(app.buttons["flowerShowClass6PreviewPauseButton"].label, "Play Class 6 demonstration")
-        XCTAssertTrue(app.buttons["flowerShowClass6PreviewReplayButton"].isHittable)
+        let replay = app.buttons["flowerShowClass6PreviewReplayButton"]
+        reveal(replay, in: app)
+        XCTAssertTrue(replay.isHittable)
+        // At accessibility sizes the demo buttons stack full width so their titles wrap by word.
+        let pauseFrame = app.buttons["flowerShowClass6PreviewPauseButton"].frame
+        XCTAssertGreaterThan(replay.frame.minY, pauseFrame.minY, "Demo buttons stack at AX5")
+        let demoShot = XCTAttachment(screenshot: app.screenshot())
+        demoShot.name = "ax5-paywall-demo-buttons"
+        demoShot.lifetime = .keepAlways
+        add(demoShot)
         reveal(app.buttons["flowerShowPurchaseButton"], in: app)
         XCTAssertTrue(app.buttons["flowerShowPurchaseButton"].label.contains("CHF 1’234.50 (FAMILY PRICE)"))
         reveal(app.buttons["flowerShowKeepPlayingButton"], in: app)
         XCTAssertTrue(app.buttons["flowerShowKeepPlayingButton"].isHittable)
         reveal(app.buttons["flowerShowRestoreButton"], in: app)
         XCTAssertTrue(app.buttons["flowerShowRestoreButton"].isHittable)
-        reveal(app.buttons["flowerShowPurchaseCloseButton"], in: app)
+        // Still tappable with the copy scrolled to its end, without scrolling back.
+        XCTAssertTrue(close.isHittable)
+        let endShot = XCTAttachment(screenshot: app.screenshot())
+        endShot.name = "ax5-paywall-scrolled-end"
+        endShot.lifetime = .keepAlways
+        add(endShot)
+        close.tap()
+        XCTAssertTrue(app.buttons["flowerShowButton"].waitForExistence(timeout: 5))
+    }
+
+    func testStalledStoreOffersRetryInsteadOfLoadingForever() {
+        let app = launch(arguments: [
+            "--flower-show-access=sample",
+            "--flower-show-class=6",
+            "--flower-show-product-stalled",
+        ])
+
+        tap(app.buttons["flowerShowButton"], in: app)
+        // The 10-second wait starts at app launch, so the initial LOADING… state may already
+        // be over; it is checked after the explicit retry below, which starts a fresh wait.
+        let heading = app.staticTexts["FLOWER SHOW UNAVAILABLE"]
+        XCTAssertTrue(heading.waitForExistence(timeout: 16))
+        XCTAssertTrue(app.staticTexts["The full Flower Show can’t be loaded right now. Garden and Classes 1–5 are still available."].exists)
+        let timedOut = XCTAttachment(screenshot: app.screenshot())
+        timedOut.name = "paywall-store-timed-out"
+        timedOut.lifetime = .keepAlways
+        add(timedOut)
+        XCTAssertTrue(app.buttons["flowerShowPurchaseRetryButton"].isEnabled)
+        XCTAssertTrue(app.buttons["flowerShowKeepPlayingButton"].isEnabled)
+        XCTAssertTrue(app.buttons["flowerShowRestoreButton"].isEnabled)
         XCTAssertTrue(app.buttons["flowerShowPurchaseCloseButton"].isHittable)
+
+        // Retry waits again, then offers Retry again rather than hanging.
+        tap(app.buttons["flowerShowPurchaseRetryButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowPurchaseButton"].waitForExistence(timeout: 3))
+        XCTAssertEqual(app.buttons["flowerShowPurchaseButton"].label, "LOADING…")
+        XCTAssertFalse(app.buttons["flowerShowPurchaseButton"].isEnabled)
+        XCTAssertFalse(heading.exists)
+        XCTAssertTrue(heading.waitForExistence(timeout: 16))
+
+        tap(app.buttons["flowerShowKeepPlayingButton"], in: app)
+        XCTAssertTrue(app.buttons["flowerShowButton"].waitForExistence(timeout: 5))
+    }
+
+    func testClassBookListsEachClassOnceForVoiceOver() {
+        let app = launch(arguments: [
+            "--flower-show-access=sample",
+            "--flower-show-class=6",
+        ])
+        tap(app.buttons["classBookButton"], in: app)
+        let classOne = app.buttons["classBookClass1"]
+        XCTAssertTrue(classOne.waitForExistence(timeout: 8))
+        XCTAssertTrue(classOne.label.hasPrefix("Class 1, Harmony Heats, completed"))
+        // Previously each tile also exposed its visible text ("1, CLASS 1, …") as a second element.
+        let shortLabels = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "1, CLASS 1"))
+        XCTAssertEqual(shortLabels.count, 0)
+        XCTAssertEqual(app.descendants(matching: .any).matching(identifier: "classBookClass1").count, 1)
     }
 
     func testReducedMotionPurchasePreviewShowsStaticBeforeAndAfterBoards() {
@@ -1127,6 +1196,113 @@ final class RingbloomUITests: XCTestCase {
     func testTurnControlsStayInsideSafeAreaInGarden() {
         let app = launch(arguments: ["--screenshot-game"])
         assertGameplayControlsFitSafeArea(in: app, context: "Garden 1")
+    }
+
+    // MARK: - Automated accessibility audits
+
+    // Apple's automated audit stands in for part of a VoiceOver and large-text check: it
+    // cannot say how the game sounds or whether a blind player can finish a puzzle.
+    func testAccessibilityAuditAtDefaultTextSize() {
+        runAccessibilityAudits(textSize: "UICTContentSizeCategoryL", tag: "default")
+    }
+
+    func testAccessibilityAuditAtLargestTextSize() {
+        runAccessibilityAudits(textSize: "UICTContentSizeCategoryAccessibilityXXXL", tag: "ax5")
+    }
+
+    private func runAccessibilityAudits(textSize: String, tag: String) {
+        // Report every screen's findings in one run rather than stopping at the first.
+        continueAfterFailure = true
+        let sampler = [
+            "--flower-show-access=sample",
+            "--flower-show-class=6",
+            "-UIPreferredContentSizeCategoryName", textSize,
+        ]
+
+        var app = launch(arguments: sampler)
+        XCTAssertTrue(app.buttons["classBookButton"].waitForExistence(timeout: 8))
+        auditScreen(app, name: "\(tag)-home")
+        tap(app.buttons["settingsButton"], in: app)
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
+        auditScreen(app, name: "\(tag)-settings")
+        app.terminate()
+
+        app = launch(arguments: sampler)
+        // At the largest size Class Book sits several screens down Home.
+        let classBookButton = app.buttons["classBookButton"]
+        XCTAssertTrue(classBookButton.waitForExistence(timeout: 8))
+        for _ in 0 ..< 15 where classBookButton.isHittable == false {
+            app.swipeUp()
+        }
+        XCTAssertTrue(classBookButton.isHittable)
+        classBookButton.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["flowerShowClassBook"].waitForExistence(timeout: 8))
+        auditScreen(app, name: "\(tag)-class-book")
+        app.terminate()
+
+        app = launch(arguments: ["--screenshot-game", "-UIPreferredContentSizeCategoryName", textSize])
+        XCTAssertTrue(app.staticTexts["gameBoard"].firstMatch.waitForExistence(timeout: 8))
+        auditScreen(app, name: "\(tag)-garden-play")
+        app.terminate()
+
+        app = launch(arguments: sampler + ["--flower-show-display-price=£2.99"])
+        tap(app.buttons["flowerShowButton"], in: app)
+        XCTAssertTrue(app.otherElements["flowerShowPurchaseView"].waitForExistence(timeout: 8))
+        auditScreen(app, name: "\(tag)-paywall")
+        app.terminate()
+    }
+
+    private func auditScreen(
+        _ app: XCUIApplication,
+        name: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        // Let entrance animations settle so the audit samples the resting layout.
+        Thread.sleep(forTimeInterval: 1.5)
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "audit-\(name)"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+
+        do {
+            try app.performAccessibilityAudit(for: .all) { issue in
+                let element = issue.element
+                let summary = "AUDIT \(name) | \(issue.auditType.rawValue) | \(issue.compactDescription)"
+                    + " | id=\(element?.identifier ?? "-") label='\(element?.label ?? "-")'"
+                    + " frame=\(element.map { "\($0.frame)" } ?? "-")"
+                if Self.isKnownBoardFalsePositive(issue) {
+                    NSLog("\(summary) | ignored: drawn board")
+                    return true
+                }
+                if issue.auditType == .contrast {
+                    // Logged, not failed: see the note on `isKnownBoardFalsePositive`.
+                    NSLog("\(summary) | logged: pixel contrast, colours checked by ThemeContrastTests")
+                    return true
+                }
+                if issue.element?.identifier == "settingsDoneButton" {
+                    // The system navigation bar draws and sizes this button, not the app.
+                    NSLog("\(summary) | ignored: system navigation bar button")
+                    return true
+                }
+                NSLog(summary)
+                return false
+            }
+        } catch {
+            XCTFail("Accessibility audit on \(name) could not run: \(error)", file: file, line: line)
+        }
+    }
+
+    /// Contrast is excused because the audit samples rendered pixels: it flags 12 pt muted
+    /// captions and even 17 pt ivory body copy whose colours measure 8.6:1 to 14:1. The theme
+    /// colour pairs are instead held to WCAG 4.5:1 deterministically by `ThemeContrastTests`.
+    /// The game board is one custom-drawn element whose label is a long spoken description
+    /// of every spoke. The audit samples its drawn petals for text contrast and treats the
+    /// description as clipped text. Neither is visible text, so only that element is excused.
+    private static func isKnownBoardFalsePositive(_ issue: XCUIAccessibilityAuditIssue) -> Bool {
+        guard let identifier = issue.element?.identifier else { return false }
+        let isBoard = identifier == "gameBoard" || identifier.hasPrefix("flowerShowClass6PreviewBoard")
+        return isBoard && (issue.auditType == .contrast || issue.auditType == .textClipped)
     }
 
     private func assertGameplayControlsFitSafeArea(

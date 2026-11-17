@@ -31,7 +31,6 @@ struct FlowerShowPurchaseView: View {
 
             ScrollView {
                 VStack(spacing: 24) {
-                    closeButton
                     if showsSuccess {
                         successContent
                     } else {
@@ -44,7 +43,18 @@ struct FlowerShowPurchaseView: View {
                 .frame(maxWidth: .infinity, minHeight: 620)
             }
             .scrollIndicators(.hidden)
+            // Pinned above the scrolling copy so close stays on screen at every text size.
+            .safeAreaInset(edge: .top, spacing: 0) {
+                closeButton
+                    .padding(.horizontal, 20)
+                    .frame(maxWidth: 540)
+                    .frame(maxWidth: .infinity)
+                    .background(RingbloomTheme.inkLifted.opacity(0.94).ignoresSafeArea(edges: .top))
+            }
         }
+        // Keep the screen identifier on a container: the pinned close button sits outside
+        // the ScrollView and would otherwise inherit it and lose its own identifier.
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("flowerShowPurchaseView")
         .onAppear {
             store.refreshPendingPurchaseState()
@@ -694,6 +704,7 @@ struct FlowerShowClass6PreviewPresentation: Equatable {
 
 private struct FlowerShowClass6PreviewView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var phase = FlowerShowClass6PreviewPhase.initial
     @State private var isPaused = true
     @State private var replayToken = UUID()
@@ -740,10 +751,14 @@ private struct FlowerShowClass6PreviewView: View {
                 .foregroundStyle(RingbloomTheme.ivory)
                 .accessibilityLabel("Class 6 Unbroken example. Turn the middle ring clockwise for the first bloom, then the inner ring counter-clockwise for the second bloom. The Unbroken objective reaches 2 of 2. This is a demonstration, not a playable Class.")
 
-            HStack(spacing: 12) {
+            // Side by side, two buttons are too narrow at accessibility sizes and break
+            // mid-word ("PLA / Y DEM / O"), so stack them full width there instead.
+            demoControlsLayout {
                 if phase.isComplete == false {
-                    Button(isPaused ? "PLAY DEMO" : "PAUSE DEMO") {
+                    Button {
                         isPaused.toggle()
+                    } label: {
+                        demoButtonTitle(isPaused ? "PLAY DEMO" : "PAUSE DEMO")
                     }
                     .buttonStyle(RingbloomButtonStyle())
                     .frame(minHeight: 44)
@@ -752,10 +767,12 @@ private struct FlowerShowClass6PreviewView: View {
                     .accessibilityIdentifier("flowerShowClass6PreviewPauseButton")
                 }
 
-                Button("REPLAY DEMO") {
+                Button {
                     phase = .initial
                     isPaused = true
                     replayToken = UUID()
+                } label: {
+                    demoButtonTitle("REPLAY DEMO")
                 }
                 .buttonStyle(RingbloomButtonStyle())
                 .frame(minHeight: 44)
@@ -775,6 +792,18 @@ private struct FlowerShowClass6PreviewView: View {
                 advance(from: visiblePhase)
             }
         }
+    }
+
+    private var demoControlsLayout: AnyLayout {
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(spacing: 12))
+            : AnyLayout(HStackLayout(spacing: 12))
+    }
+
+    private func demoButtonTitle(_ title: String) -> some View {
+        Text(title)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: dynamicTypeSize.isAccessibilitySize ? .infinity : nil)
     }
 
     private func staticPreview(_ preview: FlowerShowClass6Preview) -> some View {
