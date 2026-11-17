@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Testing
 @testable import Ringbloom
 
@@ -781,5 +782,52 @@ struct GameModelTests {
             GameLaunchMode.detect(arguments: ["app", "--screenshot-mode"])
                 == .screenshot(seed: GameLaunchMode.defaultScreenshotSeed)
         )
+    }
+}
+
+/// WCAG 2.x contrast for the theme's text colours on the app's two surfaces. The automated
+/// UI audit samples rendered pixels and cannot judge small text reliably, so the colour
+/// pairs themselves, read from `RingbloomTheme`, are held to the 4.5:1 normal-text threshold.
+struct ThemeContrastTests {
+    private static let surfaces: [(name: String, colour: Color)] = [
+        ("ink", RingbloomTheme.ink),
+        ("inkLifted", RingbloomTheme.inkLifted),
+    ]
+    private static let textColours: [(name: String, colour: Color)] = [
+        ("ivory", RingbloomTheme.ivory),
+        ("muted", RingbloomTheme.muted),
+        ("saffron", RingbloomTheme.saffron),
+        ("mint", RingbloomTheme.mint),
+    ]
+
+    @Test func themeTextColoursMeetWCAGNormalTextContrastOnBothSurfaces() {
+        for text in Self.textColours {
+            for surface in Self.surfaces {
+                let ratio = Self.contrast(text.colour, surface.colour)
+                #expect(ratio >= 4.5, "\(text.name) on \(surface.name) is \(ratio):1")
+            }
+        }
+    }
+
+    @Test func mutedCaptionsKeepAComfortableMargin() {
+        // Small muted captions were flagged by the pixel audit; keep them well above 4.5:1.
+        #expect(Self.contrast(RingbloomTheme.muted, RingbloomTheme.inkLifted) >= 7)
+    }
+
+    private static func contrast(_ first: Color, _ second: Color) -> Double {
+        let lighter = max(luminance(first), luminance(second))
+        let darker = min(luminance(first), luminance(second))
+        return (lighter + 0.05) / (darker + 0.05)
+    }
+
+    private static func luminance(_ colour: Color) -> Double {
+        let resolved = UIColor(colour).resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        resolved.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        func linear(_ channel: CGFloat) -> Double {
+            let value = Double(channel)
+            return value <= 0.04045 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
+        }
+        return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue)
     }
 }

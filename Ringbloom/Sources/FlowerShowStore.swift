@@ -54,7 +54,8 @@ final class StoreKitFlowerShowStoreClient: FlowerShowStoreClient {
         guard let product = products.first(where: {
             $0.id == FlowerShowAccessPolicy.productID && $0.type == .nonConsumable
         }) else {
-            self.product = nil
+            // Keep any product an earlier request loaded: a late, empty answer to an older
+            // request must not leave the paywall offering a product purchase() cannot find.
             return nil
         }
         self.product = product
@@ -276,6 +277,11 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
     private let purchaseProvenance: any FlowerShowPurchaseProvenanceStoring
     private let now: () -> Date
     private var bootstrapProductTask: Task<Void, Never>?
+    /// Retries are never cancelled by a newer retry: StoreKit may answer an older request first.
+    private var productLoadTasks: [Task<Void, Never>] = []
+    private var productLoadTimeoutTask: Task<Void, Never>?
+    private var productLoadGeneration: UInt64 = 0
+    private let productLoadTimeout: Duration
     private var bootstrapAccessTask: Task<Void, Never>?
     private var transactionTask: Task<Void, Never>?
     private var finishedTransactionIDs: Set<UInt64> = []
@@ -326,9 +332,11 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         purchaseAttribution: any PurchaseAttributionTracking = NoOpPurchaseAttributionTracker(),
         purchaseAnalytics: any PurchaseBoundaryAnalyticsTracking = ProductAnalytics.shared,
         purchaseProvenance: any FlowerShowPurchaseProvenanceStoring = UserDefaultsFlowerShowPurchaseProvenanceStore(),
-        now: @escaping () -> Date = Date.init
+        now: @escaping () -> Date = Date.init,
+        productLoadTimeout: Duration = FlowerShowStore.defaultProductLoadTimeout
     ) {
         self.client = client
+        self.productLoadTimeout = productLoadTimeout
         self.launchOverrides = launchOverrides
         self.purchaseAttribution = purchaseAttribution
         self.purchaseAnalytics = purchaseAnalytics
@@ -357,11 +365,19 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         if launchOverrides.access == nil {
             startTransactionListener()
             startBootstrapTasks()
+        } else if productState == .loading {
+            // Deterministic launches never request the product, so bound the wait anyway.
+            _ = beginProductLoad()
         }
     }
 
+    /// How long the paywall may show "LOADING…" before it offers a retry instead.
+    static let defaultProductLoadTimeout: Duration = .seconds(10)
+
     deinit {
         bootstrapProductTask?.cancel()
+        productLoadTasks.forEach { $0.cancel() }
+        productLoadTimeoutTask?.cancel()
         bootstrapAccessTask?.cancel()
         transactionTask?.cancel()
     }
@@ -541,10 +557,11 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         let accessRequest = beginAccessRefresh(reason: .bootstrap)
 
         if launchOverrides.productUnavailable == false {
+            let generation = beginProductLoad()
             bootstrapProductTask = Task { @MainActor [weak self, client] in
                 let result = await Self.loadProduct(using: client)
                 guard Task.isCancelled == false else { return }
-                self?.applyProductResult(result)
+                self?.applyProductResult(result, generation: generation)
             }
         }
 
@@ -555,11 +572,42 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         }
     }
 
+    /// Returns once the product loads, fails or the bounded wait expires, whichever is first.
+    /// A StoreKit request that ignores cancellation therefore cannot hold the paywall.
     private func loadProduct() async {
+        let generation = beginProductLoad()
+        // Deterministic stand-in for a store that never answers: never contacts StoreKit.
+        if launchOverrides.access == nil || launchOverrides.productLoadStalls == false {
+            let client = client
+            productLoadTasks.append(Task { @MainActor [weak self, client] in
+                let result = await Self.loadProduct(using: client)
+                guard Task.isCancelled == false else { return }
+                self?.applyProductResult(result, generation: generation)
+            })
+        }
+        for await state in $productState.values {
+            if state != .loading || productLoadGeneration != generation || Task.isCancelled { return }
+        }
+    }
+
+    /// Starts a new product-load generation in `.loading` with a watchdog that moves it to
+    /// `.unavailable`, which offers TRY AGAIN, Restore and Keep playing free.
+    private func beginProductLoad() -> UInt64 {
+        productLoadGeneration &+= 1
+        let generation = productLoadGeneration
         productState = .loading
-        let result = await Self.loadProduct(using: client)
-        guard Task.isCancelled == false else { return }
-        applyProductResult(result)
+        productLoadTimeoutTask?.cancel()
+        let timeout = productLoadTimeout
+        productLoadTimeoutTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: timeout)
+            guard Task.isCancelled == false,
+                  let self,
+                  self.productLoadGeneration == generation,
+                  self.productState == .loading
+            else { return }
+            self.productState = .unavailable
+        }
+        return generation
     }
 
     private func refreshAccess(reason: AccessRefreshReason) async {
@@ -743,12 +791,22 @@ final class FlowerShowStore: ObservableObject, FlowerShowAccessProviding {
         storefrontOperation = nil
     }
 
-    private func applyProductResult(_ result: Result<FlowerShowProductInfo?, Error>) {
+    private func applyProductResult(
+        _ result: Result<FlowerShowProductInfo?, Error>,
+        generation: UInt64
+    ) {
         switch result {
         case let .success(product?):
+            // A product that arrives after the bounded wait still restores the price.
             productState = .available(product)
         case .success(nil), .failure:
+            // An older request's failure must not end a newer request's wait, and no failure
+            // replaces a price that has already arrived.
+            guard generation == productLoadGeneration, productState == .loading else { return }
             productState = .unavailable
+        }
+        if generation == productLoadGeneration {
+            productLoadTimeoutTask?.cancel()
         }
     }
 

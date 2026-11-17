@@ -186,8 +186,8 @@ struct FlowerShowClassBookView: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityAddTraits(.isButton)
+        // The Button is already one accessibility element. Wrapping it in another element
+        // made VoiceOver list each Class twice (the full label and the tile's short text).
         .accessibilityLabel(
             accessibilityLabel(
                 number: number,

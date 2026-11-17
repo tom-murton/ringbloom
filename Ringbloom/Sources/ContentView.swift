@@ -752,7 +752,7 @@ private struct HomeView: View {
                             .accessibilityAddTraits(.isHeader)
 
                         Text("TURN · ALIGN · BLOOM")
-                            .font(.system(.caption2, design: .rounded, weight: .semibold))
+                            .font(.system(.caption, design: .rounded, weight: .semibold))
                             .tracking(3)
                             .multilineTextAlignment(.center)
                             .foregroundStyle(RingbloomTheme.muted)
@@ -1465,7 +1465,7 @@ private struct GameScreen: View {
                 Spacer()
                 Text("\(min(game.blooms, game.targetBlooms)) / \(game.targetBlooms)")
             }
-            .font(.system(.caption2, design: .rounded, weight: .semibold))
+            .font(.system(.caption, design: .rounded, weight: .semibold))
             .tracking(1.5)
             .foregroundStyle(RingbloomTheme.muted)
 
@@ -2644,7 +2644,7 @@ private struct HomeStat: View {
                 .foregroundStyle(RingbloomTheme.saffron)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(.caption2, design: .rounded, weight: .semibold))
+                    .font(.system(.caption, design: .rounded, weight: .semibold))
                     .tracking(1.5)
                     .foregroundStyle(RingbloomTheme.muted)
                 Text(value)
@@ -2670,7 +2670,7 @@ private struct GameStat: View {
     var body: some View {
         VStack(spacing: 2) {
             Text(title)
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
+                .font(.system(.caption, design: .rounded, weight: .semibold))
                 .tracking(1.5)
                 .foregroundStyle(RingbloomTheme.muted)
             Text(value)

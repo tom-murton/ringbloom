@@ -211,6 +211,12 @@ struct FlowerShowAccessPolicyTests {
         #expect(overrides.restore == .restoring)
         #expect(overrides.displayPrice == "From £2.99")
     }
+
+    @Test func stalledProductLoadIsADeterministicOnlyOverride() {
+        let arguments = ["--flower-show-access=sample", "--flower-show-product-stalled"]
+        #expect(FlowerShowLaunchOverrides.resolve(arguments: arguments, launchMode: .uiTest(seed: 1)).productLoadStalls)
+        #expect(FlowerShowLaunchOverrides.resolve(arguments: arguments, launchMode: .production).productLoadStalls == false)
+    }
 }
 
 struct FlowerShowPurchasePreviewTests {
@@ -1090,7 +1096,8 @@ private func isolatedFlowerShowStore(
     purchaseAttribution: any PurchaseAttributionTracking = NoOpPurchaseAttributionTracker(),
     purchaseAnalytics: any PurchaseBoundaryAnalyticsTracking = RecordingPurchaseBoundaryAnalytics(),
     purchaseProvenance: (any FlowerShowPurchaseProvenanceStoring)? = nil,
-    now: @escaping () -> Date = Date.init
+    now: @escaping () -> Date = Date.init,
+    productLoadTimeout: Duration = FlowerShowStore.defaultProductLoadTimeout
 ) -> FlowerShowStore {
     guard let defaults = UserDefaults(suiteName: "StoreCase.\(UUID().uuidString)") else {
         preconditionFailure("Cannot create isolated test defaults")
@@ -1099,7 +1106,8 @@ private func isolatedFlowerShowStore(
         client: client, launchOverrides: launchOverrides, purchaseAttribution: purchaseAttribution,
         purchaseAnalytics: purchaseAnalytics,
         purchaseProvenance: purchaseProvenance ?? UserDefaultsFlowerShowPurchaseProvenanceStore(defaults: defaults),
-        now: now
+        now: now,
+        productLoadTimeout: productLoadTimeout
     )
 }
 
@@ -2596,5 +2604,116 @@ struct FlowerShowStoreTests {
             displayPrice: "£2.99"
         )
         #expect(store.productState == .available(expectedProduct))
+    }
+
+    // MARK: Bounded product wait (the paywall must not sit on "LOADING…" forever)
+
+    @Test(.timeLimit(.minutes(1)))
+    func productThatNeverLoadsTimesOutToARetryableUnavailableState() async {
+        let product = FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")
+        let client = FakeFlowerShowStoreClient(product: product, suspendsProductRequests: true)
+        let store = isolatedFlowerShowStore(client: client, productLoadTimeout: .milliseconds(50))
+        await client.waitForProductCall(after: 0)
+
+        await waitForProductState(.unavailable, in: store)
+
+        client.suspendsProductRequests = false
+        await store.retryProductLoad()
+        #expect(client.loadProductCallCount == 2)
+        #expect(store.productState == .available(product))
+        store.stopTransactionListener()
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func productArrivingAfterTheTimeoutStillShowsThePrice() async {
+        let product = FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")
+        let client = FakeFlowerShowStoreClient(product: product, suspendsProductRequests: true)
+        let store = isolatedFlowerShowStore(client: client, productLoadTimeout: .milliseconds(50))
+        await client.waitForProductCall(after: 0)
+        await waitForProductState(.unavailable, in: store)
+
+        client.completeProductRequest(at: 0, with: .success(product))
+
+        await waitForProductState(.available(product), in: store)
+        store.stopTransactionListener()
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func retryReturnsAfterTheTimeoutWhenTheStoreStaysSilent() async {
+        let client = FakeFlowerShowStoreClient(suspendsProductRequests: true)
+        let store = isolatedFlowerShowStore(client: client, productLoadTimeout: .milliseconds(50))
+        await client.waitForProductCall(after: 0)
+        await waitForProductState(.unavailable, in: store)
+
+        await store.retryProductLoad()
+
+        #expect(client.loadProductCallCount == 2)
+        #expect(store.productState == .unavailable)
+        client.completeProductRequest(at: 0, with: .failure(CancellationError()))
+        client.completeProductRequest(at: 1, with: .failure(CancellationError()))
+        store.stopTransactionListener()
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func anOlderRequestsFailureDoesNotEndANewerRetry() async {
+        let product = FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")
+        let client = FakeFlowerShowStoreClient(product: product, suspendsProductRequests: true)
+        let store = isolatedFlowerShowStore(client: client, productLoadTimeout: .seconds(60))
+        await client.waitForProductCall(after: 0)
+
+        let retry = Task { await store.retryProductLoad() }
+        await client.waitForProductCall(after: 1)
+        client.completeProductRequest(at: 0, with: .failure(FlowerShowStoreClientError.failed))
+        await Task.yield()
+        #expect(store.productState == .loading)
+
+        client.completeProductRequest(at: 1, with: .success(product))
+        await retry.value
+        #expect(store.productState == .available(product))
+        store.stopTransactionListener()
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func anEarlierRetrysLateProductStillShowsThePriceDuringALaterRetry() async {
+        let product = FlowerShowProductInfo(productID: FlowerShowAccessPolicy.productID, displayPrice: "£2.99")
+        let client = FakeFlowerShowStoreClient(product: product, suspendsProductRequests: true)
+        let store = isolatedFlowerShowStore(client: client, productLoadTimeout: .seconds(60))
+        await client.waitForProductCall(after: 0)
+
+        let firstRetry = Task { await store.retryProductLoad() }
+        await client.waitForProductCall(after: 1)
+        let secondRetry = Task { await store.retryProductLoad() }
+        await client.waitForProductCall(after: 2)
+
+        client.completeProductRequest(at: 1, with: .success(product))
+        await secondRetry.value
+        await firstRetry.value
+        #expect(store.productState == .available(product))
+        #expect(client.productRequestWasCancelled(at: 1) == false)
+        client.completeProductRequest(at: 0, with: .failure(CancellationError()))
+        client.completeProductRequest(at: 2, with: .failure(CancellationError()))
+        store.stopTransactionListener()
+    }
+
+    @Test(.timeLimit(.minutes(1)))
+    func deterministicStalledProductTimesOutAndRetryNeverContactsTheStore() async {
+        let client = FakeFlowerShowStoreClient()
+        let store = isolatedFlowerShowStore(
+            client: client,
+            launchOverrides: FlowerShowLaunchOverrides(
+                access: .sample,
+                productUnavailable: false,
+                purchase: nil,
+                productLoadStalls: true
+            ),
+            productLoadTimeout: .milliseconds(50)
+        )
+        #expect(store.productState == .loading)
+        await waitForProductState(.unavailable, in: store)
+
+        await store.retryProductLoad()
+
+        #expect(store.productState == .unavailable)
+        #expect(client.loadProductCallCount == 0)
     }
 }
